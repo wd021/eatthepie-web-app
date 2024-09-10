@@ -10,8 +10,7 @@ export default function Home() {
         height={300}
       />
       <div className="text-2xl mt-12">
-        The world&apos;s first fully autonomous and trustless lottery built on
-        Ethereum.
+        A fully autonomous and trustless world lottery running on Ethereum.
       </div>
       <div className="text-2xl mt-4">Coming soon...</div>
     </div>
