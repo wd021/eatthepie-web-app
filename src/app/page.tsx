@@ -6,13 +6,29 @@ export default function Home() {
       <Image
         src="/logo.png"
         alt="Eat The Pie Lottery"
-        width={300}
-        height={300}
+        width={250}
+        height={250}
       />
-      <div className="text-2xl mt-12">
-        A fully autonomous and trustless world lottery running on Ethereum.
+      <div className="text-4xl mt-4 mb-2 max-w-[520px]">
+        The world lottery on Ethereum.
+        <br />
+        Global, transparent, and fair.
       </div>
-      <div className="text-2xl mt-4">Coming soon...</div>
+      <div className="text-lg mb-10 font-semibold text-gray-500">
+        100% automated, 100% random, 1% fee
+      </div>
+      <div className="mb-12">
+        <div className="text-8xl font-bold">5,000ETH</div>
+        <div className="text-lg text-gray-500">CURRENT JACKPOT</div>
+      </div>
+      <div className="flex gap-x-8">
+        <div className="bg-blue-500 w-[250px] h-[60px] flex items-center justify-center rounded-full text-white font-semibold text-xl">
+          Buy Ticket (0.01ETH)
+        </div>
+        <div className="border border-gray-400 w-[250px] h-[60px] flex items-center justify-center rounded-full text-xl">
+          Learn More
+        </div>
+      </div>
     </div>
   );
 }
