@@ -1,34 +1,61 @@
+import { Wallet } from "@/icons";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="h-screen flex flex-col items-center justify-center text-center px-6">
-      <Image
-        src="/logo.png"
-        alt="Eat The Pie Lottery"
-        width={250}
-        height={250}
-      />
-      <div className="text-4xl mt-4 mb-2 max-w-[520px]">
-        The world lottery on Ethereum.
-        <br />
-        Global, transparent, and fair.
-      </div>
-      <div className="text-lg mb-10 font-semibold text-gray-500">
-        100% automated, 100% random, 1% fee
-      </div>
-      <div className="mb-12">
-        <div className="text-8xl font-bold">5,000ETH</div>
-        <div className="text-lg text-gray-500">CURRENT JACKPOT</div>
-      </div>
-      <div className="flex gap-x-8">
-        <div className="bg-blue-500 w-[250px] h-[60px] flex items-center justify-center rounded-full text-white font-semibold text-xl">
-          Buy Ticket (0.01ETH)
+    <>
+      <div className="h-screen min-h-[850px] flex flex-col items-center justify-center border-b border-gray-300">
+        {/* header */}
+        <div className="w-full flex items-center p-4 justify-between border-b border-gray-300">
+          <Image
+            src="/logo.png"
+            alt="Eat The Pie Lottery"
+            width={75}
+            height={75}
+          />
+          <div className="flex items-center gap-x-6 text-xl">
+            <div>Rules</div>
+            <div>Results</div>
+            <div className="flex items-center bg-gray-200 px-5 rounded-full">
+              <Wallet width="30px" />
+              <div className="ml-2">Connect</div>
+            </div>
+          </div>
         </div>
-        <div className="border border-gray-400 w-[250px] h-[60px] flex items-center justify-center rounded-full text-xl">
-          Learn More
+        <div className="flex items-center justify-center h-full w-full max-w-container px-4 gap-x-8">
+          <div className="ml-4 flex flex-col max-w-[560px]">
+            <div className="text-8xl font-bold mb-8">The World Lottery</div>
+            <div className="text-4xl ml-2 mb-12 text-gray-500 gap-y-4 flex flex-col">
+              <div>Self-executing</div>
+              <div>Fully transparent</div>
+              <div>Built on Ethereum</div>
+            </div>
+            <div className="flex gap-x-6">
+              <button className="bg-green-600 w-[250px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl hover:bg-green-800">
+                Buy Ticket (0.01ETH)
+              </button>
+              <button className="border border-gray-400 w-[250px] h-[75px] flex items-center justify-center rounded-full text-xl">
+                How It Works
+              </button>
+            </div>
+          </div>
+          <div className="relative text-white w-[460px] aspect-[2/3] shrink-0">
+            <img
+              src="/jackpot.png"
+              className="shrink-0 w-full h-full"
+              alt="Jackpot"
+            />
+            <div className="absolute w-full h-[50%] top-[46%] flex flex-col items-center justify-center">
+              <div className="text-2xl text-gray-400">Round 1</div>
+              <div className="text-7xl my-4 font-bold">10 ETH</div>
+              <div className="text-4xl text-gray-400">50:20</div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+      <div className="h-screen min-h-[850px] bg-green-50 flex items-center justify-center">
+        Explain how it works
+      </div>
+    </>
   );
 }

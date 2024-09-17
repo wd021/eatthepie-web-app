@@ -1,12 +1,12 @@
-@import url("https://fonts.googleapis.com/css?family=SUSE:400,600,700&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Lato:400,600,700&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: "SUSE", sans-serif;
-  font-optical-sizing: auto;
+  font-family: "Lato", sans-serif;
   font-weight: 400;
   font-style: normal;
+  background: #f9f9f9;
 }
