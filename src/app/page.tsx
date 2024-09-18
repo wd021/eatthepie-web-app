@@ -26,9 +26,9 @@ export default function Home() {
           <div className="ml-4 flex flex-col max-w-[560px]">
             <div className="text-8xl font-bold mb-8">The World Lottery</div>
             <div className="text-4xl ml-2 mb-12 text-gray-500 gap-y-4 flex flex-col">
+              <div>Fully transparent and fair</div>
               <div>Self-executing</div>
-              <div>Fully transparent</div>
-              <div>Built on Ethereum</div>
+              <div>Secured by Ethereum</div>
             </div>
             <div className="flex gap-x-6">
               <button className="bg-green-600 w-[250px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl hover:bg-green-800">
