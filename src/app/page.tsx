@@ -15,7 +15,7 @@ export default function Home() {
           />
           <div className="flex items-center gap-x-6 text-xl">
             <div>Rules</div>
-            <div>Results</div>
+            <div>Game Rounds</div>
             <div className="flex items-center bg-gray-200 px-5 rounded-full">
               <Wallet width="30px" />
               <div className="ml-2">Connect</div>
@@ -31,7 +31,7 @@ export default function Home() {
               <div>Secured by Ethereum</div>
             </div>
             <div className="flex gap-x-6">
-              <button className="bg-green-600 w-[250px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl hover:bg-green-800">
+              <button className="bg-blue-600 w-[250px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl hover:bg-blue-800">
                 Buy Ticket (0.01ETH)
               </button>
               <button className="border border-gray-400 w-[250px] h-[75px] flex items-center justify-center rounded-full text-xl">
@@ -45,15 +45,17 @@ export default function Home() {
               className="shrink-0 w-full h-full"
               alt="Jackpot"
             />
-            <div className="absolute w-full h-[50%] top-[46%] flex flex-col items-center justify-center">
-              <div className="text-2xl text-gray-400">Round 1</div>
-              <div className="text-7xl my-4 font-bold">10 ETH</div>
-              <div className="text-4xl text-gray-400">50:20</div>
+            <div className="absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center">
+              {/* <div className="text-2xl text-black font-semibold">
+                Current Jackpot
+              </div> */}
+              <div className="text-7xl my-2 font-bold text-black">10 ETH</div>
+              <div className="text-4xl text-black font-semibold">42:50:20</div>
             </div>
           </div>
         </div>
       </div>
-      <div className="h-screen min-h-[850px] bg-green-50 flex items-center justify-center">
+      <div className="h-screen min-h-[850px] bg-blue-50 flex items-center justify-center">
         Explain how it works
       </div>
     </>

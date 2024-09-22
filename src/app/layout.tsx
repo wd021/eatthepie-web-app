@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Eat The Pie Lottery",
+  title: "Eat The Pie - The Wrold Lottery",
   description:
-    "The world's first fully autonomous and trustless lottery built on Ethereum.",
+    "The world's first fully autonomous and trustless lottery running on Ethereum.",
 };
 
 export default function RootLayout({
