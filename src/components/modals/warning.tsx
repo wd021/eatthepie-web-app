@@ -31,7 +31,7 @@ const Warning: FC<Props> = ({ isOpen, onRequestClose }) => {
       border: "none",
       padding: "0",
       display: "flex",
-      flexDirection: "column" as "column",
+      flexDirection: "column" as const,
     },
     overlay: {
       backgroundColor: "rgba(0, 0, 0, 0.5)",
