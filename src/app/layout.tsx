@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Web3Provider } from "@/providers/Web3Provider";
+import Wrapper from "./wrapper";
 
 export const metadata: Metadata = {
   title: "Eat The Pie - The Wrold Lottery",
@@ -14,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <Web3Provider>
+        <body>
+          <Wrapper>{children}</Wrapper>
+        </body>
+      </Web3Provider>
     </html>
   );
 }
