@@ -2,30 +2,38 @@ import { FC, useState, useEffect } from "react";
 import Modal from "react-modal";
 import { Close } from "@/icons";
 import { useDisconnect } from "wagmi";
+import Link from "next/link";
 
 type Props = {
   isOpen: boolean;
   onRequestClose: () => void;
+  walletAddress: string;
+  currentGameTickets: number;
+  onBuyTicket: () => void;
 };
 
-const Wallet: FC<Props> = ({ isOpen, onRequestClose }) => {
+const Wallet: FC<Props> = ({
+  isOpen,
+  onRequestClose,
+  walletAddress,
+  currentGameTickets,
+  onBuyTicket,
+}) => {
   const [isMobile, setIsMobile] = useState(false);
   const { disconnect } = useDisconnect();
 
   const customStyles = {
     content: {
-      // Common styles
       overflow: "visible",
       background: "#fff",
       color: "#000",
-      // Conditional styles based on `isMobile`
       top: isMobile ? "0" : "50%",
       left: isMobile ? "0" : "50%",
       right: isMobile ? "0" : "auto",
       bottom: isMobile ? "0" : "auto",
       width: isMobile ? "100%" : "90%",
       maxWidth: isMobile ? "100%" : "550px",
-      height: isMobile ? "100%" : "inherit",
+      height: isMobile ? "100%" : "auto",
       maxHeight: "100%",
       margin: isMobile ? "0" : "auto",
       borderRadius: isMobile ? "0" : "15px",
@@ -59,25 +67,55 @@ const Wallet: FC<Props> = ({ isOpen, onRequestClose }) => {
       onRequestClose={onRequestClose}
       style={customStyles}
     >
-      <div
-        className="absolute top-0 right-0 w-[75px] h-[75px] flex items-center justify-center cursor-pointer"
-        onClick={onRequestClose}
-      >
-        <Close width={24} />
-      </div>
-      <div className="m-12 text-center">
-        <div>Show Wallet</div>
-        <div>Address History</div>
-        <div>Buy Ticket Option</div>
-        <div>Show Current Tickets for Current Game</div>
+      <div className="relative flex flex-col h-full">
         <div
-          className="underline"
-          onClick={() => {
-            disconnect();
-            onRequestClose();
-          }}
+          className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center cursor-pointer rounded-full hover:bg-gray-100 transition-colors"
+          onClick={onRequestClose}
         >
-          Disconnect Wallet
+          <Close width={24} />
+        </div>
+
+        <div className="p-8 flex-grow">
+          <h2 className="text-2xl font-bold mb-6 text-center">Your Wallet</h2>
+
+          <div className="bg-gray-100 rounded-lg p-4 mb-6 flex justify-between items-center">
+            <div>
+              <p className="text-sm text-gray-500 mb-1">Wallet Address</p>
+              <p className="font-mono text-sm break-all">{walletAddress}</p>
+            </div>
+            <button
+              onClick={() => {
+                disconnect();
+                onRequestClose();
+              }}
+              className="text-red-500 hover:text-red-600 transition-colors text-sm"
+            >
+              Disconnect
+            </button>
+          </div>
+
+          <div className="bg-blue-100 rounded-lg p-4 mb-6">
+            <h3 className="text-lg font-semibold mb-2">Current Game</h3>
+            <p className="text-sm mb-4">
+              You have <span className="font-bold">{currentGameTickets}</span>{" "}
+              ticket(s) for the current game.
+            </p>
+            <button
+              onClick={onBuyTicket}
+              className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition-colors w-full"
+            >
+              Buy More Tickets
+            </button>
+          </div>
+        </div>
+
+        <div className="border-t p-4 text-center">
+          <Link
+            href={`/wallet/${walletAddress}`}
+            className="text-blue-500 hover:text-blue-600 transition-colors"
+          >
+            View Wallet History
+          </Link>
         </div>
       </div>
     </Modal>

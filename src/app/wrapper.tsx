@@ -18,10 +18,14 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
         setIsStatusBarVisible={setIsStatusBarVisible}
       />
       <Header isStatusBarVisible={isStatusBarVisible} />
-      <div className={isStatusBarVisible ? "mt-[145px]" : "mt-[75px]"}>
+      <div
+        className={`mb-[50px] ${
+          isStatusBarVisible ? "mt-[145px]" : "mt-[75px]"
+        }`}
+      >
         {children}
       </div>
-      <footer className="flex h-[50px] w-full items-center justify-center bg-gray-100">
+      <footer className="fixed bottom-0 flex h-[50px] w-full items-center justify-center bg-gray-100">
         <nav className="text-sm sm:text-base">
           <a href="https://github.com" target="_blank">
             Docs
