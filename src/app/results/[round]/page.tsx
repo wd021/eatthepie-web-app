@@ -26,6 +26,7 @@ const mockGameData = {
 };
 
 const DetailedGamePage: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [gameData, setGameData] = useState(mockGameData);
 
   useEffect(() => {

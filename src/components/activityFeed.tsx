@@ -24,7 +24,7 @@ const generateRandomTime = () => {
 };
 
 // Generate dummy activities
-const generateDummyActivities = (count) => {
+const generateDummyActivities = (count: number) => {
   return Array(count)
     .fill(null)
     .map(() => ({
@@ -35,18 +35,27 @@ const generateDummyActivities = (count) => {
     }));
 };
 
+interface Activity {
+  address: string;
+  action: string;
+  amount: number;
+  timestamp: Date;
+}
+
 const ActivityFeed = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activities, setActivities] = useState([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
     setActivities(generateDummyActivities(20));
   }, []);
 
   // Function to format the time difference
-  const formatTimeDifference = (timestamp) => {
+  const formatTimeDifference = (timestamp: Date) => {
     const now = new Date();
-    const diffInSeconds = Math.floor((now - timestamp) / 1000);
+    const diffInSeconds = Math.floor(
+      (now.getTime() - timestamp.getTime()) / 1000
+    );
 
     if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;

@@ -23,6 +23,7 @@ const Purchase: React.FC<PurchaseModalProps> = ({
   onRequestClose,
   // onPurchase,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [gameStats, setGameStats] = useState<GameStats>({
     gameNumber: 42,
     prizePool: 1000,
@@ -71,13 +72,14 @@ const Purchase: React.FC<PurchaseModalProps> = ({
     if (isAutoGenerate) {
       tickets = Array(ticketCount).fill(0).map(generateRandomNumbers);
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       tickets = manualNumbers.map((ticket) =>
         ticket.map((num) =>
           num === null ? Math.floor(Math.random() * 50) + 1 : num
         )
       );
     }
-    onPurchase(tickets);
+    // onPurchase(tickets);
   };
 
   return (

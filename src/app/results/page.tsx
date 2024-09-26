@@ -118,6 +118,7 @@ const PastGamesTable: React.FC<{
 
 const LotteryResultsPage: React.FC = () => {
   const [activeGame, setActiveGame] = useState(mockActiveGame);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pastGames, setPastGames] = useState(mockPastGames);
   const [isExpanded, setIsExpanded] = useState(false);
 

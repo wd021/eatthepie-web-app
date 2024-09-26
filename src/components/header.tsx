@@ -52,6 +52,9 @@ const Header: FC<{ isStatusBarVisible: boolean }> = ({
         </div>
       </header>
       <WalletModal
+        walletAddress="0x"
+        currentGameTickets={5}
+        onBuyTicket={() => {}}
         isOpen={isWalletModalOpen}
         onRequestClose={() => setIsWalletModalOpen(false)}
       />

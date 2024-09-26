@@ -51,7 +51,9 @@ const mockGameHistory = [
 ];
 
 const WalletHistoryPage: React.FC = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [walletData, setWalletData] = useState(mockWalletData);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [gameHistory, setGameHistory] = useState(mockGameHistory);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);

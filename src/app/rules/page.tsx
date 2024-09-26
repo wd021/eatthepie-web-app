@@ -236,7 +236,7 @@ const Rules: FC = () => {
       <Card title="Ticket Pricing and Fees" icon="coins">
         <p>
           Ticket prices may vary. A small fee (max 1% or 100 ETH) is deducted
-          from each draw to support the game's operations.
+          from each draw to support the game&apos;s operations.
         </p>
       </Card>
 
