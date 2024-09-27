@@ -65,7 +65,64 @@ export default function Home() {
         </div>
       </div>
       <div className="py-[400px] bg-blue-50 flex items-center justify-center flex flex-col">
-        <div>Explain how it works</div>
+        <div className="max-w-[500px]">
+          <div className="mb-4">The World’s First 100% Trustless Lottery</div>
+          <div>
+            Thanks to the power of Ethereum and Verifiable Delay Functions
+            (VDF), we’ve created a fair lottery that where everyone can
+            participate without relying on any centralized authority. It’s fully
+            transparent, completely decentralized, and operates
+            autonomously—forever. Unlike traditional lotteries that siphon off
+            up to 40% in fees, our lottery charges a maximum of just 1%, capped
+            at 100 ETH. Accessible worldwide, the only requirement is an
+            Ethereum wallet.
+          </div>
+          <div className="mb-4">
+            Unbreakable: Powered by Ethereum & VDF Technology
+          </div>
+          <div>
+            Our lottery is built on Ethereum, the only system that offers 100%
+            secured decentralization. Every ticket, every payout, and every
+            random number is governed by a smart contract—there’s no middleman,
+            no central authority, and no single point of failure. Even if
+            someone tried to manipulate the system, the only potential (and
+            highly improbable) attack vector would require collusion from
+            validators to disrupt the randomness. That’s where Verifiable Delay
+            Functions (VDFs) step in. By adding a delay to when the winning
+            numbers are revealed, VDFs eliminate even this slim possibility of
+            corruption. The result? Absolute fairness. Unlike traditional
+            lotteries, where you have to trust the randomness of bouncing balls
+            and accept hefty 40% fees, our lottery is secure by design. The
+            slight delay (a couple of hours) in revealing numbers is perfect for
+            a weekly lottery and ensures that no one can tamper with the
+            outcome—ever. The result is a truly trustless lottery that’s
+            cheaper, more transparent, and mathematically guaranteed to be fair.
+            :mindblown:
+          </div>
+          <div className="mb-4">
+            100% Open Source, Self-Executing, and Runs Forever
+          </div>
+          <div>
+            Our lottery is designed to be as open and transparent as the
+            blockchain itself. All code is open source and publicly available
+            for anyone to review, audit, and verify. No hidden mechanisms, no
+            behind-the-scenes tweaks—what you see is exactly what the code does.
+            The game is built to run forever, and it doesn’t rely on any single
+            entity to keep it going. Thanks to Ethereum’s smart contracts,
+            anyone can interact with the contract to draw numbers, distribute
+            prizes, or execute any part of the game’s logic. This means there’s
+            no central authority, no company behind the scenes—it’s a truly
+            autonomous, self-sustaining system. So, whether you’re participating
+            as a player or just an interested observer, everything is in plain
+            sight. This lottery is run by the community, for the
+            community—forever.
+          </div>
+          <div>
+            cavaet: only 2 things that can be changed in the smart contract..
+            and why
+          </div>
+          <div>For a more in-depth understanding, checkout the Docs!</div>
+        </div>
       </div>
       {modal === "purchase" && (
         <Purchase isOpen={true} onRequestClose={() => setModal(false)} />
