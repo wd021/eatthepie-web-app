@@ -88,10 +88,10 @@ const Purchase: React.FC<PurchaseModalProps> = ({
       onRequestClose={onRequestClose}
       contentLabel="Buy Ticket Modal"
       className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-8 max-w-2xl w-full"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+      overlayClassName="z-10 fixed inset-0 bg-black bg-opacity-50"
     >
       <h2 className="text-3xl font-bold mb-6">
-        Buy Tickets for Game #{gameStats.gameNumber}
+        Buy Tickets for Round #{gameStats.gameNumber}
       </h2>
 
       <div className="grid grid-cols-2 gap-4 mb-6">

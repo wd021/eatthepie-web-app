@@ -126,7 +126,7 @@ const WalletHistoryPage: React.FC = () => {
         <h2 className="text-2xl font-semibold mb-4">Game History</h2>
         {currentItems.map((game, gameIndex) => (
           <div key={gameIndex} className="mb-8 border-b pb-4">
-            <h3 className="text-xl font-semibold mb-2">Game #{game.gameId}</h3>
+            <h3 className="text-xl font-semibold mb-2">Round #{game.gameId}</h3>
             <p className="mb-2">Draw Date: {formatDate(game.drawDate)}</p>
             <p className="mb-4">Status: {game.status}</p>
             <div className="overflow-x-auto">

@@ -1,6 +1,7 @@
 "use client";
 
 import { ActivityFeed, Header, StatusBar } from "@/components";
+import { Ethereum } from "@/icons";
 import { useState } from "react";
 
 interface WrapperProps {
@@ -19,14 +20,18 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
       />
       <Header isStatusBarVisible={isStatusBarVisible} />
       <div
-        className={`mb-[50px] ${
+        className={`mb-[100px] ${
           isStatusBarVisible ? "mt-[145px]" : "mt-[75px]"
         }`}
       >
         {children}
       </div>
-      <footer className="fixed bottom-0 flex h-[50px] w-full items-center justify-center bg-gray-100">
-        <nav className="text-sm sm:text-base">
+      <footer className="fixed bottom-0 flex flex-col h-[100px] w-full items-center justify-center bg-gray-100 border-t border-gray-200">
+        <div className="h-[50px] flex items-center justify-center underline font-semibold cursor-pointer">
+          <Ethereum className="w-5 h-5 mr-1" />
+          <div>Ethereum Mainet: 0x3u218436218563210</div>
+        </div>
+        <nav className="h-[50px] text-sm sm:text-base">
           <a href="https://github.com" target="_blank">
             Docs
           </a>

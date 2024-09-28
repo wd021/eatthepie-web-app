@@ -113,6 +113,7 @@ const Wallet: FC<Props> = ({
           <Link
             href={`/wallet/${walletAddress}`}
             className="text-blue-500 hover:text-blue-600 transition-colors"
+            onClick={onRequestClose}
           >
             View Wallet History
           </Link>

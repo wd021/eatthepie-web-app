@@ -156,11 +156,7 @@ const Accordion: React.FC<{
 
 const Rules: FC = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold text-center mb-8">
-        Eat The Pie Lottery Rules
-      </h1>
-
+    <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <Card title="How to Play" icon="pieChart">
           <p>
@@ -239,13 +235,6 @@ const Rules: FC = () => {
           from each draw to support the game&apos;s operations.
         </p>
       </Card>
-
-      <div className="mt-8 text-center">
-        <p className="text-sm text-gray-600">
-          Remember to play responsibly. Ethereum transactions are required for
-          ticket purchases and prize claims.
-        </p>
-      </div>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity } from "@/icons";
+import { Activity, Ticket } from "@/icons";
 import React, { useState, useEffect } from "react";
 
 // Helper function to generate a random Ethereum address
@@ -68,16 +68,19 @@ const ActivityFeed = () => {
     <div className="fixed bottom-4 right-4 z-50">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`bg-white text-white rounded-full p-3 shadow-lg transition-all duration-300 ${
+        className={`bg-gray-900 text-white rounded-full p-3 shadow-lg transition-all duration-300 ${
           isOpen ? "rotate-45" : ""
         } w-16 h-16 flex items-center justify-center`}
       >
-        <Activity className="w-8 h-8" />
+        <Ticket className="w-8 h-8" />
       </button>
       <div
-        className={`absolute bottom-20 right-0 bg-white rounded-lg shadow-xl transition-all duration-300 overflow-hidden ${
-          isOpen ? "w-80 h-96 opacity-100" : "w-0 h-0 opacity-0"
+        className={`fixed right-2 bg-white rounded-lg shadow-xl transition-all duration-300 overflow-hidden ${
+          isOpen
+            ? "bottom-[90px] h-[calc(100vh-105px)] opacity-100"
+            : "bottom-[90px] h-0 opacity-0"
         }`}
+        style={{ width: "350px" }}
       >
         <div className="p-4 h-full flex flex-col">
           <h3 className="text-lg font-semibold mb-2">Latest Purchases</h3>

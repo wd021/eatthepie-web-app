@@ -2,23 +2,25 @@
 
 import { FC, useState } from "react";
 import Link from "next/link";
-import { trimAddress } from "@/utils/helpers";
-import { Wallet } from "@/icons";
+import { usePathname } from "next/navigation";
 import { ConnectKitButton } from "connectkit";
 import { useAccount } from "wagmi";
 
-import { Wallet as WalletModal } from "@/components/modals";
+import { WalletDropdown } from "@/components";
+import { Game as GameModal } from "@/components/modals";
 
 const Header: FC<{ isStatusBarVisible: boolean }> = ({
   isStatusBarVisible,
 }) => {
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
-  const { isConnected, address } = useAccount();
+  // const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [isGameModalOpen, setIsGameModalOpen] = useState(false);
+  const { isConnected } = useAccount();
+  const pathname = usePathname();
 
   return (
     <>
       <header
-        className={`bg-gray-100 h-[75px] fixed left-0 right-0 z-10 border-b border-gray-200 ${
+        className={`z-10 bg-gray-100 h-[75px] fixed left-0 right-0 border-b border-gray-200 ${
           isStatusBarVisible ? "top-[70px]" : "top-0"
         }`}
       >
@@ -33,30 +35,44 @@ const Header: FC<{ isStatusBarVisible: boolean }> = ({
           </Link>
           <div className="text-lg">
             <div className="flex items-center space-x-4">
-              <Link href="/rules">Rules</Link>
-              <Link href="/results">Results</Link>
+              <Link
+                href="/rules"
+                className={
+                  pathname === "/rules" ? "font-semibold underline" : ""
+                }
+              >
+                Rules
+              </Link>
+              <Link
+                href="/results"
+                className={
+                  pathname.startsWith("/results")
+                    ? "font-semibold underline"
+                    : ""
+                }
+              >
+                Results
+              </Link>
               {isConnected && (
-                <button
-                  className="flex items-center bg-gray-800 rounded-full text-white py-1 px-3 md:py-1.5 md:px-4"
-                  onClick={() => setIsWalletModalOpen(true)}
-                >
-                  <Wallet className="w-6 h-6 text-white" />
-                  <div className="ml-2">
-                    {address ? trimAddress(address) : ""}
-                  </div>
-                </button>
+                <WalletDropdown
+                  purchaseTicket={() => setIsGameModalOpen(true)}
+                />
               )}
               {!isConnected && <ConnectKitButton />}
             </div>
           </div>
         </div>
       </header>
-      <WalletModal
+      {/* <WalletModal
         walletAddress="0x"
         currentGameTickets={5}
         onBuyTicket={() => {}}
         isOpen={isWalletModalOpen}
         onRequestClose={() => setIsWalletModalOpen(false)}
+      /> */}
+      <GameModal
+        isOpen={isGameModalOpen}
+        onRequestClose={() => setIsGameModalOpen(false)}
       />
     </>
   );

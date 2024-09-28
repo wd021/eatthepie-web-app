@@ -104,9 +104,9 @@ const Game: FC<CurrentGameModalProps> = ({
       onRequestClose={onRequestClose}
       contentLabel="Current Game Modal"
       className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-8 max-w-3xl w-full"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50"
+      overlayClassName="z-10 fixed inset-0 bg-black bg-opacity-50"
     >
-      <h2 className="text-3xl font-bold mb-6">Game #{gameStats.gameNumber}</h2>
+      <h2 className="text-3xl font-bold mb-6">Round #{gameStats.gameNumber}</h2>
 
       <div className="mb-6">
         <button
