@@ -1,17 +1,9 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 // Mock data - replace with actual data fetching logic
-const mockActiveGame = {
-  roundNumber: 42,
-  jackpotSize: 1000,
-  timeUntilDraw: 86400, // seconds
-  ticketsSold: 5000,
-  yourTickets: 3,
-};
-
 const mockPastGames = [
   {
     id: 8,
@@ -70,14 +62,6 @@ const mockPastGames = [
     drawDate: "2024-09-04",
   },
 ];
-
-// Utility function to format time
-const formatTime = (seconds: number): string => {
-  const days = Math.floor(seconds / 86400);
-  const hours = Math.floor((seconds % 86400) / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  return `${days}d ${hours}h ${minutes}m`;
-};
 
 const PastGamesTable: React.FC<{
   games: typeof mockPastGames;
