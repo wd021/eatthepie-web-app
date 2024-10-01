@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useState } from "react";
 import { Game, Purchase } from "@/components/modals";
-
+import { useLotteryInfo } from "@/hooks";
 interface SectionProps {
   icon: string;
   title: string;
@@ -11,6 +11,9 @@ interface SectionProps {
 export default function Home() {
   const [modal, setModal] = useState<boolean | "purchase" | "game">(false);
   const howItWorksRef = useRef<HTMLDivElement>(null);
+  const { lotteryInfo } = useLotteryInfo();
+
+  console.log("lotteryInfo", lotteryInfo);
 
   const scrollToHowItWorks = () => {
     if (howItWorksRef.current) {

@@ -1,15 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ActivityFeed, Header, StatusBar } from "@/components";
 import { Ethereum } from "@/icons";
-import { useState } from "react";
 
 interface WrapperProps {
   children: React.ReactNode;
 }
 
 const Wrapper: React.FC<WrapperProps> = ({ children }) => {
+  const [isClient, setIsClient] = useState(false);
   const [isStatusBarVisible, setIsStatusBarVisible] = useState(true);
+
+  // remove ssr for hydration error
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null;
 
   return (
     <div className="min-h-screen">

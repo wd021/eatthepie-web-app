@@ -4,7 +4,7 @@ import { Web3Provider } from "@/providers/Web3Provider";
 import Wrapper from "./wrapper";
 
 export const metadata: Metadata = {
-  title: "Eat The Pie - The Wrold Lottery",
+  title: "Eat The Pie - The World Lottery",
   description:
     "The world's first fully autonomous and trustless lottery running on Ethereum.",
 };
