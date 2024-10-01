@@ -36,7 +36,7 @@ export default function Home() {
             <div className="text-4xl lg:text-7xl font-bold mb-2 sm:mb-4 lg:mb-10">
               The World Lottery
             </div>
-            <div className="text-xl ml-2 mb-6 lg:mb-12 text-gray-500 lg:gap-y-2 flex flex-col">
+            <div className="text-2xl ml-2 mb-6 lg:mb-12 text-gray-500 lg:gap-y-2 flex flex-col">
               <div>Fully transparent and fair</div>
               <div>Self-executing</div>
               <div>Secured by Ethereum</div>
