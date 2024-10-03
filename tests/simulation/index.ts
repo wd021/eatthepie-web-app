@@ -1,3 +1,4 @@
+/*
 import {
   createPublicClient,
   createWalletClient,
@@ -13,8 +14,8 @@ import { privateKeyToAccount } from "viem/accounts";
 import { foundry } from "viem/chains";
 
 // Import your contract ABIs and bytecode
-import LotteryABI from "./LotteryABI.json";
-import LotteryBytecode from "./LotteryBytecode.json";
+import LotteryABI from "../../src/contracts/LotteryABI.json";
+import LotteryBytecode from "../../src/contracts/LotteryBytecode.json";
 
 // Anvil pre-funded account private key
 const PRIVATE_KEY =
@@ -182,3 +183,4 @@ function randomPrivateKey(): `0x${string}` {
 }
 
 main().catch(console.error);
+*/
