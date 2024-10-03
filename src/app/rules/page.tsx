@@ -8,8 +8,8 @@ const Icon: React.FC<{ name: string }> = ({ name }) => {
     pieChart: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
+        width="32"
+        height="32"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -24,8 +24,8 @@ const Icon: React.FC<{ name: string }> = ({ name }) => {
     clock: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
+        width="32"
+        height="32"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -40,8 +40,8 @@ const Icon: React.FC<{ name: string }> = ({ name }) => {
     ticket: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
+        width="32"
+        height="32"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -58,8 +58,8 @@ const Icon: React.FC<{ name: string }> = ({ name }) => {
     alertCircle: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
+        width="32"
+        height="32"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -75,8 +75,8 @@ const Icon: React.FC<{ name: string }> = ({ name }) => {
     award: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
+        width="32"
+        height="32"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -91,8 +91,8 @@ const Icon: React.FC<{ name: string }> = ({ name }) => {
     coins: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
+        width="32"
+        height="32"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -129,7 +129,7 @@ const Accordion: React.FC<{
   icon: string;
   children: React.ReactNode;
 }> = ({ title, icon, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   return (
     <div className="border-b border-gray-200">
@@ -139,7 +139,7 @@ const Accordion: React.FC<{
       >
         <span className="flex items-center">
           <Icon name={icon} />
-          <span className="ml-2 font-semibold">{title}</span>
+          <span className="ml-2 font-semibold text-lg">{title}</span>
         </span>
         <span
           className={`transform transition-transform ${
@@ -156,48 +156,59 @@ const Accordion: React.FC<{
 
 const Rules: FC = () => {
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="max-w-6xl mx-auto px-2 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <Card title="How to Play" icon="pieChart">
-          <p>
-            Choose your numbers and buy tickets to join the excitement! Match
-            the winning numbers to win big prizes.
-          </p>
+          <div className="text-lg leading-relaxed">
+            Buy a ticket and pick 4 numbers. If you pick the correct numbers of
+            the lottery, you win! There are multiple prize pools to win from
+            (see below). If you match all numbers, you win the jackpot!
+          </div>
         </Card>
 
         <Card title="Draw Schedule" icon="clock">
-          <p>
-            Draws occur weekly, with a minimum prize pool of 500 ETH. Stay tuned
-            for the next big draw!
-          </p>
+          <div className="text-lg leading-relaxed">
+            Draws occur every week <b>AND</b> when the prize pool passes the
+            minimum threshold of 500ETH. When these conditions are met, a
+            drawing is triggered and the numbers are revealed.
+          </div>
         </Card>
       </div>
 
-      <div className="mb-8">
-        <Accordion title="Ticket Types and Prizes" icon="ticket">
-          <ul className="list-disc pl-5">
+      <div className="mb-8 px-6">
+        <Accordion title="Prize Pools" icon="ticket">
+          <div className="mb-4 text-lg leading-relaxed">
+            If there are multiple winners in any pool, the prize pool gets split
+            between them.
+          </div>
+          <ul className="list-disc pl-5 text-lg leading-relaxed flex flex-col gap-y-2">
             <li>
-              <strong>Gold Ticket:</strong> Match all numbers and the Etherball
-              (60% of prize pool)
+              <strong>Jackpot:</strong> Match all 4 numbers (60% of prize pool)
             </li>
             <li>
-              <strong>Silver Ticket:</strong> Match all numbers without the
-              Etherball (25% of prize pool)
+              <strong>3 in a row:</strong> Match the first 3 numbers (25% of
+              prize pool)
             </li>
             <li>
-              <strong>Bronze Ticket:</strong> Match the first two numbers (10%
-              of prize pool)
+              <strong>2 in a row:</strong> Match the first 2 numbers (10% of
+              prize pool)
             </li>
             <li>
-              <strong>Loyalty Prize:</strong> For the most consistent players
-              (4% of prize pool)
+              <strong>Loyalty Prize:</strong> Winner in any of the pools that
+              has played the most consecutive games (4% of prize pool)
             </li>
           </ul>
         </Accordion>
 
         <Accordion title="Difficulty Levels" icon="alertCircle">
-          <p>The game adjusts its difficulty based on recent outcomes:</p>
-          <ul className="list-disc pl-5">
+          <div className="mb-4 text-lg leading-relaxed">
+            In order to keep the lottery fun, the game will automatically
+            adjusts its difficulty. Whenever there&apos;s been 3 conseutive
+            drawings without a jackpot winner, the difficulty level decreases.
+            If there&apos;s been 3 consecutive jackpot winners, the difficulty
+            level increases.
+          </div>
+          <ul className="list-disc pl-5 text-lg leading-relaxed flex flex-col gap-y-2">
             <li>
               <strong>Easy:</strong> Choose from 1-50 for main numbers, 1-5 for
               Etherball
@@ -214,25 +225,37 @@ const Rules: FC = () => {
         </Accordion>
 
         <Accordion title="Winning and Claiming Prizes" icon="award">
-          <p>After each draw:</p>
-          <ul className="list-disc pl-5">
+          <div className="mb-4 text-lg leading-relaxed">
+            Once a draw has been initiated:
+          </div>
+          <ul className="list-disc pl-5 text-lg leading-relaxed flex flex-col gap-y-2">
             <li>
-              Winning numbers are determined using a verifiable random function
-              (VDF)
+              Random numbers are generated (can take a few hours due to VDF
+              computation).
             </li>
-            <li>Players can claim their prizes through the smart contract</li>
             <li>
-              Jackpot winners receive a unique NFT to commemorate their win
+              Once numbers are finalized, players can claim their prizes on this
+              site or by calling the smart contract.
             </li>
-            <li>Unclaimed prizes roll over to the next game after one year</li>
+            <li>
+              Jackpot winners receive a unique NFT to commemorate their win!
+            </li>
+            <li>
+              If any prize pool doesn&apos;t have a winner, the prize pool rolls
+              over to the next game.
+            </li>
+            <li>
+              If any prizes are not claimed within 1 year, they&apos;ll get
+              rolled over to the next prize pool.
+            </li>
           </ul>
         </Accordion>
       </div>
 
       <Card title="Ticket Pricing and Fees" icon="coins">
         <p>
-          Ticket prices may vary. A small fee (max 1% or 100 ETH) is deducted
-          from each draw to support the game&apos;s operations.
+          A ticket costs 0.1 ETH. A fee of 1% (capped at 100ETH) is deducted
+          from each draw.
         </p>
       </Card>
     </div>

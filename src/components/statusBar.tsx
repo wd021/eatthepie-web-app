@@ -3,13 +3,14 @@
 import { FC, useState } from "react";
 import { Close } from "@/icons";
 import { Game as GameModal } from "@/components/modals";
+import { useLotteryInfo } from "@/hooks";
 
 const StatusBar: FC<{
-  jackpot: number;
   isStatusBarVisible: boolean;
   setIsStatusBarVisible: (value: boolean) => void;
-}> = ({ jackpot, isStatusBarVisible, setIsStatusBarVisible }) => {
+}> = ({ isStatusBarVisible, setIsStatusBarVisible }) => {
   const [isGameModalOpen, setIsGameModalOpen] = useState(false);
+  const { lotteryInfo } = useLotteryInfo();
 
   return isStatusBarVisible ? (
     <>
@@ -18,8 +19,8 @@ const StatusBar: FC<{
         onClick={() => setIsGameModalOpen(true)}
       >
         <div className="text-lg sm:text-2xl">
-          <span>Current Jackpot:</span>
-          <span className="ml-1.5 font-bold">{jackpot}ETH</span>
+          <span>Current Prize Pool - </span>
+          <span className="ml-1.5 font-bold">{lotteryInfo?.prizePool}ETH</span>
         </div>
         <button
           onClick={() => setIsStatusBarVisible(false)}

@@ -22,7 +22,6 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
   return (
     <div className="min-h-screen">
       <StatusBar
-        jackpot={10}
         isStatusBarVisible={isStatusBarVisible}
         setIsStatusBarVisible={setIsStatusBarVisible}
       />

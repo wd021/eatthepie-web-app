@@ -1,19 +1,50 @@
 "use client";
+
 import { useRef, useState } from "react";
+import { Countdown } from "@/components";
 import { Game, Purchase } from "@/components/modals";
 import { useLotteryInfo } from "@/hooks";
+
 interface SectionProps {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
-  content: string;
+  children: React.ReactNode;
 }
+
+const Section: React.FC<SectionProps> = ({ icon, title, children }) => {
+  const [isOpen, setIsOpen] = useState(true);
+
+  return (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out">
+      <div
+        className="p-6 flex items-center cursor-pointer"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="mr-4 text-2xl">{icon}</div>
+        <h3 className="text-xl font-semibold flex-grow">{title}</h3>
+        <span
+          className={`text-xl transform transition-transform duration-300 ml-4 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        >
+          ▼
+        </span>
+      </div>
+      <div
+        className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${
+          isOpen ? "pb-6" : "max-h-0"
+        }`}
+      >
+        <div className="text-gray-600 text-lg leading-relaxed">{children}</div>
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
   const [modal, setModal] = useState<boolean | "purchase" | "game">(false);
   const howItWorksRef = useRef<HTMLDivElement>(null);
   const { lotteryInfo } = useLotteryInfo();
-
-  console.log("lotteryInfo", lotteryInfo);
 
   const scrollToHowItWorks = () => {
     if (howItWorksRef.current) {
@@ -68,10 +99,10 @@ export default function Home() {
             />
             <div className="absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center">
               <div className="text-4xl lg:text-7xl font-bold text-black">
-                10Ξ
+                {lotteryInfo?.prizePool}Ξ
               </div>
-              <div className="text-lg lg:text-4xl text-black font-semibold">
-                42:50:20
+              <div className="text-lg lg:text-3xl text-black font-semibold mt-2">
+                <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />
               </div>
             </div>
           </div>
@@ -100,27 +131,111 @@ export default function Home() {
           <h2 className="text-4xl font-bold text-center mb-12">How It Works</h2>
 
           <div className="space-y-6">
-            <Section
-              icon="🌎"
-              title="A Trustless and Fair World Lottery"
-              content="Thanks to the power of Ethereum and Verifiable Delay Functions (VDF), we've created a fair lottery where everyone can participate without relying on any centralized authority. It's fully transparent, completely decentralized, and operates autonomously—forever. Unlike traditional lotteries that siphon off up to 40% in fees, our lottery charges a maximum of just 1%, capped at 100 ETH. Accessible worldwide, the only requirement is an Ethereum wallet."
-            />
+            <Section icon="🌎" title="A Trustless and Fair World Lottery">
+              <div>
+                Imagine a global lottery where everyone plays on equal footing,
+                free from manipulation or unfair advantages. Thanks to the power
+                of{" "}
+                <a
+                  href="https://www.ethereum.org"
+                  target="_blank"
+                  className="underline font-semibold"
+                >
+                  Ethereum
+                </a>{" "}
+                and{" "}
+                <a
+                  href="https://www.youtube.com/watch?v=_-feyaZZjEw"
+                  target="_blank"
+                  className="underline font-semibold"
+                >
+                  Verifiable Delay Functions (VDFs)
+                </a>
+                , we now have that: a decentralized, self-executing lottery that
+                operates autonomously forever. No hidden tricks, no human
+                involvement—just pure, verifiable randomness.
+              </div>
+              <div className="pt-4">
+                Traditional lotteries take up to <b>50% in fees</b>, leaving a
+                fraction of the pool for the winners. Our lottery takes only{" "}
+                <b>1% in fees</b>, capped at 100 ETH. That means more of the
+                prize money goes back to where it belongs—into the hands of the
+                participants. It&apos;s a global game, accessible to anyone with
+                an{" "}
+                <a
+                  href="https://ethereum.org/en/wallets/"
+                  target="_blank"
+                  className="underline font-semibold"
+                >
+                  Ethereum wallet
+                </a>
+                .
+              </div>
+            </Section>
 
-            <Section
-              icon="🔒"
-              title="Unbreakable: Ethereum & VDFs"
-              content="Our lottery is built on Ethereum, the only system that offers 100% secured decentralization. Every ticket, every payout, and every random number is governed by a smart contract—there's no middleman, no central authority, and no single point of failure. Verifiable Delay Functions (VDFs) add a delay to when the winning numbers are revealed, eliminating even the slim possibility of corruption. The result is a truly trustless lottery that's cheaper, more transparent, and mathematically guaranteed to be fair."
-            />
+            <Section icon="🔒" title="Unbreakable: Ethereum & VDFs">
+              <div>
+                The lottery runs on the Ethereum blockchain, a decentralized
+                network powered by thousands of validators around the world.
+                This robust infrastructure not only secures cryptocurrencies but
+                also serves as the foundation for our lottery’s integrity.
+              </div>
+              <div className="pt-4">
+                We took it a step further by incorporating Verifiable Delay
+                Functions (VDFs) into the process of generating random lottery
+                numbers. VDFs introduce a required time delay, ensuring that
+                even if validators tried to collude, they wouldn’t be able to
+                predict or manipulate the outcome.
+              </div>
+              <div className="pt-4">
+                This combination makes the lottery tamper proof — mathematically
+                guaranteed, autonomous, and resistant to manipulation.
+              </div>
+            </Section>
 
             <Section
               icon="💻"
               title="Open Source, Self-Executing, and Runs Forever"
-              content="Our lottery is designed to be as open and transparent as the blockchain itself. All code is open source and publicly available for anyone to review, audit, and verify. The game is built to run forever, and it doesn't rely on any single entity to keep it going. Thanks to Ethereum's smart contracts, anyone can interact with the contract to draw numbers, distribute prizes, or execute any part of the game's logic. This means there's no central authority, no company behind the scenes—it's a truly autonomous, self-sustaining system."
-            />
+            >
+              <div>
+                All{" "}
+                <a
+                  href="https://www.github.com"
+                  target="_blank"
+                  className="underline font-semibold"
+                >
+                  code is open
+                </a>{" "}
+                and publicly available for anyone to review, audit, and verify.
+              </div>
+              <div className="pt-4">
+                Want to dive deeper into how the lottery works?{" "}
+                <a
+                  href="https://docs.eatthepie.xyz"
+                  target="_blank"
+                  className="underline font-semibold"
+                >
+                  Explore our docs
+                </a>{" "}
+                for a detailed breakdown.
+              </div>
+              <div className="pt-4">
+                We’ve also taken decentralization a step further by hosting this{" "}
+                <a
+                  href="https://www.ipfs.com"
+                  target="_blank"
+                  className="underline font-semibold"
+                >
+                  website on IPFS
+                </a>
+                . You can also access it via <b>eatthepie.eth</b> on browsers
+                that support IPFS (brave).
+              </div>
+            </Section>
           </div>
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-6">
-              For a more in-depth understanding, check out our documentation!
+              For a more in-depth understanding, check out the documentation!
             </p>
             <button className="bg-gray-800 text-white px-6 py-3 rounded-full font-semibold">
               Read the Docs
@@ -138,33 +253,3 @@ export default function Home() {
     </>
   );
 }
-
-const Section: React.FC<SectionProps> = ({ icon, title, content }) => {
-  const [isOpen, setIsOpen] = useState(true);
-
-  return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out">
-      <div
-        className="p-6 flex items-center cursor-pointer"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <div className="mr-4 text-2xl">{icon}</div>
-        <h3 className="text-xl font-semibold flex-grow">{title}</h3>
-        <span
-          className={`text-xl transform transition-transform duration-300 ml-4 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-        >
-          ▼
-        </span>
-      </div>
-      <div
-        className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-96 pb-6" : "max-h-0"
-        }`}
-      >
-        <p className="text-gray-600 text-lg">{content}</p>
-      </div>
-    </div>
-  );
-};

@@ -1,16 +1,32 @@
 import { useReadContract } from "wagmi";
+import { formatEther } from "viem";
 import { CONTRACT_ADDRESSES } from "../config/chainConfig";
 import lotteryABI from "../contracts/LotteryABI.json";
+import { GameInfo, LotteryInfo } from "../utils/types";
 
-// Define the structure of the lottery info
-interface LotteryInfo {
-  gameNumber: bigint;
-  difficulty: number;
-  prizePool: bigint;
-  drawTime: bigint;
-  timeUntilDraw: bigint;
-  ticketPrice: bigint;
-}
+const formatLotteryInfo = (lotteryInfo: GameInfo, ticketPrice: bigint) => {
+  const difficultyMap = ["Easy", "Medium", "Hard"];
+
+  return {
+    gameNumber: Number(lotteryInfo[0]),
+    difficulty: difficultyMap[lotteryInfo[1]] || "Unknown",
+    prizePool: formatEther(lotteryInfo[2]),
+
+    drawTime: new Date(Number(lotteryInfo[3]) * 1000).toLocaleString(),
+    timeUntilDraw: formatTimeUntilDraw(Number(lotteryInfo[4])),
+    secondsUntilDraw: Number(lotteryInfo[4]),
+    ticketPrice: formatEther(ticketPrice),
+  };
+};
+
+const formatTimeUntilDraw = (seconds: number) => {
+  const days = Math.floor(seconds / (3600 * 24));
+  const hours = Math.floor((seconds % (3600 * 24)) / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return `${days}d ${hours}h ${minutes}m ${remainingSeconds}s`;
+};
 
 export default function useLotteryInfo() {
   const {
@@ -21,10 +37,7 @@ export default function useLotteryInfo() {
     address: CONTRACT_ADDRESSES.LOTTERY,
     abi: lotteryABI,
     functionName: "getCurrentGameInfo",
-  });
-
-  console.log("lottery address", CONTRACT_ADDRESSES.LOTTERY);
-  console.log("gameInfo", gameInfo);
+  }) as { data: GameInfo | undefined; isError: boolean; isLoading: boolean };
 
   const {
     data: ticketPrice,
@@ -34,7 +47,7 @@ export default function useLotteryInfo() {
     address: CONTRACT_ADDRESSES.LOTTERY,
     abi: lotteryABI,
     functionName: "ticketPrice",
-  });
+  }) as { data: bigint; isError: boolean; isLoading: boolean };
 
   const isLoading = isGameInfoLoading || isTicketPriceLoading;
   const isError = isGameInfoError || isTicketPriceError;
@@ -42,14 +55,7 @@ export default function useLotteryInfo() {
   let lotteryInfo: LotteryInfo | undefined;
 
   if (gameInfo && ticketPrice) {
-    lotteryInfo = {
-      gameNumber: gameInfo[0],
-      difficulty: gameInfo[1],
-      prizePool: gameInfo[2],
-      drawTime: gameInfo[3],
-      timeUntilDraw: gameInfo[4],
-      ticketPrice: ticketPrice,
-    };
+    lotteryInfo = formatLotteryInfo(gameInfo, ticketPrice);
   }
 
   return {

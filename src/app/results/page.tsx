@@ -109,7 +109,7 @@ const LotteryResultsPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="max-w-6xl mx-auto px-2 py-12">
       <PastGamesTable games={pastGames} onRowClick={handlePastGameClick} />
     </div>
   );
