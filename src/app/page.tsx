@@ -237,9 +237,13 @@ export default function Home() {
             <p className="text-gray-600 mb-6">
               For a more in-depth understanding, check out the documentation!
             </p>
-            <button className="bg-gray-800 text-white px-6 py-3 rounded-full font-semibold">
+            <a
+              href="https://docs.eatthepie.xyz"
+              target="_blank"
+              className="bg-gray-800 text-white px-6 py-3 rounded-full font-semibold"
+            >
               Read the Docs
-            </button>
+            </a>
           </div>
         </div>
       </div>

@@ -1,5 +1,9 @@
-export { default as Wallet } from "./wallet";
 export { default as Activity } from "./activity";
 export { default as Close } from "./close";
-export { default as Ticket } from "./ticket";
 export { default as Ethereum } from "./ethereum";
+export { default as EthereumCircle } from "./ethereumCircle";
+export { default as LinkArrow } from "./linkArrow";
+export { default as Ticket } from "./ticket";
+export { default as TicketAlternative } from "./ticketAlternative";
+export { default as Timer } from "./timer";
+export { default as Wallet } from "./wallet";

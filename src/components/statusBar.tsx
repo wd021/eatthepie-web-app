@@ -20,7 +20,7 @@ const StatusBar: FC<{
       >
         <div className="text-lg sm:text-2xl">
           <span>Current Prize Pool - </span>
-          <span className="ml-1.5 font-bold">{lotteryInfo?.prizePool}ETH</span>
+          <span className="ml-1.5 font-bold">{lotteryInfo?.prizePool} ETH</span>
         </div>
         <button
           onClick={() => setIsStatusBarVisible(false)}
@@ -29,10 +29,9 @@ const StatusBar: FC<{
           <Close className="w-7 h-7" />
         </button>
       </div>
-      <GameModal
-        isOpen={isGameModalOpen}
-        onRequestClose={() => setIsGameModalOpen(false)}
-      />
+      {isGameModalOpen && (
+        <GameModal onRequestClose={() => setIsGameModalOpen(false)} />
+      )}
     </>
   ) : null;
 };

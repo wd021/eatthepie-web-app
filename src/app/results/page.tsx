@@ -8,14 +8,16 @@ const mockPastGames = [
   {
     id: 8,
     prizePool: 950,
-    winners: 2,
-    claimsStatus: "In progress",
+    winners: 0,
+    numbers: "in progress...",
+    claimsStatus: "Live",
     drawDate: "",
   },
   {
     id: 7,
     prizePool: 950,
     winners: 2,
+    numbers: "12, 42, 52, 34",
     claimsStatus: "Completed",
     drawDate: "In progress",
   },
@@ -23,6 +25,7 @@ const mockPastGames = [
     id: 6,
     prizePool: 950,
     winners: 2,
+    numbers: "12, 42, 52, 34",
     claimsStatus: "Completed",
     drawDate: "2024-09-18",
   },
@@ -30,6 +33,7 @@ const mockPastGames = [
     id: 5,
     prizePool: 880,
     winners: 1,
+    numbers: "12, 42, 52, 34",
     claimsStatus: "Completed",
     drawDate: "2024-09-11",
   },
@@ -37,6 +41,7 @@ const mockPastGames = [
     id: 4,
     prizePool: 920,
     winners: 3,
+    numbers: "12, 42, 52, 34",
     claimsStatus: "Completed",
     drawDate: "2024-09-04",
   },
@@ -44,6 +49,7 @@ const mockPastGames = [
     id: 3,
     prizePool: 950,
     winners: 2,
+    numbers: "12, 42, 52, 34",
     claimsStatus: "Completed",
     drawDate: "2024-09-18",
   },
@@ -51,6 +57,7 @@ const mockPastGames = [
     id: 2,
     prizePool: 880,
     winners: 1,
+    numbers: "12, 42, 52, 34",
     claimsStatus: "Completed",
     drawDate: "2024-09-11",
   },
@@ -58,6 +65,7 @@ const mockPastGames = [
     id: 1,
     prizePool: 920,
     winners: 3,
+    numbers: "12, 42, 52, 34",
     claimsStatus: "Completed",
     drawDate: "2024-09-04",
   },
@@ -72,10 +80,11 @@ const PastGamesTable: React.FC<{
       <thead className="bg-gray-100">
         <tr>
           <th className="py-2 px-4 text-left">Round #</th>
+          <th className="py-2 px-4 text-left">Status</th>
           <th className="py-2 px-4 text-left">Prize Pool</th>
           <th className="py-2 px-4 text-left">Winners</th>
-          <th className="py-2 px-4 text-left">Claims Status</th>
-          <th className="py-2 px-4 text-left">Draw Date</th>
+          <th className="py-2 px-4 text-left">Winning Numbers</th>
+          {/* <th className="py-2 px-4 text-left">Draw Date</th> */}
         </tr>
       </thead>
       <tbody>
@@ -86,10 +95,21 @@ const PastGamesTable: React.FC<{
             className="cursor-pointer hover:bg-gray-50 border-b border-gray-100 h-[50px]"
           >
             <td className="py-2 px-4">{game.id}</td>
+            <td className="py-2 px-4">
+              <span
+                className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                  game.claimsStatus === "Live"
+                    ? "bg-green-200 text-green-800"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                {game.claimsStatus}
+              </span>
+            </td>
             <td className="py-2 px-4">{game.prizePool} ETH</td>
             <td className="py-2 px-4">{game.winners}</td>
-            <td className="py-2 px-4">{game.claimsStatus}</td>
-            <td className="py-2 px-4">{game.drawDate}</td>
+            <td className="py-2 px-4">{game.numbers}</td>
+            {/* <td className="py-2 px-4">{game.drawDate}</td> */}
           </tr>
         ))}
       </tbody>

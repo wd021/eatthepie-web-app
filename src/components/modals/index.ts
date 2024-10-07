@@ -1,4 +1,4 @@
-export { default as Warning } from "./warning";
 export { default as Game } from "./game";
-export { default as Wallet } from "./wallet";
-export { default as Purchase } from "./purchase";
+export { default as Responsible } from "./responsible";
+export { default as Terms } from "./terms";
+export { default as Ticket } from "./ticket";

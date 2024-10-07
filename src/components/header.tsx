@@ -7,13 +7,14 @@ import { ConnectKitButton } from "connectkit";
 import { useAccount } from "wagmi";
 
 import { WalletDropdown } from "@/components";
-import { Game as GameModal } from "@/components/modals";
+import { Game as GameModal, Ticket as TicketModal } from "@/components/modals";
 
 const Header: FC<{ isStatusBarVisible: boolean }> = ({
   isStatusBarVisible,
 }) => {
-  // const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [isGameModalOpen, setIsGameModalOpen] = useState(false);
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+
   const { isConnected } = useAccount();
   const pathname = usePathname();
 
@@ -55,7 +56,7 @@ const Header: FC<{ isStatusBarVisible: boolean }> = ({
               </Link>
               {isConnected && (
                 <WalletDropdown
-                  purchaseTicket={() => setIsGameModalOpen(true)}
+                  purchaseTicket={() => setIsTicketModalOpen(true)}
                 />
               )}
               {!isConnected && <ConnectKitButton />}
@@ -63,17 +64,12 @@ const Header: FC<{ isStatusBarVisible: boolean }> = ({
           </div>
         </div>
       </header>
-      {/* <WalletModal
-        walletAddress="0x"
-        currentGameTickets={5}
-        onBuyTicket={() => {}}
-        isOpen={isWalletModalOpen}
-        onRequestClose={() => setIsWalletModalOpen(false)}
-      /> */}
-      <GameModal
-        isOpen={isGameModalOpen}
-        onRequestClose={() => setIsGameModalOpen(false)}
-      />
+      {isGameModalOpen && (
+        <GameModal onRequestClose={() => setIsGameModalOpen(false)} />
+      )}
+      {isTicketModalOpen && (
+        <TicketModal onRequestClose={() => setIsTicketModalOpen(false)} />
+      )}
     </>
   );
 };
