@@ -1,8 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
+import { useAccount } from "wagmi";
+import { useModal } from "connectkit";
 import { Countdown } from "@/components";
-import { Game, Purchase } from "@/components/modals";
+import { Game as GameModal, Ticket as TicketModal } from "@/components/modals";
 import { useLotteryInfo } from "@/hooks";
 
 interface SectionProps {
@@ -11,7 +13,7 @@ interface SectionProps {
   children: React.ReactNode;
 }
 
-const Section: React.FC<SectionProps> = ({ icon, title, children }) => {
+const Section: FC<SectionProps> = ({ icon, title, children }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -42,9 +44,17 @@ const Section: React.FC<SectionProps> = ({ icon, title, children }) => {
 };
 
 export default function Home() {
-  const [modal, setModal] = useState<boolean | "purchase" | "game">(false);
+  const { open, setOpen } = useModal();
+  const { isConnected } = useAccount();
+  const [modal, setModal] = useState<boolean | "ticket" | "game">(false);
   const howItWorksRef = useRef<HTMLDivElement>(null);
   const { lotteryInfo } = useLotteryInfo();
+
+  useEffect(() => {
+    if (!open && !isConnected && modal === "ticket") {
+      setModal(false);
+    }
+  }, [open, isConnected, modal]);
 
   const scrollToHowItWorks = () => {
     if (howItWorksRef.current) {
@@ -75,9 +85,15 @@ export default function Home() {
             <div className="flex gap-x-6 hidden lg:flex">
               <button
                 className="bg-gray-800 w-[260px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl"
-                onClick={() => setModal("purchase")}
+                onClick={() => {
+                  setModal("ticket");
+
+                  if (!isConnected) {
+                    setOpen(true);
+                  }
+                }}
               >
-                Buy Ticket - 0.1ETH
+                Buy Ticket - {lotteryInfo?.ticketPrice}ETH
               </button>
               <button
                 className="border border-gray-400 w-[260px] h-[75px] flex items-center justify-center rounded-full text-xl font-semibold"
@@ -106,12 +122,18 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col gap-y-4 flex mt-4 lg:hidden">
+          <div className="flex flex-col gap-y-4 flex mt-8 lg:hidden">
             <button
               className="bg-gray-800 w-[260px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl"
-              onClick={() => setModal("purchase")}
+              onClick={() => {
+                setModal("ticket");
+
+                if (!isConnected) {
+                  setOpen(true);
+                }
+              }}
             >
-              Buy Ticket - 0.1ETH
+              Buy Ticket - {lotteryInfo?.ticketPrice}ETH
             </button>
             <button
               className="border border-gray-400 w-[260px] h-[75px] flex items-center justify-center rounded-full text-xl font-semibold"
@@ -247,12 +269,23 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      {modal === "purchase" && (
-        <Purchase isOpen={true} onRequestClose={() => setModal(false)} />
+      {modal === "ticket" && isConnected && (
+        <TicketModal onRequestClose={() => setModal(false)} />
       )}
       {modal === "game" && (
-        <Game isOpen={true} onRequestClose={() => setModal(false)} />
+        <GameModal
+          onRequestClose={(showTicketModal) => {
+            if (showTicketModal) {
+              setModal("ticket");
+
+              if (!isConnected) {
+                setOpen(true);
+              }
+            } else {
+              setModal(false);
+            }
+          }}
+        />
       )}
     </>
   );

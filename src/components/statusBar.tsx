@@ -2,21 +2,21 @@
 
 import { FC, useState } from "react";
 import { Close } from "@/icons";
-import { Game as GameModal } from "@/components/modals";
+import { Game as GameModal, Ticket as TicketModal } from "@/components/modals";
 import { useLotteryInfo } from "@/hooks";
 
 const StatusBar: FC<{
   isStatusBarVisible: boolean;
   setIsStatusBarVisible: (value: boolean) => void;
 }> = ({ isStatusBarVisible, setIsStatusBarVisible }) => {
-  const [isGameModalOpen, setIsGameModalOpen] = useState(false);
+  const [modal, setModal] = useState<boolean | "ticket" | "game">(false);
   const { lotteryInfo } = useLotteryInfo();
 
   return isStatusBarVisible ? (
     <>
       <div
         className="z-10 bg-[#22e523] fixed top-0 left-0 right-0 h-[70px] text-center flex flex-col items-center justify-center cursor-pointer"
-        onClick={() => setIsGameModalOpen(true)}
+        onClick={() => setModal("game")}
       >
         <div className="text-lg sm:text-2xl">
           <span>Current Prize Pool - </span>
@@ -29,8 +29,19 @@ const StatusBar: FC<{
           <Close className="w-7 h-7" />
         </button>
       </div>
-      {isGameModalOpen && (
-        <GameModal onRequestClose={() => setIsGameModalOpen(false)} />
+      {modal === "game" && (
+        <GameModal
+          onRequestClose={(showTicketModal) => {
+            if (showTicketModal) {
+              setModal("ticket");
+            } else {
+              setModal(false);
+            }
+          }}
+        />
+      )}
+      {modal === "ticket" && (
+        <TicketModal onRequestClose={() => setModal(false)} />
       )}
     </>
   ) : null;

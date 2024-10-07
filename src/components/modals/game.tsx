@@ -11,7 +11,7 @@ import {
 } from "@/icons";
 
 interface CurrentGameModalProps {
-  onRequestClose: () => void;
+  onRequestClose: (showTicketModal: boolean) => void;
 }
 
 const Game: FC<CurrentGameModalProps> = ({ onRequestClose }) => {
@@ -24,21 +24,21 @@ const Game: FC<CurrentGameModalProps> = ({ onRequestClose }) => {
       id="react-modal"
       ariaHideApp={false}
       isOpen={true}
-      onRequestClose={onRequestClose}
+      onRequestClose={() => onRequestClose(false)}
       style={customStyles}
     >
       <button
-        onClick={onRequestClose}
+        onClick={() => onRequestClose(false)}
         className="absolute top-0 right-0 h-[75px] w-[75px] flex items-center justify-center"
       >
         <Close className="w-6 h-6" />
       </button>
-      <div className="p-5 flex flex-col h-full">
-        <h2 className="text-3xl font-bold mb-6 text-center">
+      <div className="p-5 flex flex-col h-full overflow-hidden">
+        <h2 className="text-2xl font-bold mb-6 text-center">
           Round #{lotteryInfo?.gameNumber}
         </h2>
 
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col overflow-y-auto hide-scrollbar">
           <div className="flex flex-col mx-6 gap-y-8 mb-8">
             {/* Prize Pool */}
             <div className="flex items-center justify-between">
@@ -85,10 +85,10 @@ const Game: FC<CurrentGameModalProps> = ({ onRequestClose }) => {
 
           {/* Buy Tickets Button */}
           <button
-            onClick={() => {}}
+            onClick={() => onRequestClose(true)}
             className="mt-auto w-full py-4 bg-[#22e523] font-semibold text-2xl rounded-xl flex items-center justify-center"
           >
-            Buy Ticket - 0.1ETH
+            Buy Ticket - {lotteryInfo?.ticketPrice}ETH
           </button>
         </div>
       </div>

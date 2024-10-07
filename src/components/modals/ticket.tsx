@@ -162,7 +162,7 @@ const Ticket: FC<TicketModalProps> = ({ onRequestClose }) => {
           <div className="flex items-center">
             <svg
               className="w-6 h-6 mr-2"
-              enable-background="new 0 0 40 40"
+              enableBackground="new 0 0 40 40"
               viewBox="0 0 40 40"
             >
               <g>
