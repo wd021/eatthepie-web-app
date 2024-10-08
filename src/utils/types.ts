@@ -8,4 +8,5 @@ export type LotteryInfo = {
   timeUntilDraw: string;
   secondsUntilDraw: number;
   ticketPrice: string;
+  ticketsSold: string;
 };

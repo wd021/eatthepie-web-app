@@ -2,6 +2,7 @@ import { FC } from "react";
 import Modal from "react-modal";
 import { useIsMobile, useLotteryInfo } from "@/hooks";
 import { getModalStyles } from "@/styles";
+import { Countdown } from "@/components";
 import {
   Close,
   EthereumCircle,
@@ -59,7 +60,9 @@ const Game: FC<CurrentGameModalProps> = ({ onRequestClose }) => {
                 <Timer className="w-12 h-12" />
                 <div className="ml-2.5 text-lg font-semibold">Time Left</div>
               </div>
-              <span className="text-2xl font-bold">1</span>
+              <div className="font-bold text-2xl">
+                <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />
+              </div>
             </div>
 
             {/* Tickets Sold */}
@@ -70,7 +73,9 @@ const Game: FC<CurrentGameModalProps> = ({ onRequestClose }) => {
                   Tickets Sold
                 </span>
               </div>
-              <span className="text-2xl font-bold">1</span>
+              <span className="text-2xl font-bold">
+                {lotteryInfo?.ticketsSold}
+              </span>
             </div>
 
             {/* My Tickets */}

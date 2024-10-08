@@ -11,11 +11,11 @@ const formatLotteryInfo = (lotteryInfo: GameInfo, ticketPrice: bigint) => {
     gameNumber: Number(lotteryInfo[0]),
     difficulty: difficultyMap[lotteryInfo[1]] || "Unknown",
     prizePool: formatEther(lotteryInfo[2]),
-
     drawTime: new Date(Number(lotteryInfo[3]) * 1000).toLocaleString(),
     timeUntilDraw: formatTimeUntilDraw(Number(lotteryInfo[4])),
     secondsUntilDraw: Number(lotteryInfo[4]),
     ticketPrice: formatEther(ticketPrice),
+    ticketsSold: formatEther(BigInt(lotteryInfo[2]) / ticketPrice),
   };
 };
 
