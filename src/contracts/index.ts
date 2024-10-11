@@ -1,4 +1,5 @@
-import LotteryABI from "./LotteryABI.json";
-import { CONTRACT_ADDRESSES } from "../config/contracts";
+import { CONTRACT_ADDRESSES } from '../config/contracts'
 
-export { LotteryABI, CONTRACT_ADDRESSES };
+import LotteryABI from './LotteryABI.json'
+
+export { LotteryABI, CONTRACT_ADDRESSES }
