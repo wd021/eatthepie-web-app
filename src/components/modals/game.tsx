@@ -1,19 +1,41 @@
-import { FC } from 'react'
+import React from 'react'
 import Modal from 'react-modal'
 
 import { Countdown } from '@/components'
 import { useIsMobile, useLotteryInfo } from '@/hooks'
-import { Close, EthereumCircle, Ticket, TicketAlternative, Timer } from '@/icons'
+import { Close, EthereumCircle, TicketAlternative, Timer } from '@/icons'
 import { getModalStyles } from '@/styles'
 
-interface CurrentGameModalProps {
+interface GameProps {
   onRequestClose: (showTicketModal: boolean) => void
 }
 
-const Game: FC<CurrentGameModalProps> = ({ onRequestClose }) => {
+interface LotteryInfo {
+  gameNumber: number
+  prizePool: number
+  secondsUntilDraw: number
+  ticketsSold: number
+  ticketPrice: number
+}
+
+interface GridItemProps {
+  icon: React.ElementType
+  title: string
+  value: React.ReactNode
+}
+
+const GridItem: React.FC<GridItemProps> = ({ icon: Icon, title, value }) => (
+  <div className='bg-gray-50 border border-gray-100 rounded-lg p-4 flex flex-col items-center justify-center'>
+    <Icon className='w-12 h-12 mb-2' />
+    <h3 className='font-semibold mb-2 text-gray-600'>{title}</h3>
+    <p className='text-2xl font-bold'>{value}</p>
+  </div>
+)
+
+const Game: React.FC<GameProps> = ({ onRequestClose }) => {
   const isMobile = useIsMobile()
   const customStyles = getModalStyles(isMobile)
-  const { lotteryInfo } = useLotteryInfo()
+  const { lotteryInfo } = useLotteryInfo() as unknown as { lotteryInfo: LotteryInfo }
 
   return (
     <Modal
@@ -23,66 +45,43 @@ const Game: FC<CurrentGameModalProps> = ({ onRequestClose }) => {
       onRequestClose={() => onRequestClose(false)}
       style={customStyles}
     >
-      <button
-        onClick={() => onRequestClose(false)}
-        className='absolute top-0 right-0 h-[75px] w-[75px] flex items-center justify-center'
-      >
-        <Close className='w-6 h-6' />
-      </button>
-      <div className='p-5 flex flex-col h-full overflow-hidden'>
-        <h2 className='text-2xl font-bold mb-6 text-center'>
-          Round #{lotteryInfo?.gameNumber}
+      <div className='p-6 flex flex-col h-full'>
+        <button
+          onClick={() => onRequestClose(false)}
+          className='absolute top-0 right-0 flex items-center justify-center h-20 w-20 text-gray-500 hover:text-gray-700'
+        >
+          <Close className='w-6 h-6' />
+        </button>
+
+        <h2 className='text-2xl font-bold mb-6 text-center text-gray-800'>
+          Round #{lotteryInfo.gameNumber}
         </h2>
 
-        <div className='h-full flex flex-col overflow-y-auto hide-scrollbar'>
-          <div className='flex flex-col mx-6 gap-y-8 mb-8'>
-            {/* Prize Pool */}
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center'>
-                <EthereumCircle className='w-12 h-12' />
-                <span className='ml-2.5 text-lg font-semibold'>Current Prize Pool</span>
-              </div>
-              <span className='text-2xl font-bold'>{lotteryInfo?.prizePool} ETH</span>
-            </div>
-
-            {/* Time Left */}
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center'>
-                <Timer className='w-12 h-12' />
-                <div className='ml-2.5 text-lg font-semibold'>Time Left</div>
-              </div>
-              <div className='font-bold text-2xl'>
-                <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />
-              </div>
-            </div>
-
-            {/* Tickets Sold */}
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center'>
-                <Ticket className='w-12 h-12 text-[#cd37cb]' />
-                <span className='ml-2.5 text-lg font-semibold'>Tickets Sold</span>
-              </div>
-              <span className='text-2xl font-bold'>{lotteryInfo?.ticketsSold}</span>
-            </div>
-
-            {/* My Tickets */}
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center'>
-                <TicketAlternative className='w-12 h-12' />
-                <span className='ml-2.5 text-lg font-semibold'>My Tickets</span>
-              </div>
-              <span className='text-2xl font-bold'>0</span>
-            </div>
-          </div>
-
-          {/* Buy Tickets Button */}
-          <button
-            onClick={() => onRequestClose(true)}
-            className='mt-auto w-full py-4 bg-[#22e523] font-semibold text-2xl rounded-xl flex items-center justify-center'
-          >
-            Buy Ticket - {lotteryInfo?.ticketPrice}ETH
-          </button>
+        <div className='grid grid-cols-2 gap-4 mb-6'>
+          <GridItem
+            icon={EthereumCircle}
+            title='Prize Pool'
+            value={`${lotteryInfo.prizePool} ETH`}
+          />
+          <GridItem
+            icon={Timer}
+            title='Countdown'
+            value={<Countdown secondsUntilDraw={lotteryInfo.secondsUntilDraw} />}
+          />
+          <GridItem
+            icon={TicketAlternative}
+            title='Tickets Sold'
+            value={lotteryInfo.ticketsSold}
+          />
+          <GridItem icon={TicketAlternative} title='My Tickets' value='0' />
         </div>
+
+        <button
+          onClick={() => onRequestClose(true)}
+          className='mt-auto w-full py-4 bg-green-500 text-white font-semibold text-xl rounded-lg hover:bg-green-600 transition-colors duration-200 flex items-center justify-center'
+        >
+          Buy Ticket - {lotteryInfo.ticketPrice} ETH
+        </button>
       </div>
     </Modal>
   )

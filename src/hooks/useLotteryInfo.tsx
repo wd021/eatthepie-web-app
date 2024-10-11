@@ -16,7 +16,7 @@ const formatLotteryInfo = (lotteryInfo: GameInfo, ticketPrice: bigint) => {
     timeUntilDraw: formatTimeUntilDraw(Number(lotteryInfo[4])),
     secondsUntilDraw: Number(lotteryInfo[4]),
     ticketPrice: formatEther(ticketPrice),
-    ticketsSold: formatEther(BigInt(lotteryInfo[2]) / ticketPrice),
+    ticketsSold: Number(lotteryInfo[2] / ticketPrice),
   }
 }
 
