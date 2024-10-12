@@ -45,43 +45,49 @@ const Game: React.FC<GameProps> = ({ onRequestClose }) => {
       onRequestClose={() => onRequestClose(false)}
       style={customStyles}
     >
-      <div className='p-6 flex flex-col h-full'>
-        <button
-          onClick={() => onRequestClose(false)}
-          className='absolute top-0 right-0 flex items-center justify-center h-20 w-20 text-gray-500 hover:text-gray-700'
-        >
-          <Close className='w-6 h-6' />
-        </button>
+      <div className='flex flex-col h-full'>
+        <div className='p-6 flex-shrink-0'>
+          <button
+            onClick={() => onRequestClose(false)}
+            className='absolute top-0 right-0 flex items-center justify-center h-20 w-20 text-gray-500 hover:text-gray-700'
+          >
+            <Close className='w-6 h-6' />
+          </button>
 
-        <h2 className='text-2xl font-bold mb-6 text-center text-gray-800'>
-          Round #{lotteryInfo.gameNumber}
-        </h2>
-
-        <div className='grid grid-cols-2 gap-4 mb-6'>
-          <GridItem
-            icon={EthereumCircle}
-            title='Prize Pool'
-            value={`${lotteryInfo.prizePool} ETH`}
-          />
-          <GridItem
-            icon={Timer}
-            title='Countdown'
-            value={<Countdown secondsUntilDraw={lotteryInfo.secondsUntilDraw} />}
-          />
-          <GridItem
-            icon={TicketAlternative}
-            title='Tickets Sold'
-            value={lotteryInfo.ticketsSold}
-          />
-          <GridItem icon={TicketAlternative} title='My Tickets' value='0' />
+          <h2 className='text-2xl font-bold mb-6 text-center text-gray-800'>
+            Round #{lotteryInfo?.gameNumber}
+          </h2>
         </div>
 
-        <button
-          onClick={() => onRequestClose(true)}
-          className='mt-auto w-full py-4 bg-green-500 text-white font-semibold text-xl rounded-lg hover:bg-green-600 transition-colors duration-200 flex items-center justify-center'
-        >
-          Buy Ticket - {lotteryInfo.ticketPrice} ETH
-        </button>
+        <div className='flex-grow overflow-y-auto px-6'>
+          <div className='grid grid-cols-2 gap-4 mb-6'>
+            <GridItem
+              icon={EthereumCircle}
+              title='Prize Pool'
+              value={`${lotteryInfo?.prizePool || ''} ETH`}
+            />
+            <GridItem
+              icon={Timer}
+              title='Countdown'
+              value={<Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />}
+            />
+            <GridItem
+              icon={TicketAlternative}
+              title='Tickets Sold'
+              value={lotteryInfo?.ticketsSold}
+            />
+            <GridItem icon={TicketAlternative} title='My Tickets' value='0' />
+          </div>
+        </div>
+
+        <div className='p-6 flex-shrink-0'>
+          <button
+            onClick={() => onRequestClose(true)}
+            className='w-full py-4 bg-green-500 text-white font-semibold text-xl rounded-lg hover:bg-green-600 transition-colors duration-200 flex items-center justify-center'
+          >
+            Buy Ticket - {lotteryInfo?.ticketPrice} ETH
+          </button>
+        </div>
       </div>
     </Modal>
   )

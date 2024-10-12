@@ -1,64 +1,121 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { formatEther } from 'viem'
+import { useChainId, usePublicClient } from 'wagmi'
 
-import { Activity, Ticket } from '@/icons'
+import LotteryABI from '@/contracts/LotteryABI.json'
+import { Ticket } from '@/icons'
 
-// Helper function to generate a random Ethereum address
-const generateRandomAddress = () => {
-  return (
-    '0x' +
-    Array(40)
-      .fill(0)
-      .map(() => Math.random().toString(16)[2])
-      .join('')
-  )
+interface TicketPurchasedEvent {
+  player: `0x${string}`
+  gameNumber: bigint
+  numbers: [bigint, bigint, bigint]
+  etherball: bigint
 }
 
-// Helper function to generate a random time in the last 24 hours
-const generateRandomTime = () => {
-  const now = new Date()
-  const pastDay = new Date(now.getTime() - 24 * 60 * 60 * 1000)
-  return new Date(pastDay.getTime() + Math.random() * (now.getTime() - pastDay.getTime()))
+interface Ticket {
+  player: string
+  gameNumber: number
+  numbers: number[]
+  etherball: number
+  blockNumber: bigint
+  transactionHash: `0x${string}`
 }
 
-// Generate dummy activities
-const generateDummyActivities = (count: number) => {
-  return Array(count)
-    .fill(null)
-    .map(() => ({
-      address: generateRandomAddress(),
-      action: Math.random() > 0.3 ? 'purchased' : 'won',
-      amount: Math.floor(Math.random() * 10) + 1,
-      timestamp: generateRandomTime(),
-    }))
+interface RecentTicketPurchasesProps {
+  contractAddress: `0x${string}`
+  abi: any[] // You might want to define a more specific type for your ABI
 }
 
-interface Activity {
-  address: string
-  action: string
-  amount: number
-  timestamp: Date
-}
+const BATCH_SIZE = 2000n // Fetch 2000 blocks at a time
 
-const ActivityFeed = () => {
+const RecentTicketPurchases: React.FC<{}> = (
+  {
+    // contractAddress,
+    // abi,
+  },
+) => {
+  const contractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
+
   const [isOpen, setIsOpen] = useState(false)
-  const [activities, setActivities] = useState<Activity[]>([])
+  const [tickets, setTickets] = useState<Ticket[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [currentBlock, setCurrentBlock] = useState<bigint | null>(null)
+  const publicClient = usePublicClient()
+  const chainId = useChainId()
+
+  const getEtherscanLink = useCallback(
+    (address: string) => {
+      const chainMap: { [key: number]: string } = {
+        1: 'https://etherscan.io',
+        5: 'https://goerli.etherscan.io',
+        11155111: 'https://sepolia.etherscan.io',
+        // Add more chains as needed
+      }
+      const baseUrl = chainMap[chainId] || 'https://etherscan.io'
+      return `${baseUrl}/address/${address}`
+    },
+    [chainId],
+  )
+
+  const fetchTickets = useCallback(
+    async (fromBlock: bigint, toBlock: bigint) => {
+      const ticketEvent = LotteryABI.find((event) => event.name === 'TicketPurchased')
+      if (!ticketEvent) {
+        console.error('TicketPurchased event not found in ABI')
+        return []
+      }
+
+      if (!publicClient) {
+        console.error('Public client is undefined')
+        return []
+      }
+
+      const logs = await publicClient.getLogs({
+        address: contractAddress,
+        event: ticketEvent,
+        fromBlock,
+        toBlock,
+      })
+
+      return logs.map((log) => ({
+        player: log.args.player,
+        gameNumber: Number(log.args.gameNumber),
+        numbers: log.args.numbers.map((n: bigint) => Number(n)),
+        etherball: Number(log.args.etherball),
+        blockNumber: log.blockNumber,
+        transactionHash: log.transactionHash,
+      }))
+    },
+    [contractAddress, LotteryABI, publicClient],
+  )
+
+  const loadMoreTickets = useCallback(async () => {
+    if (isLoading) return
+    setIsLoading(true)
+
+    try {
+      const fromBlock = currentBlock
+        ? currentBlock - BATCH_SIZE
+        : await (publicClient?.getBlockNumber() ??
+            Promise.reject(new Error('Public client is undefined')))
+      const toBlock = currentBlock || fromBlock
+
+      const newTickets = await fetchTickets(fromBlock, toBlock)
+
+      setTickets((prevTickets) => [...prevTickets, ...newTickets])
+      setCurrentBlock(fromBlock)
+    } catch (error) {
+      console.error('Error fetching tickets:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [currentBlock, fetchTickets, publicClient, isLoading])
 
   useEffect(() => {
-    setActivities(generateDummyActivities(20))
+    loadMoreTickets()
   }, [])
-
-  // Function to format the time difference
-  const formatTimeDifference = (timestamp: Date) => {
-    const now = new Date()
-    const diffInSeconds = Math.floor((now.getTime() - timestamp.getTime()) / 1000)
-
-    if (diffInSeconds < 60) return `${diffInSeconds}s ago`
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`
-    return `${Math.floor(diffInSeconds / 86400)}d ago`
-  }
 
   return (
     <div className='fixed bottom-4 right-4 z-50'>
@@ -81,36 +138,62 @@ const ActivityFeed = () => {
         <div className='p-4 h-full flex flex-col'>
           <h3 className='text-lg font-semibold mb-2'>Latest Purchases</h3>
           <ul className='space-y-2 overflow-y-auto flex-grow hide-scrollbar'>
-            {activities.map((activity, index) => (
-              <li key={index} className='text-sm border-b border-gray-200 pb-2'>
-                <div className='flex justify-between items-start'>
-                  <span className='font-medium text-gray-800'>
-                    {activity.address.slice(0, 6)}...
-                    {activity.address.slice(-4)}
-                  </span>
-                  <span className='text-xs text-gray-500'>
-                    {formatTimeDifference(activity.timestamp)}
-                  </span>
-                </div>
-                <p className='text-gray-600'>
-                  {activity.action === 'purchased' ? (
-                    <>
-                      Purchased <span className='font-semibold'>{activity.amount}</span> ticket
-                      {activity.amount > 1 ? 's' : ''}
-                    </>
-                  ) : (
-                    <>
-                      Won <span className='font-semibold'>{activity.amount} ETH</span>
-                    </>
-                  )}
-                </p>
-              </li>
-            ))}
+            {tickets.length === 0 ? (
+              <p className='px-4 py-5 sm:p-6 text-gray-500'>No ticket purchases found.</p>
+            ) : (
+              <ul className='divide-y divide-gray-200'>
+                {tickets.map((ticket, index) => (
+                  <li key={index} className='px-4 py-5 sm:p-6'>
+                    <p className='text-sm font-medium text-gray-900'>
+                      Wallet:{' '}
+                      <a
+                        href={getEtherscanLink(ticket.player)}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-blue-600 hover:underline'
+                      >
+                        {ticket.player.slice(0, 6)}...{ticket.player.slice(-4)}
+                      </a>
+                    </p>
+                    <p className='mt-1 text-sm text-gray-500'>
+                      Game Number: {ticket.gameNumber}
+                    </p>
+                    <p className='mt-1 text-sm text-gray-500'>
+                      Numbers: {ticket.numbers.join(', ')}
+                    </p>
+                    <p className='mt-1 text-sm text-gray-500'>Etherball: {ticket.etherball}</p>
+                    <p className='mt-1 text-sm text-gray-500'>
+                      Block: {ticket.blockNumber.toString()}
+                    </p>
+                    <p className='mt-1 text-sm text-gray-500'>
+                      Transaction:{' '}
+                      <a
+                        href={`${getEtherscanLink(ticket.player)}/tx/${ticket.transactionHash}`}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-blue-600 hover:underline'
+                      >
+                        View on Etherscan
+                      </a>
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </ul>
+          <div className='px-4 py-4 sm:px-6'>
+            <button
+              onClick={loadMoreTickets}
+              disabled={isLoading}
+              className='w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+            >
+              {isLoading ? 'Loading...' : 'Load More'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
   )
 }
 
-export default ActivityFeed
+export default RecentTicketPurchases

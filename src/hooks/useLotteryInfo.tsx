@@ -1,9 +1,9 @@
 import { formatEther } from 'viem'
 import { useReadContract } from 'wagmi'
 
-import { CONTRACT_ADDRESSES } from '../config/chainConfig'
-import lotteryABI from '../contracts/LotteryABI.json'
-import { GameInfo, LotteryInfo } from '../utils/types'
+import { CONTRACT_ADDRESSES } from '@/config/chainConfig'
+import lotteryABI from '@/contracts/LotteryABI.json'
+import { GameInfo, LotteryInfo } from '@/utils/types'
 
 const formatLotteryInfo = (lotteryInfo: GameInfo, ticketPrice: bigint) => {
   const difficultyMap = ['Easy', 'Medium', 'Hard']
