@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ConnectKitButton } from 'connectkit'
@@ -9,10 +9,35 @@ import { useAccount } from 'wagmi'
 import { WalletDropdown } from '@/components'
 import { Game as GameModal } from '@/components/modals'
 
-const Header: FC<{ isStatusBarVisible: boolean }> = ({ isStatusBarVisible }) => {
+interface HeaderProps {
+  isStatusBarVisible: boolean
+}
+
+interface NavLinkProps {
+  href: string
+  currentPath: string
+  children: React.ReactNode
+}
+
+const NavLink: FC<NavLinkProps> = ({ href, currentPath, children }) => (
+  <Link
+    href={href}
+    className={
+      currentPath === href || currentPath.startsWith(href) ? 'font-semibold underline' : ''
+    }
+  >
+    {children}
+  </Link>
+)
+
+const Header: FC<HeaderProps> = ({ isStatusBarVisible }) => {
   const [isGameModalOpen, setIsGameModalOpen] = useState(false)
   const { isConnected } = useAccount()
   const pathname = usePathname()
+
+  const handlePurchaseTicket = useCallback(() => {
+    setIsGameModalOpen(true)
+  }, [])
 
   return (
     <>
@@ -23,33 +48,27 @@ const Header: FC<{ isStatusBarVisible: boolean }> = ({ isStatusBarVisible }) => 
       >
         <div className='flex items-center justify-between h-full px-4'>
           <Link href='/' className='h-full flex items-center'>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src='/etp_logo.png'
+              src='/logo.png'
               alt='Eat The Pie Lottery'
               className='w-[54px] h-[40px] md:w-[74px] md:h-[55px]'
             />
           </Link>
-          <div className='text-lg'>
+          <nav className='text-lg'>
             <div className='flex items-center space-x-4'>
-              <Link
-                href='/rules'
-                className={pathname === '/rules' ? 'font-semibold underline' : ''}
-              >
+              <NavLink href='/rules' currentPath={pathname}>
                 Rules
-              </Link>
-              <Link
-                href='/results'
-                className={pathname.startsWith('/results') ? 'font-semibold underline' : ''}
-              >
+              </NavLink>
+              <NavLink href='/results' currentPath={pathname}>
                 Results
-              </Link>
-              {isConnected && (
-                <WalletDropdown purchaseTicket={() => setIsGameModalOpen(true)} />
+              </NavLink>
+              {isConnected ? (
+                <WalletDropdown purchaseTicket={handlePurchaseTicket} />
+              ) : (
+                <ConnectKitButton />
               )}
-              {!isConnected && <ConnectKitButton />}
             </div>
-          </div>
+          </nav>
         </div>
       </header>
       {isGameModalOpen && <GameModal onRequestClose={() => setIsGameModalOpen(false)} />}

@@ -8,7 +8,7 @@ import { useAccount, usePublicClient, useWriteContract } from 'wagmi'
 import { Countdown } from '@/components'
 import lotteryABI from '@/contracts/LotteryABI.json'
 import { useIsMobile, useLotteryInfo, useTicketInfo } from '@/hooks'
-import { Calculator, Close, EthereumCircle, TicketAlternative, Timer } from '@/icons'
+import { Calculator, Close, EthereumCircle, Ticket, Timer } from '@/icons'
 import { useToast } from '@/providers/ToastProvider'
 import { getModalStyles } from '@/styles'
 import { LOTTERY_NUMBERS_RANGE } from '@/utils/constants'
@@ -280,7 +280,7 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
               <div className='bg-emerald-50 border border-emerald-100 rounded-lg p-4 flex items-center'>
                 <EthereumCircle className='w-10 h-10 text-emerald-600 mr-3' />
                 <div>
-                  <h3 className='text-sm font-semibold text-emerald-700'>Prize Pool</h3>
+                  <h3 className='text-sm font-semibold text-emerald-700'>Current Prize Pool</h3>
                   <p className='text-xl font-bold text-emerald-800'>{`${lotteryInfo?.prizePool || '0'} ETH`}</p>
                 </div>
               </div>
@@ -294,9 +294,9 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
                 </div>
               </div>
               <div className='bg-violet-50 border border-violet-100 rounded-lg p-4 flex items-center'>
-                <TicketAlternative className='w-10 h-10 text-violet-600 mr-3' />
+                <Ticket className='w-10 h-10 text-violet-600 mr-3' />
                 <div>
-                  <h3 className='text-sm font-semibold text-violet-700'>Your Tickets</h3>
+                  <h3 className='text-sm font-semibold text-violet-700'>My Tickets</h3>
                   <p className='text-xl font-bold text-violet-800'>{purchasedTickets}</p>
                 </div>
               </div>
@@ -307,7 +307,7 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
             <div className='flex bg-gray-100 p-4 rounded-lg'>
               <div className='flex flex-col'>
                 <div className='flex items-center'>
-                  <TicketAlternative className='w-6 h-6 mr-2 text-gray-600' />
+                  <Ticket className='w-6 h-6 mr-2 text-gray-600' />
                   <span className='font-semibold text-gray-700'>Number of tickets:</span>
                 </div>
                 <p className='text-sm text-gray-500 italic'>Max 100 tickets per purchase</p>
