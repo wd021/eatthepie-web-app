@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import Modal from 'react-modal'
 import { animated, useSpring } from 'react-spring'
 import { useModal } from 'connectkit'
@@ -12,6 +12,141 @@ import { Calculator, Close, EthereumCircle, Ticket, Timer } from '@/icons'
 import { useToast } from '@/providers/ToastProvider'
 import { getModalStyles } from '@/styles'
 import { LOTTERY_NUMBERS_RANGE } from '@/utils/constants'
+
+interface GameInfoCardProps {
+  icon: React.ElementType
+  title: string
+  value: React.ReactNode
+  bgColor: string
+  borderColor: string
+  textColor: string
+}
+
+const GameInfoCard: React.FC<GameInfoCardProps> = ({
+  icon: Icon,
+  title,
+  value,
+  bgColor,
+  borderColor,
+  textColor,
+}) => (
+  <div className={`${bgColor} ${borderColor} rounded-lg p-4 flex items-center`}>
+    <Icon className={`w-10 h-10 ${textColor} mr-3`} />
+    <div>
+      <h3 className={`text-sm font-semibold ${textColor}`}>{title}</h3>
+      <p className={`text-xl font-bold ${textColor}`}>{value}</p>
+    </div>
+  </div>
+)
+
+interface NumberRange {
+  min: number
+  max: number
+  etherball_max: number
+}
+
+interface TicketNumberInputProps {
+  ticket: number[]
+  ticketIndex: number
+  numberRange: NumberRange
+  handleNumberChange: (ticketIndex: number, numberIndex: number, value: number) => void
+}
+
+const TicketNumberInput: React.FC<TicketNumberInputProps> = ({
+  ticket,
+  ticketIndex,
+  numberRange,
+  handleNumberChange,
+}) => (
+  <div className='bg-gray-100 p-4 rounded-lg mb-4'>
+    <h4 className='text-sm font-semibold mb-2'>Ticket {ticketIndex + 1}</h4>
+    <div className='grid grid-cols-4 gap-2'>
+      {ticket.map((number, numberIndex) => (
+        <input
+          key={numberIndex}
+          type='number'
+          min={numberRange.min}
+          max={numberIndex === 3 ? numberRange.etherball_max : numberRange.max}
+          value={number || ''}
+          onChange={(e) =>
+            handleNumberChange(ticketIndex, numberIndex, parseInt(e.target.value))
+          }
+          className='w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+          placeholder={`${numberRange.min}-${
+            numberIndex === 3 ? numberRange.etherball_max : numberRange.max
+          }`}
+        />
+      ))}
+    </div>
+  </div>
+)
+
+interface TransactionFeedbackProps {
+  status: WriteContractResult['status']
+  error: Error | null
+  onRequestClose: () => void
+  onReset: () => void
+}
+
+const TransactionFeedback: React.FC<TransactionFeedbackProps> = ({
+  status,
+  error,
+  onRequestClose,
+  onReset,
+}) => {
+  const fadeIn = useSpring({
+    opacity: status !== 'idle' ? 1 : 0,
+    config: { duration: 200 },
+  })
+
+  if (status === 'idle') return null
+
+  return (
+    <animated.div
+      style={fadeIn}
+      className='absolute inset-0 bg-white flex flex-col items-center justify-center z-50 p-6 rounded-[15px]'
+    >
+      {status === 'pending' && (
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-16 w-16 border-b-2 border-blue-500 mx-auto mb-6'></div>
+          <h2 className='text-2xl font-bold mb-4'>Purchasing your tickets</h2>
+          <p className='text-lg'>Hold on tight, luck is on its way!</p>
+        </div>
+      )}
+      {status === 'success' && (
+        <div className='text-center'>
+          <div className='text-7xl mb-6'>🎟️</div>
+          <h2 className='text-3xl font-bold mb-4'>Tickets Secured!</h2>
+          <p className='text-xl mb-2'>You&apos;re officially in the game.</p>
+          <p className='text-lg mb-8'>May fortune smile upon you!</p>
+          <button
+            onClick={onRequestClose}
+            className='px-6 py-3 bg-green-500 text-white text-lg rounded-lg hover:bg-green-600 transition-colors duration-200'
+          >
+            Back to Game
+          </button>
+        </div>
+      )}
+      {status === 'error' && (
+        <div className='text-center max-w-md w-full'>
+          <div className='text-7xl mb-6'>😕</div>
+          <h2 className='text-3xl font-bold mb-4'>Oops! A slight hiccup.</h2>
+          <div className='mb-8 max-h-40 overflow-y-auto bg-gray-100 rounded-lg p-4'>
+            <p className='text-lg'>
+              {error?.message || "We couldn't process your ticket purchase. Want to try again?"}
+            </p>
+          </div>
+          <button
+            onClick={onReset}
+            className='px-6 py-3 bg-blue-500 text-white text-lg rounded-lg hover:bg-blue-600 transition-colors duration-200'
+          >
+            Give it Another Shot
+          </button>
+        </div>
+      )}
+    </animated.div>
+  )
+}
 
 interface GameModalProps {
   onRequestClose: () => void
@@ -81,7 +216,6 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
           .map(() => generateRandomNumbers())
       : manualNumbers
 
-    console.log('value', value)
     try {
       const { request } = await publicClient.simulateContract({
         address: CONTRACT_ADDRESS,
@@ -93,11 +227,8 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
       })
       writeContract(request)
     } catch (err) {
-      console.log('error hits here?', err)
-
       if (err instanceof ContractFunctionExecutionError) {
         const errorMessage = err.message.toLowerCase()
-        console.log('error msg', errorMessage)
         if (errorMessage.includes('invalid numbers')) {
           showToast('⚠️ Invalid ticket numbers', 2500)
         } else if (errorMessage.includes('insufficient funds')) {
@@ -122,101 +253,48 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
     writeContract,
   ])
 
-  const renderNumberInputs = () => {
-    return manualNumbers.map((ticket, ticketIndex) => (
-      <div key={ticketIndex} className='bg-gray-100 p-4 rounded-lg mb-4'>
-        <h4 className='text-sm font-semibold mb-2'>Ticket {ticketIndex + 1}</h4>
-        <div className='grid grid-cols-4 gap-2'>
-          {ticket.map((number, numberIndex) => (
-            <input
-              key={numberIndex}
-              type='number'
-              min={numberRange.min}
-              max={numberIndex === 3 ? numberRange.etherball_max : numberRange.max}
-              value={number || ''}
-              onChange={(e) =>
-                handleNumberChange(ticketIndex, numberIndex, parseInt(e.target.value))
-              }
-              className='w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
-              placeholder={`${numberRange.min}-${numberIndex === 3 ? numberRange.etherball_max : numberRange.max}`}
-            />
-          ))}
-        </div>
-      </div>
-    ))
-  }
-
   const buttonAnimation = useSpring({
     scale: transactionStatus === 'pending' ? 1.05 : 1,
     config: { tension: 300, friction: 10 },
   })
 
-  const fadeIn = useSpring({
-    opacity: transactionStatus !== 'idle' ? 1 : 0,
-    config: { duration: 200 },
-  })
-
-  const renderTransactionFeedback = () => {
-    switch (transactionStatus) {
-      case 'pending':
-        return (
-          <animated.div
-            style={fadeIn}
-            className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'
-          >
-            <div className='bg-white p-6 rounded-lg text-center'>
-              <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4'></div>
-              <p className='text-xl font-bold'>Purchasing your tickets</p>
-              <p>Hold on tight, luck is on its way!</p>
-            </div>
-          </animated.div>
-        )
-      case 'success':
-        return (
-          <animated.div
-            style={fadeIn}
-            className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'
-          >
-            <div className='bg-white p-6 rounded-lg text-center'>
-              <div className='text-5xl mb-4'>🎟️</div>
-              <p className='text-2xl font-bold mb-2'>Tickets Secured!</p>
-              <p className='text-xl mb-4'>You're officially in the game.</p>
-              <p>May fortune smile upon you!</p>
-              <button
-                onClick={onRequestClose}
-                className='mt-4 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200'
-              >
-                Back to Game
-              </button>
-            </div>
-          </animated.div>
-        )
-      case 'error':
-        return (
-          <animated.div
-            style={fadeIn}
-            className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'
-          >
-            <div className='bg-white p-6 rounded-lg text-center'>
-              <div className='text-5xl mb-4'>😕</div>
-              <p className='text-xl font-bold mb-2'>Oops! A slight hiccup.</p>
-              <p>
-                {error?.message ||
-                  "We couldn't process your ticket purchase. Want to try again?"}
-              </p>
-              <button
-                onClick={() => reset()}
-                className='mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200'
-              >
-                Give it Another Shot
-              </button>
-            </div>
-          </animated.div>
-        )
-      default:
-        return null
-    }
-  }
+  const gameInfo = useMemo(
+    () => [
+      {
+        icon: Timer,
+        title: 'Countdown',
+        value: <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />,
+        bgColor: 'bg-sky-50',
+        borderColor: 'border border-sky-100',
+        textColor: 'text-sky-700',
+      },
+      {
+        icon: EthereumCircle,
+        title: 'Current Prize Pool',
+        value: `${lotteryInfo?.prizePool || '0'} ETH`,
+        bgColor: 'bg-emerald-50',
+        borderColor: 'border border-emerald-100',
+        textColor: 'text-emerald-700',
+      },
+      {
+        icon: Calculator,
+        title: 'Difficulty',
+        value: lotteryInfo?.difficulty || '-',
+        bgColor: 'bg-amber-50',
+        borderColor: 'border border-amber-100',
+        textColor: 'text-amber-700',
+      },
+      {
+        icon: Ticket,
+        title: 'My Tickets',
+        value: purchasedTickets,
+        bgColor: 'bg-violet-50',
+        borderColor: 'border border-violet-100',
+        textColor: 'text-violet-700',
+      },
+    ],
+    [lotteryInfo, purchasedTickets],
+  )
 
   return (
     <Modal
@@ -268,38 +346,9 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
 
           {!isInfoCollapsed && (
             <div className='grid grid-cols-2 gap-4 mb-6'>
-              <div className='bg-sky-50 border border-sky-100 rounded-lg p-4 flex items-center'>
-                <Timer className='w-10 h-10 text-sky-600 mr-3' />
-                <div>
-                  <h3 className='text-sm font-semibold text-sky-700'>Countdown</h3>
-                  <div className='text-xl font-bold text-sky-800'>
-                    <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />
-                  </div>
-                </div>
-              </div>
-              <div className='bg-emerald-50 border border-emerald-100 rounded-lg p-4 flex items-center'>
-                <EthereumCircle className='w-10 h-10 text-emerald-600 mr-3' />
-                <div>
-                  <h3 className='text-sm font-semibold text-emerald-700'>Current Prize Pool</h3>
-                  <p className='text-xl font-bold text-emerald-800'>{`${lotteryInfo?.prizePool || '0'} ETH`}</p>
-                </div>
-              </div>
-              <div className='bg-amber-50 border border-amber-100 rounded-lg p-4 flex items-center'>
-                <Calculator className='w-10 h-10 text-amber-600 mr-3' />
-                <div>
-                  <h3 className='text-sm font-semibold text-amber-700'>Difficulty</h3>
-                  <p className='text-xl font-bold text-amber-800'>
-                    {lotteryInfo?.difficulty || '-'}
-                  </p>
-                </div>
-              </div>
-              <div className='bg-violet-50 border border-violet-100 rounded-lg p-4 flex items-center'>
-                <Ticket className='w-10 h-10 text-violet-600 mr-3' />
-                <div>
-                  <h3 className='text-sm font-semibold text-violet-700'>My Tickets</h3>
-                  <p className='text-xl font-bold text-violet-800'>{purchasedTickets}</p>
-                </div>
-              </div>
+              {gameInfo.map((info, index) => (
+                <GameInfoCard key={index} {...info} />
+              ))}
             </div>
           )}
 
@@ -353,7 +402,16 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
                 </div>
               </label>
             </div>
-            {!isAutoGenerated && renderNumberInputs()}
+            {!isAutoGenerated &&
+              manualNumbers.map((ticket, index) => (
+                <TicketNumberInput
+                  key={index}
+                  ticket={ticket}
+                  ticketIndex={index}
+                  numberRange={numberRange}
+                  handleNumberChange={handleNumberChange}
+                />
+              ))}
           </div>
         </div>
 
@@ -379,7 +437,12 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
           </animated.button>
         </div>
       </div>
-      {renderTransactionFeedback()}
+      <TransactionFeedback
+        status={transactionStatus}
+        error={error}
+        onRequestClose={onRequestClose}
+        onReset={reset}
+      />
     </Modal>
   )
 }
