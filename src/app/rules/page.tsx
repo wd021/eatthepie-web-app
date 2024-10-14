@@ -156,17 +156,17 @@ const Rules: FC = () => {
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
         <Card title='How to Play' icon='pieChart'>
           <div className='text-lg leading-relaxed'>
-            Buy a ticket and pick 4 numbers. If you pick the correct numbers of the lottery, you
-            win! There are multiple prize pools to win from (see below). If you match all
-            numbers, you win the jackpot!
+            Buy a ticket and pick 4 numbers. If you pick the correct numbers, in the correct
+            order, you win! prizes for getting all 4 (jackpot!), 3 in-a-row, and 2 in-a-row (see
+            below)!
           </div>
         </Card>
 
         <Card title='Draw Schedule' icon='clock'>
           <div className='text-lg leading-relaxed'>
-            Draws occur every week <b>AND</b> when the prize pool passes the minimum threshold
-            of 500ETH. When these conditions are met, a drawing is triggered and the numbers are
-            revealed.
+            Draws occur when a week has passed <b>AND</b> when the prize pool passes the minimum
+            threshold of <b>500ETH</b>. When both these conditions are met, a drawing is
+            triggered and the numbers are revealed.
           </div>
         </Card>
       </div>
@@ -174,7 +174,7 @@ const Rules: FC = () => {
       <div className='mb-8 px-6'>
         <Accordion title='Prize Pools' icon='ticket'>
           <div className='mb-4 text-lg leading-relaxed'>
-            If there are multiple winners in any pool, the prize pool gets split between them.
+            Each prize pool gets distributed amongst all the winners in the pool.
           </div>
           <ul className='list-disc pl-5 text-lg leading-relaxed flex flex-col gap-y-2'>
             <li>
@@ -187,14 +187,18 @@ const Rules: FC = () => {
               <strong>2 in a row:</strong> Match the first 2 numbers (9% of prize pool)
             </li>
           </ul>
+          <div className='mt-4 italic'>
+            *Each ticket is eligible for each pool. So a jackpot winner would collect in all 3
+            pools, a 3 in-a-row winner would also win 2 in-a-row.
+          </div>
         </Accordion>
 
         <Accordion title='Difficulty Levels' icon='alertCircle'>
           <div className='mb-4 text-lg leading-relaxed'>
-            In order to keep the lottery fun, the game will automatically adjusts its
-            difficulty. Whenever there&apos;s been 3 conseutive drawings without a jackpot
-            winner, the difficulty level decreases. If there&apos;s been 3 consecutive jackpot
-            winners, the difficulty level increases.
+            In order to keep the lottery fun, the game difficulty adjusts based on frequency of
+            jackpots. Whenever there&apos;s been 3 conseutive drawings without a jackpot winner,
+            the difficulty level decreases. If there&apos;s been 3 consecutive jackpot winners,
+            the difficulty level increases.
           </div>
           <ul className='list-disc pl-5 text-lg leading-relaxed flex flex-col gap-y-2'>
             <li>
@@ -212,27 +216,18 @@ const Rules: FC = () => {
         <Accordion title='Winning and Claiming Prizes' icon='award'>
           <div className='mb-4 text-lg leading-relaxed'>Once a draw has been initiated:</div>
           <ul className='list-disc pl-5 text-lg leading-relaxed flex flex-col gap-y-2'>
-            <li>Random numbers are generated (can take a few hours due to VDF computation).</li>
-            <li>
-              Once numbers are finalized, players can claim their prizes on this site or by
-              calling the smart contract.
-            </li>
+            <li>Random numbers are generated (can take a few hours for VDF computation).</li>
+            <li>Once generated, players can view and claim prizes on the results tab.</li>
             <li>Jackpot winners receive a unique NFT to commemorate their win!</li>
-            <li>
-              If any prize pool doesn&apos;t have a winner, the prize pool rolls over to the
-              next game.
-            </li>
-            <li>
-              If any prizes are not claimed within 1 year, they&apos;ll get rolled over to the
-              next prize pool.
-            </li>
+            <li>If there isn&apos;t a winner, the prize pool rolls over to the next game.</li>
           </ul>
         </Accordion>
       </div>
 
       <Card title='Ticket Pricing and Fees' icon='coins'>
         <p>
-          A ticket costs 0.1 ETH. A fee of 1% (capped at 100ETH) is deducted from each draw.
+          A ticket costs 0.1 ETH. 99% of ticket purchases go towards the prize pool. 1% (capped
+          at 100ETH) is deducted as a fee.
         </p>
       </Card>
     </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
-import { ActivityFeed, Header, StatusBar } from '@/components'
+import { Header, RecentPurchases, StatusBar } from '@/components'
 import { Ethereum, LinkArrow } from '@/icons'
 import { BLOCK_EXPLORER_LINKS, NETWORK_NAMES } from '@/utils/constants'
 import { trimAddress } from '@/utils/helpers'
@@ -84,7 +84,7 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
         {children}
       </main>
       <Footer networkName={networkName} lotteryAddress={lotteryAddress} />
-      <ActivityFeed />
+      <RecentPurchases />
     </div>
   )
 }
