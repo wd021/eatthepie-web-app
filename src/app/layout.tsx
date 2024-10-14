@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { ToastProvider } from '@/providers/ToastProvider'
 import { Web3Provider } from '@/providers/Web3Provider'
 
 import Wrapper from './wrapper'
@@ -21,7 +22,9 @@ export default function RootLayout({
     <html lang='en'>
       <Web3Provider>
         <body>
-          <Wrapper>{children}</Wrapper>
+          <ToastProvider>
+            <Wrapper>{children}</Wrapper>
+          </ToastProvider>
         </body>
       </Web3Provider>
     </html>

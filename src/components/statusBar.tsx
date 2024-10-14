@@ -2,7 +2,7 @@
 
 import { FC, useState } from 'react'
 
-import { Game as GameModal, Ticket as TicketModal } from '@/components/modals'
+import { Game as GameModal } from '@/components/modals'
 import { useLotteryInfo } from '@/hooks'
 import { Close } from '@/icons'
 
@@ -32,16 +32,16 @@ const StatusBar: FC<{
       </div>
       {modal === 'game' && (
         <GameModal
-          onRequestClose={(showTicketModal) => {
-            if (showTicketModal) {
-              setModal('ticket')
-            } else {
-              setModal(false)
-            }
-          }}
+          onRequestClose={() => {}}
+          // onRequestClose={(showTicketModal) => {
+          //   if (showTicketModal) {
+          //     setModal('ticket')
+          //   } else {
+          //     setModal(false)
+          //   }
+          // }}
         />
       )}
-      {modal === 'ticket' && <TicketModal onRequestClose={() => setModal(false)} />}
     </>
   ) : null
 }

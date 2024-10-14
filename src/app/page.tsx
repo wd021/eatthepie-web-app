@@ -5,7 +5,7 @@ import { useModal } from 'connectkit'
 import { useAccount } from 'wagmi'
 
 import { Countdown } from '@/components'
-import { Game as GameModal, Ticket as TicketModal } from '@/components/modals'
+import { Game as GameModal } from '@/components/modals'
 import { useLotteryInfo } from '@/hooks'
 
 interface SectionProps {
@@ -44,12 +44,12 @@ const Section: FC<SectionProps> = ({ icon, title, children }) => {
 export default function Home() {
   const { open, setOpen } = useModal()
   const { isConnected } = useAccount()
-  const [modal, setModal] = useState<boolean | 'ticket' | 'game'>(false)
+  const [modal, setModal] = useState<boolean | 'game'>(false)
   const howItWorksRef = useRef<HTMLDivElement>(null)
   const { lotteryInfo } = useLotteryInfo()
 
   useEffect(() => {
-    if (!open && !isConnected && modal === 'ticket') {
+    if (!open && !isConnected && modal === 'game') {
       setModal(false)
     }
   }, [open, isConnected, modal])
@@ -81,7 +81,7 @@ export default function Home() {
               <button
                 className='bg-gray-800 w-[260px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl'
                 onClick={() => {
-                  setModal('ticket')
+                  setModal('game')
 
                   if (!isConnected) {
                     setOpen(true)
@@ -117,7 +117,7 @@ export default function Home() {
             <button
               className='bg-gray-800 w-[260px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl'
               onClick={() => {
-                setModal('ticket')
+                setModal('game')
 
                 if (!isConnected) {
                   setOpen(true)
@@ -250,22 +250,20 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {modal === 'ticket' && isConnected && (
-        <TicketModal onRequestClose={() => setModal(false)} />
-      )}
       {modal === 'game' && (
         <GameModal
-          onRequestClose={(showTicketModal) => {
-            if (showTicketModal) {
-              setModal('ticket')
+          onRequestClose={() => {}}
+          // onRequestClose={(showTicketModal) => {
+          //   if (showTicketModal) {
+          //     setModal('ticket')
 
-              if (!isConnected) {
-                setOpen(true)
-              }
-            } else {
-              setModal(false)
-            }
-          }}
+          //     if (!isConnected) {
+          //       setOpen(true)
+          //     }
+          //   } else {
+          //     setModal(false)
+          //   }
+          // }}
         />
       )}
     </>

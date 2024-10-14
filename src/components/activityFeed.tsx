@@ -30,6 +30,109 @@ interface RecentTicketPurchasesProps {
 
 const BATCH_SIZE = 2000n // Fetch 2000 blocks at a time
 
+const formatTimestamp = (timestamp) => {
+  const date = new Date(timestamp * 1000)
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+const TicketIcon = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    className='h-6 w-6'
+    fill='none'
+    viewBox='0 0 24 24'
+    stroke='currentColor'
+  >
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z'
+    />
+  </svg>
+)
+
+const CloseIcon = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    className='h-6 w-6'
+    fill='none'
+    viewBox='0 0 24 24'
+    stroke='currentColor'
+  >
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M6 18L18 6M6 6l12 12'
+    />
+  </svg>
+)
+
+const ExternalLinkIcon = () => (
+  <svg
+    xmlns='http://www.w3.org/2000/svg'
+    className='h-4 w-4 ml-1'
+    fill='none'
+    viewBox='0 0 24 24'
+    stroke='currentColor'
+  >
+    <path
+      strokeLinecap='round'
+      strokeLinejoin='round'
+      strokeWidth={2}
+      d='M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14'
+    />
+  </svg>
+)
+
+const TicketItem = ({ ticket }) => (
+  <div className='bg-white rounded-lg shadow-md p-4 mb-3 transition-shadow duration-300 hover:shadow-lg'>
+    <div className='flex justify-between items-center mb-2'>
+      <span className='text-sm font-medium text-gray-600'>
+        {formatTimestamp(ticket.timestamp)}
+      </span>
+      <a
+        href={`https://etherscan.io/address/${ticket.player}`}
+        target='_blank'
+        rel='noopener noreferrer'
+        className='text-blue-500 hover:text-blue-700 flex items-center'
+      >
+        <span className='text-sm'>
+          {ticket.player.slice(0, 6)}...{ticket.player.slice(-4)}
+        </span>
+        <ExternalLinkIcon />
+      </a>
+    </div>
+    <div className='flex justify-center bg-gray-100 rounded p-2 my-3'>
+      {ticket.numbers.map((num, index) => (
+        <span
+          key={index}
+          className='w-8 h-8 flex items-center justify-center font-bold text-gray-800 text-base'
+        >
+          {num}
+        </span>
+      ))}
+    </div>
+    <div className='text-center'>
+      <a
+        href={`https://etherscan.io/tx/${ticket.transactionHash}`}
+        target='_blank'
+        rel='noopener noreferrer'
+        className='text-sm text-blue-500 hover:text-blue-700 flex items-center justify-center'
+      >
+        View on Etherscan
+        <ExternalLinkIcon />
+      </a>
+    </div>
+  </div>
+)
+
 const RecentTicketPurchases: React.FC<{}> = (
   {
     // contractAddress,
@@ -121,71 +224,34 @@ const RecentTicketPurchases: React.FC<{}> = (
     <div className='fixed bottom-4 right-4 z-50'>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`bg-gray-900 text-white rounded-full p-3 shadow-lg transition-all duration-300 ${
-          isOpen ? 'rotate-45' : ''
-        } w-16 h-16 flex items-center justify-center`}
+        className='bg-gray-800 text-white rounded-full shadow-lg w-16 h-16 flex items-center justify-center'
       >
-        <Ticket className='w-8 h-8' />
+        {isOpen ? <CloseIcon /> : <TicketIcon />}
       </button>
       <div
-        className={`fixed right-2 bg-white rounded-lg shadow-xl transition-all duration-300 overflow-hidden ${
+        className={`fixed right-4 bg-gray-50 rounded-lg shadow-xl transition-all duration-300 overflow-hidden ${
           isOpen
-            ? 'bottom-[90px] h-[calc(100vh-105px)] opacity-100'
-            : 'bottom-[90px] h-0 opacity-0'
+            ? 'bottom-24 opacity-100 pointer-events-auto'
+            : 'bottom-24 opacity-0 pointer-events-none'
         }`}
-        style={{ width: '350px' }}
+        style={{ width: '350px', maxHeight: 'calc(100vh - 120px)' }}
       >
         <div className='p-4 h-full flex flex-col'>
-          <h3 className='text-lg font-semibold mb-2'>Latest Purchases</h3>
-          <ul className='space-y-2 overflow-y-auto flex-grow hide-scrollbar'>
+          <h3 className='text-lg font-semibold mb-4 text-center text-gray-800'>
+            Latest Purchases
+          </h3>
+          <div className='overflow-y-auto flex-grow'>
             {tickets.length === 0 ? (
-              <p className='px-4 py-5 sm:p-6 text-gray-500'>No ticket purchases found.</p>
+              <p className='text-center text-gray-500'>No ticket purchases found.</p>
             ) : (
-              <ul className='divide-y divide-gray-200'>
-                {tickets.map((ticket, index) => (
-                  <li key={index} className='px-4 py-5 sm:p-6'>
-                    <p className='text-sm font-medium text-gray-900'>
-                      Wallet:{' '}
-                      <a
-                        href={getEtherscanLink(ticket.player)}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='text-blue-600 hover:underline'
-                      >
-                        {ticket.player.slice(0, 6)}...{ticket.player.slice(-4)}
-                      </a>
-                    </p>
-                    <p className='mt-1 text-sm text-gray-500'>
-                      Game Number: {ticket.gameNumber}
-                    </p>
-                    <p className='mt-1 text-sm text-gray-500'>
-                      Numbers: {ticket.numbers.join(', ')}
-                    </p>
-                    <p className='mt-1 text-sm text-gray-500'>Etherball: {ticket.etherball}</p>
-                    <p className='mt-1 text-sm text-gray-500'>
-                      Block: {ticket.blockNumber.toString()}
-                    </p>
-                    <p className='mt-1 text-sm text-gray-500'>
-                      Transaction:{' '}
-                      <a
-                        href={`${getEtherscanLink(ticket.player)}/tx/${ticket.transactionHash}`}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='text-blue-600 hover:underline'
-                      >
-                        View on Etherscan
-                      </a>
-                    </p>
-                  </li>
-                ))}
-              </ul>
+              tickets.map((ticket, index) => <TicketItem key={index} ticket={ticket} />)
             )}
-          </ul>
-          <div className='px-4 py-4 sm:px-6'>
+          </div>
+          <div className='mt-4'>
             <button
               onClick={loadMoreTickets}
               disabled={isLoading}
-              className='w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed'
+              className='w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed'
             >
               {isLoading ? 'Loading...' : 'Load More'}
             </button>

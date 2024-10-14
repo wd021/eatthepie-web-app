@@ -178,17 +178,13 @@ const Rules: FC = () => {
           </div>
           <ul className='list-disc pl-5 text-lg leading-relaxed flex flex-col gap-y-2'>
             <li>
-              <strong>Jackpot:</strong> Match all 4 numbers (60% of prize pool)
+              <strong>Jackpot:</strong> Match all 4 numbers (65% of prize pool)
             </li>
             <li>
               <strong>3 in a row:</strong> Match the first 3 numbers (25% of prize pool)
             </li>
             <li>
-              <strong>2 in a row:</strong> Match the first 2 numbers (10% of prize pool)
-            </li>
-            <li>
-              <strong>Loyalty Prize:</strong> Winner in any of the pools that has played the
-              most consecutive games (4% of prize pool)
+              <strong>2 in a row:</strong> Match the first 2 numbers (9% of prize pool)
             </li>
           </ul>
         </Accordion>
