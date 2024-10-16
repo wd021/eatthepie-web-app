@@ -7,7 +7,7 @@ export default function Activity(props: SVGProps<SVGSVGElement>) {
       <polyline
         fill='none'
         points='24 128 56 128 96 40 160 208 200 128 232 128'
-        stroke='#000'
+        stroke='#fff'
         strokeLinecap='round'
         strokeLinejoin='round'
         strokeWidth='16'

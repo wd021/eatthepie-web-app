@@ -1,6 +1,7 @@
 'use client'
 
 import { FC, useState } from 'react'
+import { motion } from 'framer-motion'
 
 const Icon: React.FC<{ name: string }> = ({ name }) => {
   // Simple SVG icons
@@ -114,14 +115,18 @@ const Card: React.FC<{
   title: string
   icon: string
   children: React.ReactNode
-}> = ({ title, icon, children }) => (
-  <div className='bg-white rounded-lg shadow-md p-6'>
+  color?: string
+}> = ({ title, icon, children, color = 'bg-white' }) => (
+  <motion.div
+    className={`${color} rounded-lg shadow-md p-6 transition-shadow duration-300 hover:shadow-lg`}
+    whileHover={{ scale: 1.02 }}
+  >
     <h2 className='text-xl font-semibold mb-4 flex items-center'>
       <Icon name={icon} />
       <span className='ml-2'>{title}</span>
     </h2>
-    {children}
-  </div>
+    <div className='text-lg leading-relaxed'>{children}</div>
+  </motion.div>
 )
 
 const Accordion: React.FC<{
@@ -132,46 +137,57 @@ const Accordion: React.FC<{
   const [isOpen, setIsOpen] = useState(true)
 
   return (
-    <div className='border-b border-gray-200'>
+    <div className='border border-gray-200 bg-white rounded-lg mb-4 overflow-hidden'>
       <button
-        className='w-full text-left py-4 flex items-center justify-between focus:outline-none'
+        className='w-full text-left py-4 px-6 flex items-center justify-between focus:outline-none'
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className='flex items-center'>
           <Icon name={icon} />
           <span className='ml-2 font-semibold text-lg'>{title}</span>
         </span>
-        <span className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+        <motion.span animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.3 }}>
           ▼
-        </span>
+        </motion.span>
       </button>
-      {isOpen && <div className='pb-4'>{children}</div>}
+      <motion.div
+        initial={false}
+        animate={{ height: isOpen ? 'auto' : 0 }}
+        transition={{ duration: 0.3 }}
+        className='overflow-hidden'
+      >
+        <div className='p-6'>{children}</div>
+      </motion.div>
     </div>
   )
 }
-
 const Rules: FC = () => {
   return (
     <div className='max-w-6xl mx-auto px-2 py-12'>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
-        <Card title='How to Play' icon='pieChart'>
-          <div className='text-lg leading-relaxed'>
-            Buy a ticket and pick 4 numbers. If you pick the correct numbers, in the correct
-            order, you win! prizes for getting all 4 (jackpot!), 3 in-a-row, and 2 in-a-row (see
-            below)!
-          </div>
+        <Card title='How to Play' icon='pieChart' color='bg-blue-50'>
+          <ol className='list-decimal pl-5 space-y-2'>
+            <li>Buy a ticket</li>
+            <li>Pick 4 numbers</li>
+            <li>Wait for the draw</li>
+            <li>Check your results</li>
+          </ol>
         </Card>
 
-        <Card title='Draw Schedule' icon='clock'>
-          <div className='text-lg leading-relaxed'>
-            Draws occur when a week has passed <b>AND</b> when the prize pool passes the minimum
-            threshold of <b>500ETH</b>. When both these conditions are met, a drawing is
-            triggered and the numbers are revealed.
-          </div>
+        <Card title='Draw Schedule' icon='clock' color='bg-green-50'>
+          Draws occur when:
+          <ul className='list-disc pl-5 mt-2 space-y-2'>
+            <li>
+              A week has passed <b>AND</b>
+            </li>
+            <li>
+              The prize pool passes <b>500ETH</b>
+            </li>
+          </ul>
         </Card>
       </div>
 
-      <div className='mb-8 px-6'>
+      <div className='space-y-4'>
         <Accordion title='Prize Pools' icon='ticket'>
           <div className='mb-4 text-lg leading-relaxed'>
             Each prize pool gets distributed amongst all the winners in the pool.
@@ -192,7 +208,6 @@ const Rules: FC = () => {
             pools, a 3 in-a-row winner would also win 2 in-a-row.
           </div>
         </Accordion>
-
         <Accordion title='Difficulty Levels' icon='alertCircle'>
           <div className='mb-4 text-lg leading-relaxed'>
             In order to keep the lottery fun, the game difficulty adjusts based on frequency of
@@ -212,7 +227,6 @@ const Rules: FC = () => {
             </li>
           </ul>
         </Accordion>
-
         <Accordion title='Winning and Claiming Prizes' icon='award'>
           <div className='mb-4 text-lg leading-relaxed'>Once a draw has been initiated:</div>
           <ul className='list-disc pl-5 text-lg leading-relaxed flex flex-col gap-y-2'>
@@ -224,12 +238,17 @@ const Rules: FC = () => {
         </Accordion>
       </div>
 
-      <Card title='Ticket Pricing and Fees' icon='coins'>
-        <p>
-          A ticket costs 0.1 ETH. 99% of ticket purchases go towards the prize pool. 1% (capped
-          at 100ETH) is deducted as a fee.
-        </p>
-      </Card>
+      <div className='mt-8 mb-16'>
+        <Card title='Ticket Pricing and Fees' icon='coins' color='bg-yellow-50'>
+          <p className='mb-2'>
+            Ticket cost: <span className='font-bold text-xl'>0.1 ETH</span>
+          </p>
+          <ul className='list-disc pl-5 space-y-2'>
+            <li>99% goes to prize pool</li>
+            <li>1% fee (capped at 100ETH)</li>
+          </ul>
+        </Card>
+      </div>
     </div>
   )
 }

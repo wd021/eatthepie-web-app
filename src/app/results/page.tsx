@@ -75,16 +75,15 @@ const PastGamesTable: React.FC<{
   games: typeof mockPastGames
   onRowClick: (id: number) => void
 }> = ({ games, onRowClick }) => (
-  <div className='overflow-x-auto'>
-    <table className='min-w-full bg-white'>
-      <thead className='bg-gray-100'>
-        <tr>
-          <th className='py-2 px-4 text-left'>Round #</th>
-          <th className='py-2 px-4 text-left'>Status</th>
-          <th className='py-2 px-4 text-left'>Prize Pool</th>
-          <th className='py-2 px-4 text-left'>Winners</th>
-          <th className='py-2 px-4 text-left'>Winning Numbers</th>
-          {/* <th className="py-2 px-4 text-left">Draw Date</th> */}
+  <div className='w-full overflow-x-auto'>
+    <table className='w-full border-collapse bg-white'>
+      <thead>
+        <tr className='bg-gray-100'>
+          <th className='border border-gray-300 p-2 text-left'>Round #</th>
+          <th className='border border-gray-300 p-2 text-left'>Status</th>
+          <th className='border border-gray-300 p-2 text-left'>Prize Pool</th>
+          <th className='border border-gray-300 p-2 text-left'>Winners</th>
+          <th className='border border-gray-300 p-2 text-left'>Winning Numbers</th>
         </tr>
       </thead>
       <tbody>
@@ -92,10 +91,10 @@ const PastGamesTable: React.FC<{
           <tr
             key={game.id}
             onClick={() => onRowClick(game.id)}
-            className='cursor-pointer hover:bg-gray-50 border-b border-gray-100 h-[50px]'
+            className='cursor-pointer hover:bg-gray-50'
           >
-            <td className='py-2 px-4'>{game.id}</td>
-            <td className='py-2 px-4'>
+            <td className='border border-gray-300 p-2'>{game.id}</td>
+            <td className='border border-gray-300 p-2'>
               <span
                 className={`px-2 py-1 rounded-full text-xs font-semibold ${
                   game.claimsStatus === 'Live'
@@ -106,10 +105,9 @@ const PastGamesTable: React.FC<{
                 {game.claimsStatus}
               </span>
             </td>
-            <td className='py-2 px-4'>{game.prizePool} ETH</td>
-            <td className='py-2 px-4'>{game.winners}</td>
-            <td className='py-2 px-4'>{game.numbers}</td>
-            {/* <td className="py-2 px-4">{game.drawDate}</td> */}
+            <td className='border border-gray-300 p-2'>{game.prizePool} ETH</td>
+            <td className='border border-gray-300 p-2'>{game.winners}</td>
+            <td className='border border-gray-300 p-2'>{game.numbers}</td>
           </tr>
         ))}
       </tbody>
@@ -118,18 +116,17 @@ const PastGamesTable: React.FC<{
 )
 
 const LotteryResultsPage: React.FC = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [pastGames, setPastGames] = useState(mockPastGames)
   const router = useRouter()
 
   const handlePastGameClick = (id: number) => {
-    // Implement navigation to detailed game page
     console.log(`Navigating to detailed view for game ${id}`)
-    router.push(`/results/1`)
+    router.push(`/results/${id}`)
   }
 
   return (
-    <div className='max-w-6xl mx-auto px-2 py-12'>
+    <div className='container mx-auto p-4'>
+      <h1 className='text-2xl font-bold mb-6'>Lottery Results</h1>
       <PastGamesTable games={pastGames} onRowClick={handlePastGameClick} />
     </div>
   )

@@ -1,6 +1,7 @@
 'use client'
 
 import { FC, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 
 import { Countdown } from '@/components'
 import { Game as GameModal } from '@/components/modals'
@@ -23,28 +24,43 @@ const Section: FC<SectionProps> = ({ icon, title, children }) => {
   const [isOpen, setIsOpen] = useState(true)
 
   return (
-    <div className='bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out'>
+    <motion.div
+      className='bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out'
+      whileHover={{ scale: 1.02 }}
+    >
       <div className='p-6 flex items-center cursor-pointer' onClick={() => setIsOpen(!isOpen)}>
         <div className='mr-4 text-2xl'>{icon}</div>
         <h3 className='text-xl font-semibold flex-grow'>{title}</h3>
-        <span
-          className={`text-xl transform transition-transform duration-300 ml-4 ${isOpen ? 'rotate-180' : ''}`}
+        <motion.span
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+          className='text-xl ml-4'
         >
           ▼
-        </span>
+        </motion.span>
       </div>
-      <div
-        className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'pb-6' : 'max-h-0'}`}
+      <motion.div
+        initial={false}
+        animate={{ height: isOpen ? 'auto' : 0 }}
+        transition={{ duration: 0.3 }}
+        className='overflow-hidden'
       >
-        <div className='text-gray-600 text-lg leading-relaxed'>{children}</div>
-      </div>
-    </div>
+        <div className='px-6 pb-6'>
+          <div className='text-gray-600 text-lg leading-relaxed'>{children}</div>
+        </div>
+      </motion.div>
+    </motion.div>
   )
 }
 
 const Hero: FC<HeroProps> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => (
   <div className='flex flex-col lg:flex-row items-center justify-center h-full w-full max-w-container py-10 lg:py-16 px-4 gap-x-12'>
-    <div className='text-center lg:text-left lg:ml-4 flex flex-col lg:max-w-[560px]'>
+    <motion.div
+      className='text-center lg:text-left lg:ml-4 flex flex-col lg:max-w-[560px]'
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className='text-4xl lg:text-7xl font-bold mb-2 sm:mb-4 lg:mb-10'>
         The World Lottery
       </div>
@@ -54,23 +70,31 @@ const Hero: FC<HeroProps> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => (
         <div>Secured by Ethereum</div>
       </div>
       <div className='flex gap-x-6 hidden lg:flex'>
-        <button
+        <motion.button
           className='bg-gray-800 w-[260px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl'
           onClick={onBuyTicket}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           Buy Ticket - {lotteryInfo?.ticketPrice}ETH
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           className='border border-gray-400 w-[260px] h-[75px] flex items-center justify-center rounded-full text-xl font-semibold'
           onClick={onHowItWorks}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           How It Works
-        </button>
+        </motion.button>
       </div>
-    </div>
-    <div
+    </motion.div>
+    <motion.div
       className='relative text-white w-[240px] lg:w-[420px] aspect-[2/3] shrink-0 cursor-pointer'
       onClick={onBuyTicket}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+      whileHover={{ scale: 1.05 }}
     >
       <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
       <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
@@ -81,28 +105,44 @@ const Hero: FC<HeroProps> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => (
           <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />
         </div>
       </div>
-    </div>
+    </motion.div>
     <div className='flex flex-col gap-y-4 flex mt-8 lg:hidden'>
-      <button
+      <motion.button
         className='bg-gray-800 w-[260px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl'
         onClick={onBuyTicket}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
         Buy Ticket - {lotteryInfo?.ticketPrice}ETH
-      </button>
-      <button
+      </motion.button>
+      <motion.button
         className='border border-gray-400 w-[260px] h-[75px] flex items-center justify-center rounded-full text-xl font-semibold'
         onClick={onHowItWorks}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
         How It Works
-      </button>
+      </motion.button>
     </div>
   </div>
 )
 
 const HowItWorks = () => (
   <div className='max-w-2xl mx-auto px-4'>
-    <h2 className='text-4xl font-bold text-center mb-12'>How It Works</h2>
-    <div className='space-y-6'>
+    <motion.h2
+      className='text-4xl font-bold text-center mb-12'
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      How It Works
+    </motion.h2>
+    <motion.div
+      className='space-y-6'
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+    >
       <Section icon='🌎' title='A Trustless and Fair World Lottery'>
         <div>
           Imagine a global lottery where everyone plays on equal footing, free from manipulation
@@ -187,19 +227,26 @@ const HowItWorks = () => (
           (brave).
         </div>
       </Section>
-    </div>
-    <div className='mt-12 text-center'>
+    </motion.div>
+    <motion.div
+      className='mt-12 text-center'
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.4 }}
+    >
       <p className='text-gray-600 mb-6'>
         For a more in-depth understanding, check out the documentation!
       </p>
-      <a
+      <motion.a
         href='https://docs.eatthepie.xyz'
         target='_blank'
-        className='bg-gray-800 text-white px-6 py-3 rounded-full font-semibold'
+        className='bg-gray-800 text-white px-6 py-3 rounded-full font-semibold inline-block'
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
         Read the Docs
-      </a>
-    </div>
+      </motion.a>
+    </motion.div>
   </div>
 )
 
@@ -218,17 +265,28 @@ export default function Home() {
 
   return (
     <>
-      <div className='flex flex-col items-center justify-center border-b border-gray-300'>
+      <motion.div
+        className='flex flex-col items-center justify-center border-b border-gray-300'
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <Hero
           lotteryInfo={lotteryInfo}
           onBuyTicket={() => setModal('game')}
           onHowItWorks={scrollToHowItWorks}
         />
-      </div>
+      </motion.div>
 
-      <div ref={howItWorksRef} className='py-16 bg-gradient-to-b from-green-50 to-white'>
+      <motion.div
+        ref={howItWorksRef}
+        className='py-16 bg-gradient-to-b from-green-50 to-white'
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <HowItWorks />
-      </div>
+      </motion.div>
 
       {modal === 'game' && <GameModal onRequestClose={() => setModal(false)} />}
     </>

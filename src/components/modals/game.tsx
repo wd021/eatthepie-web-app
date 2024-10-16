@@ -22,19 +22,12 @@ interface GameInfoCardProps {
   textColor: string
 }
 
-const GameInfoCard: React.FC<GameInfoCardProps> = ({
-  icon: Icon,
-  title,
-  value,
-  bgColor,
-  borderColor,
-  textColor,
-}) => (
-  <div className={`${bgColor} ${borderColor} rounded-lg p-4 flex items-center`}>
-    <Icon className={`w-10 h-10 ${textColor} mr-3`} />
+const GameInfoCard: React.FC<GameInfoCardProps> = ({ icon: Icon, title, value, bgColor }) => (
+  <div className={`${bgColor} rounded-lg p-4 flex items-center`}>
+    <Icon className={`w-10 h-10 text-white mr-3`} />
     <div>
-      <h3 className={`text-sm font-semibold ${textColor}`}>{title}</h3>
-      <p className={`text-xl font-bold ${textColor}`}>{value}</p>
+      <h3 className={`text-sm font-semibold text-white`}>{title}</h3>
+      <p className={`text-xl font-bold text-white`}>{value}</p>
     </div>
   </div>
 )
@@ -264,33 +257,25 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
         icon: Timer,
         title: 'Countdown',
         value: <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />,
-        bgColor: 'bg-sky-50',
-        borderColor: 'border border-sky-100',
-        textColor: 'text-sky-700',
+        bgColor: 'bg-[#f38181]',
       },
       {
         icon: EthereumCircle,
         title: 'Current Prize Pool',
         value: `${lotteryInfo?.prizePool || '0'} ETH`,
-        bgColor: 'bg-emerald-50',
-        borderColor: 'border border-emerald-100',
-        textColor: 'text-emerald-700',
+        bgColor: 'bg-[#17a34a]',
       },
       {
         icon: Calculator,
         title: 'Difficulty',
         value: lotteryInfo?.difficulty || '-',
-        bgColor: 'bg-amber-50',
-        borderColor: 'border border-amber-100',
-        textColor: 'text-amber-700',
+        bgColor: 'bg-[#a31795]',
       },
       {
         icon: Ticket,
         title: 'My Tickets',
         value: purchasedTickets,
-        bgColor: 'bg-violet-50',
-        borderColor: 'border border-violet-100',
-        textColor: 'text-violet-700',
+        bgColor: 'bg-[#2663eb]',
       },
     ],
     [lotteryInfo, purchasedTickets],

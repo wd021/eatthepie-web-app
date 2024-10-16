@@ -1,9 +1,11 @@
+'use client'
+
 import React, { useCallback, useEffect, useState } from 'react'
 import { formatEther } from 'viem'
 import { useChainId, usePublicClient } from 'wagmi'
 
 import LotteryABI from '@/contracts/LotteryABI.json'
-import { Close, Ticket } from '@/icons'
+import { Activity, Close } from '@/icons'
 
 interface Ticket {
   player: string
@@ -172,7 +174,7 @@ const RecentPurchases: React.FC = () => {
         onClick={() => setIsOpen(!isOpen)}
         className='bg-gray-800 text-white rounded-full shadow-lg w-16 h-16 flex items-center justify-center'
       >
-        {isOpen ? <Close className='w-6 h-6' /> : <Ticket className='w-8 h-8' />}
+        {isOpen ? <Close className='w-6 h-6' /> : <Activity className='w-8 h-8' />}
       </button>
       {isOpen && (
         <div
