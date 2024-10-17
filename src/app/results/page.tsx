@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { formatEther } from 'viem'
+
+import { useLotteryResults } from '@/hooks'
 
 // Mock data - replace with actual data fetching logic
 const mockPastGames = [
@@ -116,18 +119,82 @@ const PastGamesTable: React.FC<{
 )
 
 const LotteryResultsPage: React.FC = () => {
-  const [pastGames, setPastGames] = useState(mockPastGames)
+  const { games, hasMore, isLoading, loadMore } = useLotteryResults()
+  // const [pastGames, setPastGames] = useState(mockPastGames)
   const router = useRouter()
 
-  const handlePastGameClick = (id: number) => {
-    console.log(`Navigating to detailed view for game ${id}`)
-    router.push(`/results/${id}`)
+  // const handlePastGameClick = (id: number) => {
+  //   console.log(`Navigating to detailed view for game ${id}`)
+  //   router.push(`/results/${id}`)
+  // }
+
+  console.log('games', games)
+
+  // return (
+  //   <div className='container mx-auto p-4'>
+  //     <h1 className='text-2xl font-bold mb-6'>Lottery Results</h1>
+  //     {/* <PastGamesTable games={pastGames} onRowClick={handlePastGameClick} /> */}
+  //   </div>
+  // )
+
+  const formatPrizePool = (prizePool: bigint) => {
+    return `${formatEther(prizePool)} ETH`
+  }
+
+  const formatWinningNumbers = (numbers: bigint[]) => {
+    return numbers.map((n) => n.toString()).join(' - ')
+  }
+
+  const getStatusString = (status: number) => {
+    switch (status) {
+      case 0:
+        return 'InPlay'
+      case 1:
+        return 'Drawing'
+      case 2:
+        return 'Completed'
+      default:
+        return 'Unknown'
+    }
   }
 
   return (
-    <div className='container mx-auto p-4'>
-      <h1 className='text-2xl font-bold mb-6'>Lottery Results</h1>
-      <PastGamesTable games={pastGames} onRowClick={handlePastGameClick} />
+    <div className='container mx-auto px-4'>
+      <h1 className='text-2xl font-bold mb-4'>Lottery Results</h1>
+      <table className='w-full border-collapse border border-gray-300'>
+        <thead>
+          <tr>
+            <th className='border border-gray-300 p-2 text-left'>Round #</th>
+            <th className='border border-gray-300 p-2 text-left'>Status</th>
+            <th className='border border-gray-300 p-2 text-left'>Prize Pool</th>
+            <th className='border border-gray-300 p-2 text-left'>Winners</th>
+            <th className='border border-gray-300 p-2 text-left'>Winning Numbers</th>
+          </tr>
+        </thead>
+        <tbody>
+          {games.map((game) => (
+            <tr key={game.gameId.toString()}>
+              <td className='border border-gray-300 p-2'>{game.gameId.toString()}</td>
+              <td className='border border-gray-300 p-2'>{getStatusString(game.status)}</td>
+              <td className='border border-gray-300 p-2'>{formatPrizePool(game.prizePool)}</td>
+              <td className='border border-gray-300 p-2'>{game.numberOfWinners.toString()}</td>
+              <td className='border border-gray-300 p-2'>
+                {formatWinningNumbers(game.winningNumbers)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {isLoading && <p className='mt-4'>Loading...</p>}
+      {hasMore && (
+        <button
+          className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          onClick={loadMore}
+          disabled={isLoading}
+        >
+          Load More
+        </button>
+      )}
     </div>
   )
 }

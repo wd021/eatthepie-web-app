@@ -269,6 +269,29 @@
   },
   {
     "type": "function",
+    "name": "getBasicGameInfo",
+    "inputs": [
+      { "name": "startGameId", "type": "uint256", "internalType": "uint256" },
+      { "name": "endGameId", "type": "uint256", "internalType": "uint256" }
+    ],
+    "outputs": [
+      {
+        "name": "gameInfos",
+        "type": "tuple[]",
+        "internalType": "struct Lottery.GameBasicInfo[]",
+        "components": [
+          { "name": "gameId", "type": "uint256", "internalType": "uint256" },
+          { "name": "status", "type": "uint8", "internalType": "enum Lottery.GameStatus" },
+          { "name": "prizePool", "type": "uint256", "internalType": "uint256" },
+          { "name": "numberOfWinners", "type": "uint256", "internalType": "uint256" },
+          { "name": "winningNumbers", "type": "uint256[4]", "internalType": "uint256[4]" }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getCurrentGameInfo",
     "inputs": [],
     "outputs": [
@@ -277,6 +300,51 @@
       { "name": "prizePool", "type": "uint256", "internalType": "uint256" },
       { "name": "drawTime", "type": "uint256", "internalType": "uint256" },
       { "name": "timeUntilDraw", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getDetailedGameInfo",
+    "inputs": [{ "name": "gameId", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct Lottery.GameDetailedInfo",
+        "components": [
+          { "name": "gameId", "type": "uint256", "internalType": "uint256" },
+          { "name": "status", "type": "uint8", "internalType": "enum Lottery.GameStatus" },
+          { "name": "prizePool", "type": "uint256", "internalType": "uint256" },
+          { "name": "numberOfWinners", "type": "uint256", "internalType": "uint256" },
+          { "name": "winningNumbers", "type": "uint256[4]", "internalType": "uint256[4]" },
+          {
+            "name": "difficulty",
+            "type": "uint8",
+            "internalType": "enum Lottery.Difficulty"
+          },
+          { "name": "drawInitiatedBlock", "type": "uint256", "internalType": "uint256" },
+          { "name": "randaoBlock", "type": "uint256", "internalType": "uint256" },
+          { "name": "randaoValue", "type": "uint256", "internalType": "uint256" },
+          { "name": "payouts", "type": "uint256[3]", "internalType": "uint256[3]" }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getUserGameWinnings",
+    "inputs": [
+      { "name": "gameNumber", "type": "uint256", "internalType": "uint256" },
+      { "name": "user", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [
+      { "name": "goldWin", "type": "bool", "internalType": "bool" },
+      { "name": "silverWin", "type": "bool", "internalType": "bool" },
+      { "name": "bronzeWin", "type": "bool", "internalType": "bool" },
+      { "name": "totalPrize", "type": "uint256", "internalType": "uint256" },
+      { "name": "claimed", "type": "bool", "internalType": "bool" }
     ],
     "stateMutability": "view"
   },
@@ -309,6 +377,16 @@
       { "name": "", "type": "address", "internalType": "address" }
     ],
     "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "hasUserWon",
+    "inputs": [
+      { "name": "gameNumber", "type": "uint256", "internalType": "uint256" },
+      { "name": "user", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [{ "name": "hasWon", "type": "bool", "internalType": "bool" }],
     "stateMutability": "view"
   },
   {

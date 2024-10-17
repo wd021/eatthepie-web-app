@@ -32,6 +32,18 @@ const GameInfoCard: React.FC<GameInfoCardProps> = ({ icon: Icon, title, value, b
   </div>
 )
 
+const ProgressBar: React.FC<{ percentage: number; color: string }> = ({
+  percentage,
+  color,
+}) => (
+  <div className='w-full bg-gray-200 rounded-full h-2.5'>
+    <div
+      className={`${color} h-2.5 rounded-full transition-all duration-500 ease-out`}
+      style={{ width: `${percentage}%` }}
+    ></div>
+  </div>
+)
+
 interface NumberRange {
   min: number
   max: number
@@ -251,13 +263,26 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
     config: { tension: 300, friction: 10 },
   })
 
+  const [isInfoExpanded, setIsInfoExpanded] = useState(false)
+
+  const prizePoolProgress = useMemo(() => {
+    const currentPrizePool = parseFloat(lotteryInfo?.prizePool || '0')
+    return Math.min((currentPrizePool / 500) * 100, 100)
+  }, [lotteryInfo?.prizePool])
+
+  const countdownProgress = useMemo(() => {
+    const totalSeconds = 7 * 24 * 60 * 60 // 1 week in seconds
+    const remainingSeconds = lotteryInfo?.secondsUntilDraw || 0
+    return Math.max(0, Math.min(((totalSeconds - remainingSeconds) / totalSeconds) * 100, 100))
+  }, [lotteryInfo?.secondsUntilDraw])
+
   const gameInfo = useMemo(
     () => [
       {
         icon: Timer,
         title: 'Countdown',
         value: <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />,
-        bgColor: 'bg-[#f38181]',
+        bgColor: 'bg-[#2663eb]',
       },
       {
         icon: EthereumCircle,
@@ -265,20 +290,8 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
         value: `${lotteryInfo?.prizePool || '0'} ETH`,
         bgColor: 'bg-[#17a34a]',
       },
-      {
-        icon: Calculator,
-        title: 'Difficulty',
-        value: lotteryInfo?.difficulty || '-',
-        bgColor: 'bg-[#a31795]',
-      },
-      {
-        icon: Ticket,
-        title: 'My Tickets',
-        value: purchasedTickets,
-        bgColor: 'bg-[#2663eb]',
-      },
     ],
-    [lotteryInfo, purchasedTickets],
+    [lotteryInfo],
   )
 
   return (
@@ -290,7 +303,7 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
       style={customStyles}
     >
       <div className='flex flex-col h-full overflow-hidden'>
-        <div className='p-6 flex-shrink-0 border-b border-gray-200'>
+        <div className='p-4 flex-shrink-0 border-b border-gray-200'>
           <div className='flex justify-between items-center'>
             <h2 className='text-2xl font-bold text-gray-800'>
               Buy Tickets - Round #{lotteryInfo?.gameNumber}
@@ -304,47 +317,104 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
           </div>
         </div>
 
-        <div className='flex-grow overflow-y-auto px-6 py-4'>
-          <div className='mb-6'>
-            <button
-              onClick={() => setIsInfoCollapsed(!isInfoCollapsed)}
-              className='w-full flex items-center justify-between py-5 px-4 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors'
-            >
-              <span className='font-semibold text-gray-800'>Game Information</span>
-              <svg
-                className={`w-5 h-5 transform transition-transform ${
-                  isInfoCollapsed ? 'rotate-180' : ''
-                }`}
-                fill='none'
-                viewBox='0 0 24 24'
-                stroke='currentColor'
+        <div className='flex-grow overflow-y-auto p-4'>
+          <div className='space-y-4'>
+            <div className='bg-gray-100 p-4 rounded-lg'>
+              <div
+                className={`flex items-center justify-between ${isInfoExpanded ? 'mb-4' : 'mb-2'}`}
               >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M19 9l-7 7-7-7'
-                />
-              </svg>
-            </button>
-          </div>
-
-          {!isInfoCollapsed && (
-            <div className='grid grid-cols-2 gap-4 mb-6'>
-              {gameInfo.map((info, index) => (
-                <GameInfoCard key={index} {...info} />
-              ))}
+                <div className='flex items-center'>
+                  <svg
+                    className='w-6 h-6 mr-2 text-gray-600'
+                    viewBox='0 0 24 24'
+                    fill='none'
+                    xmlns='http://www.w3.org/2000/svg'
+                  >
+                    <path
+                      d='M13 16H12V12H11M12 8H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                    />
+                  </svg>
+                  <span className='font-semibold text-gray-700'>Game Information</span>
+                </div>
+                <button
+                  onClick={() => setIsInfoExpanded(!isInfoExpanded)}
+                  className='text-blue-500 hover:text-blue-600 transition-colors'
+                >
+                  <svg
+                    className={`w-5 h-5 transform transition-transform ${
+                      isInfoExpanded ? 'rotate-180' : ''
+                    }`}
+                    fill='none'
+                    viewBox='0 0 24 24'
+                    stroke='currentColor'
+                  >
+                    <path
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      strokeWidth={2}
+                      d='M19 9l-7 7-7-7'
+                    />
+                  </svg>
+                </button>
+              </div>
+              {isInfoExpanded && (
+                <>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
+                    <div className='bg-white rounded-lg p-3 flex flex-col justify-between border border-gray-200'>
+                      <div className='flex items-center'>
+                        <Timer className='w-8 h-8 text-blue-500 mr-2' />
+                        <div>
+                          <h4 className='text-xs font-semibold text-gray-600'>Countdown</h4>
+                          <p className='text-sm font-bold text-gray-800'>
+                            <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />
+                          </p>
+                        </div>
+                      </div>
+                      <div className='mt-2 bg-gray-200 rounded-full h-1.5'>
+                        <div
+                          className='bg-blue-500 h-1.5 rounded-full transition-all duration-500 ease-out'
+                          style={{ width: `${countdownProgress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div className='bg-white rounded-lg p-3 flex flex-col justify-between border border-gray-200'>
+                      <div className='flex items-center'>
+                        <EthereumCircle className='w-8 h-8 text-green-500 mr-2' />
+                        <div>
+                          <h4 className='text-xs font-semibold text-gray-600'>
+                            Current Prize Pool
+                          </h4>
+                          <p className='text-sm font-bold text-gray-800'>
+                            {lotteryInfo?.prizePool || '0'} ETH
+                          </p>
+                        </div>
+                      </div>
+                      <div className='mt-2 bg-gray-200 rounded-full h-1.5'>
+                        <div
+                          className='bg-green-500 h-1.5 rounded-full transition-all duration-500 ease-out'
+                          style={{ width: `${prizePoolProgress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='text-xs text-center text-gray-600'>
+                    Drawing starts when countdown reaches 0 and prize pool reaches 500 ETH
+                  </div>
+                </>
+              )}
             </div>
-          )}
 
-          <div className='space-y-6'>
             <div className='flex bg-gray-100 p-4 rounded-lg'>
               <div className='flex flex-col'>
                 <div className='flex items-center'>
                   <Ticket className='w-6 h-6 mr-2 text-gray-600' />
-                  <span className='font-semibold text-gray-700'>Number of tickets:</span>
+                  <span className='font-semibold text-gray-700'>Tickets to buy</span>
                 </div>
-                <p className='text-sm text-gray-500 italic'>Max 100 tickets per purchase</p>
+                <p className='text-sm text-gray-500 mt-1'>Max 100 tickets per purchase</p>
               </div>
               <input
                 type='number'
@@ -355,6 +425,7 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
                 className='ml-auto w-20 px-3 py-2 text-center border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
               />
             </div>
+
             <div className='flex items-center justify-between bg-gray-100 p-4 rounded-lg'>
               <div className='flex items-center'>
                 <svg
@@ -364,7 +435,7 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
                 >
                   <path d='M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z' />
                 </svg>
-                <span className='font-semibold text-gray-700'>Auto-generate numbers:</span>
+                <span className='font-semibold text-gray-700'>Auto-generate numbers</span>
               </div>
               <label className='flex items-center cursor-pointer'>
                 <div className='relative'>
@@ -400,7 +471,7 @@ const Game: React.FC<GameModalProps> = ({ onRequestClose }) => {
           </div>
         </div>
 
-        <div className='p-6 flex-shrink-0 border-t border-gray-200'>
+        <div className='p-4 flex-shrink-0 border-t border-gray-200'>
           <div className='mb-4 text-center'>
             <span className='text-lg font-semibold text-gray-700'>
               Total cost: {(ticketCount * Number(lotteryInfo?.ticketPrice || 0)).toFixed(2)} ETH

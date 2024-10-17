@@ -27,7 +27,7 @@ const CountdownComponent: React.FC<CountdownProps> = ({ secondsUntilDraw }) => {
 
   const renderer = ({ days, hours, minutes, seconds, completed }: RendererProps) => {
     if (completed) {
-      return <span>Draw in progress!</span>
+      return <span>Completed!</span>
     } else {
       return (
         <span className='font-mono'>
