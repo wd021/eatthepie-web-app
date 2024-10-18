@@ -1,29 +1,24 @@
 'use client'
 
-import { FC, useState } from 'react'
+import React, { FC, useState } from 'react'
 
 import { Game as GameModal } from '@/components/modals'
 import { useLotteryInfo } from '@/hooks'
 import { Close } from '@/icons'
+import { convertSecondsToShorthand } from '@/utils/helpers'
 
 interface StatusBarProps {
   isStatusBarVisible: boolean
   setIsStatusBarVisible: (value: boolean) => void
 }
 
-const PrizePoolDisplay: FC<{ prizePool: string | undefined }> = ({ prizePool }) => (
-  <div className='text-lg sm:text-2xl'>
-    <span>Current Prize Pool - </span>
-    <span className='ml-1.5 font-bold'>{prizePool} ETH</span>
-  </div>
-)
-
 const CloseButton: FC<{ onClick: (e: React.MouseEvent) => void }> = ({ onClick }) => (
   <button
     onClick={onClick}
-    className='absolute right-0 w-16 h-full flex items-center justify-center'
+    className='ml-4 p-1 rounded-full hover:bg-green-600 transition-colors duration-200 text-white'
+    aria-label='Close'
   >
-    <Close className='w-7 h-7' />
+    <Close className='w-6 h-6' />
   </button>
 )
 
@@ -42,10 +37,16 @@ const StatusBar: FC<StatusBarProps> = ({ isStatusBarVisible, setIsStatusBarVisib
   return (
     <>
       <div
-        className='z-10 bg-[#22e523] fixed top-0 left-0 right-0 h-[70px] text-center flex flex-col items-center justify-center cursor-pointer'
+        className='z-10 bg-gradient-to-r from-green-400 to-green-600 fixed top-0 left-0 right-0 h-12 flex items-center justify-between px-4 cursor-pointer transition-all duration-300 shadow-md'
         onClick={handleStatusBarClick}
       >
-        <PrizePoolDisplay prizePool={lotteryInfo?.prizePool} />
+        <div className='flex items-center space-x-4 text-black'>
+          <span className='font-bold'>Prize Pool: {lotteryInfo?.prizePool} ETH</span>
+          <span className='text-sm'>|</span>
+          <span>
+            Time Left: {convertSecondsToShorthand(lotteryInfo?.secondsUntilDraw || 0)}
+          </span>
+        </div>
         <CloseButton onClick={handleCloseClick} />
       </div>
       {modal === 'game' && <GameModal onRequestClose={() => setModal(false)} />}

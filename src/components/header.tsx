@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useCallback, useState } from 'react'
+import React, { FC, useCallback, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ConnectKitButton } from 'connectkit'
@@ -22,12 +22,32 @@ interface NavLinkProps {
 const NavLink: FC<NavLinkProps> = ({ href, currentPath, children }) => (
   <Link
     href={href}
-    className={
-      currentPath === href || currentPath.startsWith(href) ? 'font-semibold underline' : ''
-    }
+    className={`
+      px-3 py-2 rounded-md transition-colors duration-200
+      ${
+        currentPath === href || currentPath.startsWith(href)
+          ? 'bg-green-100 text-green-700 font-semibold'
+          : 'text-gray-700 hover:bg-gray-100'
+      }
+    `}
   >
     {children}
   </Link>
+)
+
+const CustomConnectButton: FC = () => (
+  <ConnectKitButton.Custom>
+    {({ show }) => {
+      return (
+        <button
+          onClick={show}
+          className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold'
+        >
+          Connect Wallet
+        </button>
+      )
+    }}
+  </ConnectKitButton.Custom>
 )
 
 const Header: FC<HeaderProps> = ({ isStatusBarVisible }) => {
@@ -42,32 +62,31 @@ const Header: FC<HeaderProps> = ({ isStatusBarVisible }) => {
   return (
     <>
       <header
-        className={`z-10 bg-gray-100 h-[75px] fixed left-0 right-0 border-b border-gray-200 ${
-          isStatusBarVisible ? 'top-[70px]' : 'top-0'
-        }`}
+        className={`
+          z-10 bg-white h-20 fixed left-0 right-0 shadow-md transition-all duration-300
+          ${isStatusBarVisible ? 'top-12' : 'top-0'}
+        `}
       >
-        <div className='flex items-center justify-between h-full px-4'>
+        <div className='container mx-auto h-full px-4 flex items-center justify-between'>
           <Link href='/' className='h-full flex items-center'>
             <img
               src='/logo.png'
               alt='Eat The Pie Lottery'
-              className='w-[54px] h-[40px] md:w-[74px] md:h-[55px]'
+              className='w-12 md:w-14 transition-transform duration-200 hover:scale-105'
             />
           </Link>
-          <nav className='text-lg'>
-            <div className='flex items-center space-x-4'>
-              <NavLink href='/rules' currentPath={pathname}>
-                Rules
-              </NavLink>
-              <NavLink href='/results' currentPath={pathname}>
-                Results
-              </NavLink>
-              {isConnected ? (
-                <WalletDropdown purchaseTicket={handlePurchaseTicket} />
-              ) : (
-                <ConnectKitButton />
-              )}
-            </div>
+          <nav className='flex items-center space-x-2 md:space-x-4'>
+            <NavLink href='/rules' currentPath={pathname}>
+              Rules
+            </NavLink>
+            <NavLink href='/results' currentPath={pathname}>
+              Results
+            </NavLink>
+            {isConnected ? (
+              <WalletDropdown purchaseTicket={handlePurchaseTicket} />
+            ) : (
+              <CustomConnectButton />
+            )}
           </nav>
         </div>
       </header>

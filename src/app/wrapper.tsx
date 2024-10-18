@@ -12,51 +12,64 @@ interface WrapperProps {
   children: React.ReactNode
 }
 
+interface FooterProps {
+  networkName: NetworkName
+  lotteryAddress: string
+}
+
 type NetworkName = keyof typeof NETWORK_NAMES
 
-const Footer: React.FC<{ networkName: NetworkName; lotteryAddress: string }> = ({
-  networkName,
-  lotteryAddress,
-}) => (
-  <footer className='fixed bottom-0 flex flex-col h-[100px] w-full items-center justify-center bg-gray-100 border-t border-gray-200'>
-    <BlockExplorerLink networkName={networkName} lotteryAddress={lotteryAddress} />
-    <Navigation />
-  </footer>
-)
-
-const BlockExplorerLink: React.FC<{ networkName: NetworkName; lotteryAddress: string }> = ({
-  networkName,
-  lotteryAddress,
-}) => (
-  <a
-    href={`${BLOCK_EXPLORER_LINKS[networkName]}address/${lotteryAddress}`}
-    target='_blank'
-    className='h-[50px] text-lg flex items-center justify-center underline font-semibold cursor-pointer'
-  >
-    <Ethereum className='w-5 h-5 mr-1' />
-    <div>
-      {NETWORK_NAMES[networkName]}: {trimAddress(lotteryAddress, 6, 6)}
-    </div>
-    <LinkArrow className='w-8 h-8' />
-  </a>
-)
+const BlockExplorerLink: React.FC<FooterProps> = ({ networkName, lotteryAddress }) => {
+  const explorerUrl = 'https://www.google.com'
+  return (
+    <a
+      href={explorerUrl}
+      target='_blank'
+      rel='noopener noreferrer'
+      className='text-gray-600 font-semibold hover:text-green-600 transition-colors duration-200'
+    >
+      View Contract on Etherscan
+    </a>
+  )
+}
 
 const Navigation: React.FC = () => (
-  <nav className='h-[50px] text-sm sm:text-base'>
-    <a href='https://docs.eatthepie.xyz' target='_blank'>
+  <nav className='h-[50px] text-sm sm:text-base flex items-center justify-center'>
+    <a
+      href='https://docs.eatthepie.xyz'
+      target='_blank'
+      rel='noopener noreferrer'
+      className='hover:text-green-600 transition-colors duration-200'
+    >
       Docs
     </a>
     <span className='mx-2 text-gray-400'>·</span>
-    <a href='https://github.com/eatthepie' target='_blank'>
+    <a
+      href='https://github.com/eatthepie'
+      target='_blank'
+      rel='noopener noreferrer'
+      className='hover:text-green-600 transition-colors duration-200'
+    >
       Github
     </a>
     <span className='mx-2 text-gray-400'>·</span>
-    <Link href='/mirrors' target='_blank'>
+    <Link href='/mirrors' className='hover:text-green-600 transition-colors duration-200'>
       Mirrors
     </Link>
     <span className='mx-2 text-gray-400'>·</span>
-    <span>Responsible Gambling</span>
+    <span className='text-gray-600'>Responsible Gambling</span>
   </nav>
+)
+
+const Footer: React.FC<FooterProps> = ({ networkName, lotteryAddress }) => (
+  <footer className='bg-white border-t border-gray-200 py-4'>
+    <div className='container mx-auto px-4'>
+      <div className='flex flex-col items-center'>
+        <BlockExplorerLink networkName={networkName} lotteryAddress={lotteryAddress} />
+        <Navigation />
+      </div>
+    </div>
+  </footer>
 )
 
 const Wrapper: React.FC<WrapperProps> = ({ children }) => {
@@ -80,9 +93,7 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
         setIsStatusBarVisible={setIsStatusBarVisible}
       />
       <Header isStatusBarVisible={isStatusBarVisible} />
-      <main className={`mb-[100px] ${isStatusBarVisible ? 'mt-[145px]' : 'mt-[75px]'}`}>
-        {children}
-      </main>
+      <main className={`${isStatusBarVisible ? 'mt-32' : 'mt-20'}`}>{children}</main>
       <Footer networkName={networkName} lotteryAddress={lotteryAddress} />
       <RecentPurchases />
     </div>

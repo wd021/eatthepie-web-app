@@ -54,75 +54,108 @@ const Section: FC<SectionProps> = ({ icon, title, children }) => {
 }
 
 const Hero: FC<HeroProps> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => (
-  <div className='flex flex-col lg:flex-row items-center justify-center h-full w-full max-w-container py-10 lg:py-16 px-4 gap-x-12'>
-    <motion.div
-      className='text-center lg:text-left lg:ml-4 flex flex-col lg:max-w-[560px]'
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className='text-4xl lg:text-7xl font-bold mb-2 sm:mb-4 lg:mb-10'>
-        The World Lottery
-      </div>
-      <div className='text-2xl ml-2 mb-6 lg:mb-12 text-gray-500 lg:gap-y-2 flex flex-col'>
-        <div>Fully transparent and fair</div>
-        <div>Self-executing</div>
-        <div>Secured by Ethereum</div>
-      </div>
-      <div className='flex gap-x-6 hidden lg:flex'>
-        <motion.button
-          className='bg-gray-800 w-[260px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl'
+  <div className='py-16'>
+    <div className='container mx-auto px-4'>
+      <div className='flex flex-col lg:flex-row items-center justify-between gap-12'>
+        <motion.div
+          className='text-center lg:text-left lg:max-w-[560px] w-full'
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className='text-4xl lg:text-6xl font-bold mb-6 text-gray-900'>
+            The World Lottery
+          </h1>
+          <ul className='text-xl lg:text-2xl mb-8 text-gray-700 space-y-2'>
+            <li className='flex items-center justify-center lg:justify-start'>
+              <svg
+                className='w-6 h-6 mr-2 text-green-500'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='M5 13l4 4L19 7'
+                ></path>
+              </svg>
+              Fully transparent and fair
+            </li>
+            <li className='flex items-center justify-center lg:justify-start'>
+              <svg
+                className='w-6 h-6 mr-2 text-green-500'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='M5 13l4 4L19 7'
+                ></path>
+              </svg>
+              Self-executing
+            </li>
+            <li className='flex items-center justify-center lg:justify-start'>
+              <svg
+                className='w-6 h-6 mr-2 text-green-500'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='M5 13l4 4L19 7'
+                ></path>
+              </svg>
+              Secured by Ethereum
+            </li>
+          </ul>
+          <div className='flex flex-col sm:flex-row gap-4 justify-center sm:justify-center lg:justify-start w-full'>
+            <motion.button
+              className='bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-full text-xl transition-colors duration-300'
+              onClick={onBuyTicket}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Buy Ticket - {lotteryInfo?.ticketPrice}ETH
+            </motion.button>
+            <motion.button
+              className='border-2 border-gray-400 hover:border-gray-600 text-gray-800 font-bold py-4 px-8 rounded-full text-xl transition-colors duration-300'
+              onClick={onHowItWorks}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              How It Works
+            </motion.button>
+          </div>
+        </motion.div>
+        <motion.div
+          className='relative w-full max-w-sm lg:max-w-md cursor-pointer'
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
           onClick={onBuyTicket}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
         >
-          Buy Ticket - {lotteryInfo?.ticketPrice}ETH
-        </motion.button>
-        <motion.button
-          className='border border-gray-400 w-[260px] h-[75px] flex items-center justify-center rounded-full text-xl font-semibold'
-          onClick={onHowItWorks}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          How It Works
-        </motion.button>
+          <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
+          <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
+            <div className='text-4xl lg:text-7xl font-bold text-black'>
+              {lotteryInfo?.prizePool}Ξ
+            </div>
+            <div className='text-lg lg:text-3xl text-black font-semibold mt-2'>
+              <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />
+            </div>
+          </div>
+        </motion.div>
       </div>
-    </motion.div>
-    <motion.div
-      className='relative text-white w-[240px] lg:w-[420px] aspect-[2/3] shrink-0 cursor-pointer'
-      onClick={onBuyTicket}
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      whileHover={{ scale: 1.05 }}
-    >
-      <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
-      <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
-        <div className='text-4xl lg:text-7xl font-bold text-black'>
-          {lotteryInfo?.prizePool}Ξ
-        </div>
-        <div className='text-lg lg:text-3xl text-black font-semibold mt-2'>
-          <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />
-        </div>
-      </div>
-    </motion.div>
-    <div className='flex flex-col gap-y-4 flex mt-8 lg:hidden'>
-      <motion.button
-        className='bg-gray-800 w-[260px] h-[75px] flex items-center justify-center rounded-full text-white font-semibold text-xl'
-        onClick={onBuyTicket}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        Buy Ticket - {lotteryInfo?.ticketPrice}ETH
-      </motion.button>
-      <motion.button
-        className='border border-gray-400 w-[260px] h-[75px] flex items-center justify-center rounded-full text-xl font-semibold'
-        onClick={onHowItWorks}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        How It Works
-      </motion.button>
     </div>
   </div>
 )
@@ -235,7 +268,7 @@ const HowItWorks = () => (
       transition={{ duration: 0.5, delay: 0.4 }}
     >
       <p className='text-gray-600 mb-6'>
-        For a more in-depth understanding, check out the documentation!
+        For a more in-depth understanding, check out the documentation.
       </p>
       <motion.a
         href='https://docs.eatthepie.xyz'
@@ -277,17 +310,15 @@ export default function Home() {
           onHowItWorks={scrollToHowItWorks}
         />
       </motion.div>
-
       <motion.div
         ref={howItWorksRef}
-        className='py-16 bg-gradient-to-b from-green-50 to-white'
+        className='py-16 bg-gradient-to-b from-green-50 to-green-100'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}
       >
         <HowItWorks />
       </motion.div>
-
       {modal === 'game' && <GameModal onRequestClose={() => setModal(false)} />}
     </>
   )

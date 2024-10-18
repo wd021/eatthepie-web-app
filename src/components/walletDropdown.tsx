@@ -84,7 +84,7 @@ const WalletDropdown: React.FC<WalletDropdownProps> = ({ purchaseTicket }) => {
   return (
     <div className='relative' ref={dropdownRef}>
       <button
-        className='flex items-center bg-gray-800 rounded-full text-white py-1 px-3 md:py-1.5 md:px-4'
+        className='flex px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold'
         onClick={() => setIsOpen(!isOpen)}
       >
         <Wallet className='w-6 h-6 text-white' />

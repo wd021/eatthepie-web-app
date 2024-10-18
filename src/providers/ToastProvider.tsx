@@ -18,7 +18,7 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined)
 export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [toast, setToast] = useState<ToastProps | null>(null)
 
-  const showToast = useCallback((message: string, duration = 2000) => {
+  const showToast = useCallback((message: string, duration = 2500) => {
     setToast({ message, duration })
   }, [])
 
