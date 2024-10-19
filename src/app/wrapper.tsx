@@ -62,7 +62,7 @@ const Navigation: React.FC = () => (
 )
 
 const Footer: React.FC<FooterProps> = ({ networkName, lotteryAddress }) => (
-  <footer className='bg-white border-t border-gray-200 py-4'>
+  <footer className='bg-white border-t border-gray-200 py-4 mt-auto'>
     <div className='container mx-auto px-4'>
       <div className='flex flex-col items-center'>
         <BlockExplorerLink networkName={networkName} lotteryAddress={lotteryAddress} />
@@ -87,13 +87,13 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
   if (!isClient) return null
 
   return (
-    <div className='min-h-screen'>
+    <div className='min-h-screen flex flex-col'>
       <StatusBar
         isStatusBarVisible={isStatusBarVisible}
         setIsStatusBarVisible={setIsStatusBarVisible}
       />
       <Header isStatusBarVisible={isStatusBarVisible} />
-      <main className={`${isStatusBarVisible ? 'mt-32' : 'mt-20'}`}>{children}</main>
+      <main className={`flex-grow ${isStatusBarVisible ? 'mt-32' : 'mt-20'}`}>{children}</main>
       <Footer networkName={networkName} lotteryAddress={lotteryAddress} />
       <RecentPurchases />
     </div>

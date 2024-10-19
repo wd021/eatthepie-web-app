@@ -18,22 +18,29 @@ interface GameBasicInfo {
 export default function useLotteryResults() {
   const [currentPage, setCurrentPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
+  const [allGames, setAllGames] = useState<GameBasicInfo[]>([])
+  const [error, setError] = useState<string | null>(null)
 
-  const { data: currentGameNumber } = useReadContract({
+  const { data: currentGameNumber, isError: isCurrentGameNumberError } = useReadContract({
     address: CONTRACT_ADDRESSES.LOTTERY as Address,
     abi: lotteryABI,
     functionName: 'currentGameNumber',
   })
 
-  console.log('currentGameNumber', currentGameNumber)
+  const endGameId = useMemo(() => {
+    if (currentGameNumber === undefined) return 0n
+    return BigInt(currentGameNumber as bigint) - BigInt(currentPage * PAGE_SIZE)
+  }, [currentGameNumber, currentPage])
 
-  const endGameId =
-    currentGameNumber !== undefined
-      ? BigInt(currentGameNumber as number) - BigInt(currentPage * PAGE_SIZE)
-      : 0n
-  const startGameId = endGameId > BigInt(PAGE_SIZE) ? endGameId - BigInt(PAGE_SIZE - 1) : 1n
+  const startGameId = useMemo(() => {
+    return endGameId > BigInt(PAGE_SIZE) ? endGameId - BigInt(PAGE_SIZE - 1) : 1n
+  }, [endGameId])
 
-  const { data: gameInfos, isLoading } = useReadContracts({
+  const {
+    data: gameInfos,
+    isLoading,
+    isError: isGameInfosError,
+  } = useReadContracts({
     contracts: [
       {
         address: CONTRACT_ADDRESSES.LOTTERY as Address,
@@ -44,9 +51,7 @@ export default function useLotteryResults() {
     ],
   })
 
-  console.log('gameInfos', gameInfos)
-
-  const games = useMemo(() => {
+  const newGames = useMemo(() => {
     if (gameInfos && gameInfos[0].result) {
       return gameInfos[0].result as GameBasicInfo[]
     }
@@ -54,21 +59,38 @@ export default function useLotteryResults() {
   }, [gameInfos])
 
   useEffect(() => {
-    if (games.length > 0) {
-      setHasMore(startGameId > 1n)
+    if (isCurrentGameNumberError || isGameInfosError) {
+      setError('Failed to fetch lottery data. Please try again.')
     } else {
+      setError(null)
+    }
+  }, [isCurrentGameNumberError, isGameInfosError])
+
+  useEffect(() => {
+    if (newGames.length > 0) {
+      setAllGames((prevGames) => {
+        const uniqueGames = newGames.filter(
+          (newGame) =>
+            !prevGames.some((existingGame) => existingGame.gameId === newGame.gameId),
+        )
+        const updatedGames = [...prevGames, ...uniqueGames]
+        return updatedGames.sort((a, b) => (b.gameId > a.gameId ? 1 : -1))
+      })
+      setHasMore(startGameId > 1n)
+    } else if (!isLoading) {
       setHasMore(false)
     }
-  }, [games, startGameId])
+  }, [newGames, startGameId, isLoading])
 
   const loadMore = () => {
     setCurrentPage((prevPage) => prevPage + 1)
   }
 
   return {
-    games,
+    games: allGames,
     hasMore,
     isLoading,
     loadMore,
+    error,
   }
 }

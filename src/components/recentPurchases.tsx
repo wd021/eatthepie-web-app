@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useChainId, usePublicClient } from 'wagmi'
 
 import LotteryABI from '@/contracts/LotteryABI.json'
@@ -16,6 +16,7 @@ interface Ticket {
 }
 
 const BATCH_SIZE = 2000n
+const MAX_TICKETS = 500
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_LOTTERY_ADDRESS! as `0x${string}`
 
 const ExternalLinkIcon: React.FC = () => (
@@ -35,32 +36,36 @@ const ExternalLinkIcon: React.FC = () => (
   </svg>
 )
 
+const formatNumbers = (numbers: number[]): string => {
+  return numbers.map((num) => num.toString().padStart(2, '0')).join(' - ')
+}
+
 const TicketItem: React.FC<{ ticket: Ticket }> = ({ ticket }) => (
-  <div className='border-b border-gray-200 py-3'>
-    <div className='flex justify-between items-center mb-1'>
-      <span className='text-sm text-gray-600'>Game #{ticket.gameNumber}</span>
-      <a
-        href={`https://etherscan.io/address/${ticket.player}`}
-        target='_blank'
-        rel='noopener noreferrer'
-        className='text-gray-600 hover:text-gray-800 flex items-center'
-      >
-        <span className='text-sm'>
-          {ticket.player.slice(0, 6)}...{ticket.player.slice(-4)}
-        </span>
-        <ExternalLinkIcon />
-      </a>
-    </div>
+  <div className='border-b border-gray-200 last:border-b-0 py-3 hover:bg-gray-50 transition-colors duration-150'>
     <div className='flex justify-between items-center'>
-      <div>
-        <span className='text-sm'>Numbers:</span>
-        <span className='font-semibold ml-1.5'>{ticket.numbers.join(', ')}</span>
+      <div className='flex flex-col'>
+        <div className='flex items-center mb-1'>
+          <span className='text-sm font-medium text-gray-700'>
+            {formatNumbers(ticket.numbers)}
+          </span>
+        </div>
+        <a
+          href={`https://etherscan.io/address/${ticket.player}`}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='text-xs text-gray-500 hover:text-gray-700 flex items-center'
+        >
+          <span>
+            {ticket.player.slice(0, 6)}...{ticket.player.slice(-4)}
+          </span>
+          <ExternalLinkIcon />
+        </a>
       </div>
       <a
         href={`https://etherscan.io/tx/${ticket.transactionHash}`}
         target='_blank'
         rel='noopener noreferrer'
-        className='text-xs text-gray-600 hover:text-gray-800 flex items-center'
+        className='text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 py-1 px-2 rounded-full transition-colors duration-150 flex items-center'
       >
         View Tx
         <ExternalLinkIcon />
@@ -70,7 +75,7 @@ const TicketItem: React.FC<{ ticket: Ticket }> = ({ ticket }) => (
 )
 
 const TicketList: React.FC<{ tickets: Ticket[] }> = ({ tickets }) => (
-  <div className='flex-grow overflow-y-auto p-4'>
+  <div className='flex-grow overflow-y-auto px-4'>
     {tickets.length === 0 ? (
       <p className='text-center text-gray-500'>No ticket purchases found.</p>
     ) : (
@@ -81,13 +86,14 @@ const TicketList: React.FC<{ tickets: Ticket[] }> = ({ tickets }) => (
   </div>
 )
 
-const LoadMoreButton: React.FC<{ isLoading: boolean; onClick: () => void }> = ({
-  isLoading,
-  onClick,
-}) => (
+const LoadMoreButton: React.FC<{
+  isLoading: boolean
+  onClick: () => void
+  disabled: boolean
+}> = ({ isLoading, onClick, disabled }) => (
   <button
     onClick={onClick}
-    disabled={isLoading}
+    disabled={isLoading || disabled}
     className='w-full py-2 px-4 bg-gray-800 text-white rounded-md focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 active:scale-95'
   >
     {isLoading ? (
@@ -120,6 +126,7 @@ const useTicketFetcher = (publicClient: any) => {
   const [isLoading, setIsLoading] = useState(false)
   const [currentBlock, setCurrentBlock] = useState<bigint | null>(null)
   const [oldestLoadedTimestamp, setOldestLoadedTimestamp] = useState<number | null>(null)
+  const [hasMore, setHasMore] = useState(true)
 
   const fetchTickets = useCallback(
     async (fromBlock: bigint, toBlock: bigint) => {
@@ -164,7 +171,7 @@ const useTicketFetcher = (publicClient: any) => {
   )
 
   const loadMoreTickets = useCallback(async () => {
-    if (isLoading) return
+    if (isLoading || !hasMore) return
     setIsLoading(true)
 
     try {
@@ -180,7 +187,11 @@ const useTicketFetcher = (publicClient: any) => {
 
       const newTickets = await fetchTickets(fromBlock, toBlock)
 
-      setTickets((prevTickets) => [...prevTickets, ...newTickets])
+      setTickets((prevTickets) => {
+        const updatedTickets = [...prevTickets, ...newTickets].slice(0, MAX_TICKETS)
+        setHasMore(updatedTickets.length < MAX_TICKETS)
+        return updatedTickets
+      })
       setCurrentBlock(fromBlock)
 
       const oldestTicket = newTickets[newTickets.length - 1]
@@ -192,9 +203,9 @@ const useTicketFetcher = (publicClient: any) => {
     } finally {
       setIsLoading(false)
     }
-  }, [currentBlock, fetchTickets, publicClient, isLoading])
+  }, [currentBlock, fetchTickets, publicClient, isLoading, hasMore])
 
-  return { tickets, isLoading, oldestLoadedTimestamp, loadMoreTickets }
+  return { tickets, isLoading, oldestLoadedTimestamp, loadMoreTickets, hasMore }
 }
 
 const formatTimeElapsed = (timestamp: number): string => {
@@ -214,7 +225,7 @@ const RecentPurchases: React.FC = () => {
   const publicClient = usePublicClient()
   const chainId = useChainId()
 
-  const { tickets, isLoading, oldestLoadedTimestamp, loadMoreTickets } =
+  const { tickets, isLoading, oldestLoadedTimestamp, loadMoreTickets, hasMore } =
     useTicketFetcher(publicClient)
 
   useEffect(() => {
@@ -248,7 +259,11 @@ const RecentPurchases: React.FC = () => {
           </div>
           <TicketList tickets={tickets} />
           <div className='p-4 border-t border-gray-200'>
-            <LoadMoreButton isLoading={isLoading} onClick={loadMoreTickets} />
+            <LoadMoreButton
+              isLoading={isLoading}
+              onClick={loadMoreTickets}
+              disabled={!hasMore}
+            />
             {oldestLoadedTimestamp && (
               <p className='text-xs text-gray-500 text-center mt-2'>
                 Showing purchases from the last {formatTimeElapsed(oldestLoadedTimestamp)}

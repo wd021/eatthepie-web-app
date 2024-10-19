@@ -147,11 +147,14 @@ const Hero: FC<HeroProps> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => (
         >
           <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
           <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
-            <div className='text-4xl lg:text-7xl font-bold text-black'>
-              {lotteryInfo?.prizePool}Ξ
+            <div className='text-5xl lg:text-7xl font-bold text-black'>
+              {lotteryInfo?.prizePool ? Number(lotteryInfo?.prizePool).toFixed(1) : ''}Ξ
             </div>
             <div className='text-lg lg:text-3xl text-black font-semibold mt-2'>
-              <Countdown secondsUntilDraw={lotteryInfo?.secondsUntilDraw} />
+              <Countdown
+                secondsUntilDraw={lotteryInfo?.secondsUntilDraw}
+                displayCompleted={false}
+              />
             </div>
           </div>
         </motion.div>

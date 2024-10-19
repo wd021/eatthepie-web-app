@@ -5,6 +5,7 @@ import Countdown from 'react-countdown'
 
 interface CountdownProps {
   secondsUntilDraw?: number
+  displayCompleted?: boolean
 }
 
 interface RendererProps {
@@ -15,7 +16,10 @@ interface RendererProps {
   completed: boolean
 }
 
-const CountdownComponent: React.FC<CountdownProps> = ({ secondsUntilDraw }) => {
+const CountdownComponent: React.FC<CountdownProps> = ({
+  secondsUntilDraw,
+  displayCompleted = true,
+}) => {
   const [targetDate, setTargetDate] = useState<Date | null>(null)
 
   useEffect(() => {
@@ -27,7 +31,7 @@ const CountdownComponent: React.FC<CountdownProps> = ({ secondsUntilDraw }) => {
 
   const renderer = ({ days, hours, minutes, seconds, completed }: RendererProps) => {
     if (completed) {
-      return <span>Completed!</span>
+      return <span>{displayCompleted ? 'Completed!' : ''}</span>
     } else {
       return (
         <span className='font-mono'>

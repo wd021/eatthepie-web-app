@@ -1,154 +1,26 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React from 'react'
+import Link from 'next/link'
 import { formatEther } from 'viem'
 
 import { useLotteryResults } from '@/hooks'
 
-// Mock data - replace with actual data fetching logic
-const mockPastGames = [
-  {
-    id: 8,
-    prizePool: 950,
-    winners: 0,
-    numbers: 'in progress...',
-    claimsStatus: 'Live',
-    drawDate: '',
-  },
-  {
-    id: 7,
-    prizePool: 950,
-    winners: 2,
-    numbers: '12, 42, 52, 34',
-    claimsStatus: 'Completed',
-    drawDate: 'In progress',
-  },
-  {
-    id: 6,
-    prizePool: 950,
-    winners: 2,
-    numbers: '12, 42, 52, 34',
-    claimsStatus: 'Completed',
-    drawDate: '2024-09-18',
-  },
-  {
-    id: 5,
-    prizePool: 880,
-    winners: 1,
-    numbers: '12, 42, 52, 34',
-    claimsStatus: 'Completed',
-    drawDate: '2024-09-11',
-  },
-  {
-    id: 4,
-    prizePool: 920,
-    winners: 3,
-    numbers: '12, 42, 52, 34',
-    claimsStatus: 'Completed',
-    drawDate: '2024-09-04',
-  },
-  {
-    id: 3,
-    prizePool: 950,
-    winners: 2,
-    numbers: '12, 42, 52, 34',
-    claimsStatus: 'Completed',
-    drawDate: '2024-09-18',
-  },
-  {
-    id: 2,
-    prizePool: 880,
-    winners: 1,
-    numbers: '12, 42, 52, 34',
-    claimsStatus: 'Completed',
-    drawDate: '2024-09-11',
-  },
-  {
-    id: 1,
-    prizePool: 920,
-    winners: 3,
-    numbers: '12, 42, 52, 34',
-    claimsStatus: 'Completed',
-    drawDate: '2024-09-04',
-  },
-]
-
-const PastGamesTable: React.FC<{
-  games: typeof mockPastGames
-  onRowClick: (id: number) => void
-}> = ({ games, onRowClick }) => (
-  <div className='w-full overflow-x-auto'>
-    <table className='w-full border-collapse bg-white'>
-      <thead>
-        <tr className='bg-gray-100'>
-          <th className='border border-gray-300 p-2 text-left'>Round #</th>
-          <th className='border border-gray-300 p-2 text-left'>Status</th>
-          <th className='border border-gray-300 p-2 text-left'>Prize Pool</th>
-          <th className='border border-gray-300 p-2 text-left'>Winners</th>
-          <th className='border border-gray-300 p-2 text-left'>Winning Numbers</th>
-        </tr>
-      </thead>
-      <tbody>
-        {games.map((game) => (
-          <tr
-            key={game.id}
-            onClick={() => onRowClick(game.id)}
-            className='cursor-pointer hover:bg-gray-50'
-          >
-            <td className='border border-gray-300 p-2'>{game.id}</td>
-            <td className='border border-gray-300 p-2'>
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                  game.claimsStatus === 'Live'
-                    ? 'bg-green-200 text-green-800'
-                    : 'bg-gray-200 text-gray-800'
-                }`}
-              >
-                {game.claimsStatus}
-              </span>
-            </td>
-            <td className='border border-gray-300 p-2'>{game.prizePool} ETH</td>
-            <td className='border border-gray-300 p-2'>{game.winners}</td>
-            <td className='border border-gray-300 p-2'>{game.numbers}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-)
-
 const LotteryResultsPage: React.FC = () => {
   const { games, hasMore, isLoading, loadMore } = useLotteryResults()
-  // const [pastGames, setPastGames] = useState(mockPastGames)
-  const router = useRouter()
-
-  // const handlePastGameClick = (id: number) => {
-  //   console.log(`Navigating to detailed view for game ${id}`)
-  //   router.push(`/results/${id}`)
-  // }
-
-  console.log('games', games)
-
-  // return (
-  //   <div className='container mx-auto p-4'>
-  //     <h1 className='text-2xl font-bold mb-6'>Lottery Results</h1>
-  //     {/* <PastGamesTable games={pastGames} onRowClick={handlePastGameClick} /> */}
-  //   </div>
-  // )
 
   const formatPrizePool = (prizePool: bigint) => {
-    return `${formatEther(prizePool)} ETH`
+    return `${parseFloat(formatEther(prizePool)).toFixed(1)} ETH`
   }
 
   const formatWinningNumbers = (numbers: bigint[]) => {
-    return numbers.map((n) => n.toString()).join(' - ')
+    return numbers.map((n) => n.toString().padStart(2, '0')).join(' - ')
   }
 
   const getStatusString = (status: number) => {
     switch (status) {
       case 0:
-        return 'InPlay'
+        return 'In Play'
       case 1:
         return 'Drawing'
       case 2:
@@ -158,43 +30,148 @@ const LotteryResultsPage: React.FC = () => {
     }
   }
 
+  const getStatusColor = (status: number) => {
+    switch (status) {
+      case 0:
+        return 'bg-blue-100 text-blue-800'
+      case 1:
+        return 'bg-yellow-100 text-yellow-800'
+      case 2:
+        return 'bg-green-100 text-green-800'
+      default:
+        return 'bg-gray-100 text-gray-800'
+    }
+  }
+
   return (
-    <div className='container mx-auto px-4'>
-      <h1 className='text-2xl font-bold mb-4'>Lottery Results</h1>
-      <table className='w-full border-collapse border border-gray-300'>
-        <thead>
-          <tr>
-            <th className='border border-gray-300 p-2 text-left'>Round #</th>
-            <th className='border border-gray-300 p-2 text-left'>Status</th>
-            <th className='border border-gray-300 p-2 text-left'>Prize Pool</th>
-            <th className='border border-gray-300 p-2 text-left'>Winners</th>
-            <th className='border border-gray-300 p-2 text-left'>Winning Numbers</th>
-          </tr>
-        </thead>
-        <tbody>
-          {games.map((game) => (
-            <tr key={game.gameId.toString()}>
-              <td className='border border-gray-300 p-2'>{game.gameId.toString()}</td>
-              <td className='border border-gray-300 p-2'>{getStatusString(game.status)}</td>
-              <td className='border border-gray-300 p-2'>{formatPrizePool(game.prizePool)}</td>
-              <td className='border border-gray-300 p-2'>{game.numberOfWinners.toString()}</td>
-              <td className='border border-gray-300 p-2'>
-                {formatWinningNumbers(game.winningNumbers)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {isLoading && <p className='mt-4'>Loading...</p>}
-      {hasMore && (
-        <button
-          className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          onClick={loadMore}
-          disabled={isLoading}
-        >
-          Load More
-        </button>
-      )}
+    <div className='max-w-6xl mx-auto px-4 py-12'>
+      <h1 className='text-3xl font-bold mb-8 text-center'>Lottery Results</h1>
+      <div className='bg-white shadow-md rounded-lg overflow-hidden'>
+        <div className='overflow-x-auto'>
+          <table className='w-full'>
+            <thead className='bg-gray-50'>
+              <tr>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Round #
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Status
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Prize Pool
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Winners
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                  Winning Numbers
+                </th>
+                <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'></th>
+              </tr>
+            </thead>
+            <tbody className='bg-white divide-y divide-gray-200'>
+              {games.map((game) => (
+                <tr
+                  key={game.gameId.toString()}
+                  className='hover:bg-gray-50 transition-colors duration-150 ease-in-out'
+                >
+                  <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>
+                    {game.gameId.toString()}
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap text-sm'>
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(game.status)}`}
+                    >
+                      {getStatusString(game.status)}
+                    </span>
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
+                    {formatPrizePool(game.prizePool)}
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
+                    {game.numberOfWinners.toString()}
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
+                    {formatWinningNumbers(game.winningNumbers)}
+                  </td>
+                  <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
+                    <Link
+                      href={`/results/${game.gameId.toString()}`}
+                      className='text-gray-600 hover:text-gray-900'
+                    >
+                      <svg
+                        className='w-5 h-5 inline-block'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M9 5l7 7-7 7'
+                        />
+                      </svg>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div className='mt-8 flex justify-center'>
+        {isLoading ? (
+          <div className='flex items-center text-gray-500'>
+            <svg
+              className='animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-500'
+              xmlns='http://www.w3.org/2000/svg'
+              fill='none'
+              viewBox='0 0 24 24'
+            >
+              <circle
+                className='opacity-25'
+                cx='12'
+                cy='12'
+                r='10'
+                stroke='currentColor'
+                strokeWidth='4'
+              ></circle>
+              <path
+                className='opacity-75'
+                fill='currentColor'
+                d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+              ></path>
+            </svg>
+            Loading...
+          </div>
+        ) : hasMore ? (
+          <button
+            className='bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-150 ease-in-out flex items-center'
+            onClick={loadMore}
+            disabled={isLoading}
+          >
+            Load More
+            <svg
+              className='ml-2 w-5 h-5'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M19 9l-7 7-7-7'
+              />
+            </svg>
+          </button>
+        ) : (
+          <p className='text-gray-500'>No more results to load.</p>
+        )}
+      </div>
     </div>
   )
 }

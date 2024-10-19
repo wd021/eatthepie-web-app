@@ -4,7 +4,6 @@ import { FC, useState } from 'react'
 import { motion } from 'framer-motion'
 
 const Icon: React.FC<{ name: string }> = ({ name }) => {
-  // Simple SVG icons
   const icons: { [key: string]: JSX.Element } = {
     pieChart: (
       <svg
@@ -161,6 +160,7 @@ const Accordion: React.FC<{
     </div>
   )
 }
+
 const Rules: FC = () => {
   return (
     <div className='max-w-6xl mx-auto px-2 py-12'>

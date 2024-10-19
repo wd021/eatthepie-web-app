@@ -1,7 +1,7 @@
 import { WalletPage } from '@/components'
 
 const Page = () => {
-  return <WalletPage />
+  return <WalletPage address={null} />
 }
 
 export default Page
