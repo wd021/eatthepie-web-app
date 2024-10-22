@@ -149,7 +149,7 @@ const TransactionFeedback: React.FC<TransactionFeedbackProps> = ({
             onClick={onRequestClose}
             className='px-6 py-3 bg-green-600 text-white text-lg rounded-lg hover:bg-green-700 transition-colors duration-200'
           >
-            Back to Game
+            Done
           </button>
         </div>
       )}

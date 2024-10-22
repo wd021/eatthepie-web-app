@@ -89,10 +89,14 @@ const LotteryResultsPage: React.FC = () => {
                     {formatPrizePool(game.prizePool)}
                   </td>
                   <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                    {game.numberOfWinners.toString()}
+                    {Number(game.winningNumbers[0]) !== 0
+                      ? game.numberOfWinners.toString()
+                      : '-'}
                   </td>
                   <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-500'>
-                    {formatWinningNumbers(game.winningNumbers)}
+                    {Number(game.winningNumbers[0]) !== 0
+                      ? formatWinningNumbers(game.winningNumbers)
+                      : '-'}
                   </td>
                   <td className='px-6 py-4 whitespace-nowrap text-right text-sm font-medium'>
                     <Link
