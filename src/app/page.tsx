@@ -1,12 +1,15 @@
 'use client'
 
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { Countdown } from '@/components'
-import { Game as GameModal } from '@/components/modals'
+import { Game as GameModal, Responsible as ResponsibleModal } from '@/components/modals'
 import { useLotteryInfo } from '@/hooks'
 import { LotteryInfo } from '@/utils/types'
+
+const TERMS_ACCEPTED_KEY = 'etp-terms-accepted'
+const TERMS_VERSION = '1.0' // increment this when terms change to force re-acceptance
 
 interface SectionProps {
   icon: React.ReactNode
@@ -148,7 +151,12 @@ const Hero: FC<HeroProps> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => (
           <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
           <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
             <div className='text-5xl lg:text-7xl font-bold text-black'>
-              {lotteryInfo?.prizePool ? Number(lotteryInfo?.prizePool).toFixed(1) : ''}Ξ
+              {lotteryInfo?.prizePool
+                ? Number(lotteryInfo?.prizePool) >= 10000
+                  ? Number(lotteryInfo?.prizePool).toFixed(0)
+                  : Number(lotteryInfo?.prizePool).toFixed(1)
+                : ''}
+              Ξ
             </div>
             <div className='text-lg lg:text-3xl text-black font-semibold mt-2'>
               <Countdown
@@ -287,7 +295,7 @@ const HowItWorks = () => (
 )
 
 export default function Home() {
-  const [modal, setModal] = useState<boolean | 'game'>(false)
+  const [modal, setModal] = useState<boolean | 'game' | 'responsible'>(false)
   const howItWorksRef = useRef<HTMLDivElement>(null)
   const { lotteryInfo } = useLotteryInfo()
 
@@ -297,6 +305,25 @@ export default function Home() {
       const y = howItWorksRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset
       window.scrollTo({ top: y, behavior: 'smooth' })
     }
+  }
+
+  useEffect(() => {
+    checkTermsAcceptance()
+  }, [])
+
+  const checkTermsAcceptance = () => {
+    // Only check after component is mounted to avoid hydration issues
+    if (typeof window !== 'undefined') {
+      const acceptedVersion = localStorage.getItem(TERMS_ACCEPTED_KEY)
+      if (!acceptedVersion || acceptedVersion !== TERMS_VERSION) {
+        setModal('responsible')
+      }
+    }
+  }
+
+  const handleAcceptTerms = () => {
+    localStorage.setItem(TERMS_ACCEPTED_KEY, TERMS_VERSION)
+    setModal(false)
   }
 
   return (
@@ -323,6 +350,13 @@ export default function Home() {
         <HowItWorks />
       </motion.div>
       {modal === 'game' && <GameModal onRequestClose={() => setModal(false)} />}
+      {modal === 'responsible' && (
+        <ResponsibleModal
+          onRequestClose={() => setModal(false)}
+          isFirstVisit={true}
+          onAccept={handleAcceptTerms}
+        />
+      )}
     </>
   )
 }

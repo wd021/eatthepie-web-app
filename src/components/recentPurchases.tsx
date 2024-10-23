@@ -74,59 +74,80 @@ const TicketItem: React.FC<{ ticket: Ticket }> = ({ ticket }) => (
   </div>
 )
 
-const TicketList: React.FC<{ tickets: Ticket[] }> = ({ tickets }) => (
-  <div className='flex-grow overflow-y-auto px-4'>
-    {tickets.length === 0 ? (
-      <p className='text-center text-gray-500'>No ticket purchases found.</p>
-    ) : (
-      tickets.map((ticket, index) => (
-        <TicketItem key={ticket.transactionHash} ticket={ticket} />
-      ))
-    )}
-  </div>
-)
-
-const LoadMoreButton: React.FC<{
+const TicketList: React.FC<{
+  tickets: Ticket[]
   isLoading: boolean
-  onClick: () => void
-  disabled: boolean
-}> = ({ isLoading, onClick, disabled }) => (
-  <button
-    onClick={onClick}
-    disabled={isLoading || disabled}
-    className='w-full py-2 px-4 bg-gray-800 text-white rounded-md focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 active:scale-95'
-  >
-    {isLoading ? (
-      <div className='flex items-center justify-center'>
-        <svg className='animate-spin h-5 w-5 mr-3' viewBox='0 0 24 24'>
-          <circle
-            className='opacity-25'
-            cx='12'
-            cy='12'
-            r='10'
-            stroke='currentColor'
-            strokeWidth='4'
-          />
-          <path
-            className='opacity-75'
-            fill='currentColor'
-            d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-          />
-        </svg>
-        Loading...
+}> = ({ tickets, isLoading }) => {
+  if (isLoading) {
+    return (
+      <div className='flex-grow flex items-center justify-center'>
+        <div className='flex flex-col items-center space-y-3'>
+          <svg
+            className='animate-spin h-5 w-5 text-blue-500'
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+          >
+            <circle
+              className='opacity-25'
+              cx='12'
+              cy='12'
+              r='10'
+              stroke='currentColor'
+              strokeWidth='4'
+            ></circle>
+            <path
+              className='opacity-75'
+              fill='currentColor'
+              d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+            ></path>
+          </svg>
+          <span className='text-sm text-gray-600'>Loading...</span>
+        </div>
       </div>
-    ) : (
-      'Load More'
-    )}
-  </button>
-)
+    )
+  }
+
+  return (
+    <div className='flex-grow overflow-y-auto'>
+      <div className='px-4'>
+        {tickets.length === 0 ? (
+          <p className='text-center text-gray-500 py-4'>No ticket purchases found.</p>
+        ) : (
+          <>
+            <div className='text-xs text-gray-500 text-center py-2'>
+              Showing the last {tickets.length} ticket purchases
+              <br />
+              (from the last 2000 blocks)
+            </div>
+            {tickets.map((ticket, i) => (
+              <TicketItem key={i} ticket={ticket} />
+            ))}
+            <div className='text-sm text-center p-4 bg-gray-50 rounded-lg my-4 mx-2'>
+              <p className='text-gray-600'>
+                Join Discord to get alerts of all events including ticket purchases, draws, and
+                when numbers get revealed!
+              </p>
+              <a
+                href='https://discord.gg/yourdiscord'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='text-blue-600 hover:text-blue-800 font-medium inline-flex items-center mt-2'
+              >
+                Join Discord
+                <ExternalLinkIcon />
+              </a>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
 
 const useTicketFetcher = (publicClient: any) => {
   const [tickets, setTickets] = useState<Ticket[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [currentBlock, setCurrentBlock] = useState<bigint | null>(null)
-  const [oldestLoadedTimestamp, setOldestLoadedTimestamp] = useState<number | null>(null)
-  const [hasMore, setHasMore] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
 
   const fetchTickets = useCallback(
     async (fromBlock: bigint, toBlock: bigint) => {
@@ -143,7 +164,10 @@ const useTicketFetcher = (publicClient: any) => {
         toBlock,
       })
 
-      const ticketsWithoutTimestamp = logs.map((log: any) => ({
+      // Limit the number of logs to process
+      const limitedLogs = logs.slice(0, MAX_TICKETS)
+
+      const ticketsWithoutTimestamp = limitedLogs.map((log: any) => ({
         player: log.args.player,
         gameNumber: Number(log.args.gameNumber),
         numbers: [
@@ -170,54 +194,23 @@ const useTicketFetcher = (publicClient: any) => {
     [publicClient],
   )
 
-  const loadMoreTickets = useCallback(async () => {
-    if (isLoading || !hasMore) return
+  const loadLatestTickets = useCallback(async () => {
+    if (!publicClient) return
     setIsLoading(true)
 
     try {
-      const latestBlock = await publicClient?.getBlockNumber()
-      if (!latestBlock) throw new Error('Unable to fetch latest block number')
-
-      const fromBlock = currentBlock
-        ? currentBlock - BATCH_SIZE > 1n
-          ? currentBlock - BATCH_SIZE
-          : 1n
-        : latestBlock
-      const toBlock = currentBlock || latestBlock
-
-      const newTickets = await fetchTickets(fromBlock, toBlock)
-
-      setTickets((prevTickets) => {
-        const updatedTickets = [...prevTickets, ...newTickets].slice(0, MAX_TICKETS)
-        setHasMore(updatedTickets.length < MAX_TICKETS)
-        return updatedTickets
-      })
-      setCurrentBlock(fromBlock)
-
-      const oldestTicket = newTickets[newTickets.length - 1]
-      if (oldestTicket) {
-        setOldestLoadedTimestamp(oldestTicket.timestamp)
-      }
+      const latestBlock = await publicClient.getBlockNumber()
+      const fromBlock = latestBlock - BATCH_SIZE > 1n ? latestBlock - BATCH_SIZE : 1n
+      const newTickets = await fetchTickets(fromBlock, latestBlock)
+      setTickets(newTickets)
     } catch (error) {
       console.error('Error fetching tickets:', error)
     } finally {
       setIsLoading(false)
     }
-  }, [currentBlock, fetchTickets, publicClient, isLoading, hasMore])
+  }, [fetchTickets, publicClient])
 
-  return { tickets, isLoading, oldestLoadedTimestamp, loadMoreTickets, hasMore }
-}
-
-const formatTimeElapsed = (timestamp: number): string => {
-  const now = Math.floor(Date.now() / 1000)
-  const diff = now - timestamp
-  const minutes = Math.floor(diff / 60)
-  const hours = Math.floor(minutes / 60)
-  const days = Math.floor(hours / 24)
-
-  if (days > 0) return `${days} day${days > 1 ? 's' : ''}`
-  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''}`
-  return `${minutes} minute${minutes > 1 ? 's' : ''}`
+  return { tickets, isLoading, loadLatestTickets }
 }
 
 const RecentPurchases: React.FC = () => {
@@ -225,14 +218,13 @@ const RecentPurchases: React.FC = () => {
   const publicClient = usePublicClient()
   const chainId = useChainId()
 
-  const { tickets, isLoading, oldestLoadedTimestamp, loadMoreTickets, hasMore } =
-    useTicketFetcher(publicClient)
+  const { tickets, isLoading, loadLatestTickets } = useTicketFetcher(publicClient)
 
   useEffect(() => {
-    if (isOpen && tickets.length === 0) {
-      loadMoreTickets()
+    if (isOpen) {
+      loadLatestTickets()
     }
-  }, [isOpen, tickets.length, loadMoreTickets])
+  }, [isOpen, loadLatestTickets])
 
   const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), [])
 
@@ -251,25 +243,17 @@ const RecentPurchases: React.FC = () => {
           className='fixed right-4 bottom-24 bg-white z-40 shadow-xl rounded-lg overflow-hidden flex flex-col'
           style={{ width: '350px', height: '80vh' }}
         >
-          <div className='p-4 border-b border-gray-200 flex justify-between items-center'>
-            <h3 className='text-lg font-semibold text-gray-800'>Recent Purchases</h3>
+          <div className='p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50'>
+            <h3 className='text-lg font-semibold text-gray-800 flex items-center'>
+              <span className='mr-2'>🎟️</span>
+              Recent Purchases
+            </h3>
             <button onClick={toggleOpen} className='text-gray-500 hover:text-gray-700'>
               <Close className='w-6 h-6' />
             </button>
           </div>
-          <TicketList tickets={tickets} />
-          <div className='p-4 border-t border-gray-200'>
-            <LoadMoreButton
-              isLoading={isLoading}
-              onClick={loadMoreTickets}
-              disabled={!hasMore}
-            />
-            {oldestLoadedTimestamp && (
-              <p className='text-xs text-gray-500 text-center mt-2'>
-                Showing purchases from the last {formatTimeElapsed(oldestLoadedTimestamp)}
-              </p>
-            )}
-          </div>
+
+          <TicketList tickets={tickets} isLoading={isLoading} />
         </div>
       )}
     </div>

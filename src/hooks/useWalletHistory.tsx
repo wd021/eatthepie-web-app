@@ -6,6 +6,8 @@ import { CONTRACT_ADDRESSES } from '@/config/chainConfig'
 import lotteryABI from '@/contracts/LotteryABI.json'
 import { Ticket } from '@/utils/types'
 
+const MAX_TICKETS = 500
+
 export interface WalletHistoryParams {
   walletAddress: Address
   gameNumber: number
@@ -108,15 +110,17 @@ export default function useWalletHistory({
         (ticket) => ticket.player.toLowerCase() === walletAddress.toLowerCase(),
       )
 
+      const limitedTickets = walletTickets.slice(0, MAX_TICKETS)
+
       // Here you would determine the status and cost of each ticket
       // This is a placeholder and should be replaced with your actual logic
-      const processedTickets = walletTickets.map((ticket) => ({
-        ...ticket,
-        status: 'Pending', // Replace with actual status logic
-        cost: '0.1 ETH', // Replace with actual cost calculation
-      }))
+      // const processedTickets = walletTickets.map((ticket) => ({
+      //   ...ticket,
+      //   status: 'Pending', // Replace with actual status logic
+      //   cost: '0.1 ETH', // Replace with actual cost calculation
+      // }))
 
-      setTickets(processedTickets)
+      setTickets(limitedTickets)
     } catch (err) {
       setError('An error occurred while fetching tickets')
       console.error(err)

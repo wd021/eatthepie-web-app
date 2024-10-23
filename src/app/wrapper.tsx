@@ -57,7 +57,7 @@ const Navigation: React.FC = () => (
       Mirrors
     </Link>
     <span className='mx-2 text-gray-400'>·</span>
-    <span className='text-gray-600'>Responsible Gambling</span>
+    <span className='text-gray-600'>⚠️ Responsible Gaming</span>
   </nav>
 )
 

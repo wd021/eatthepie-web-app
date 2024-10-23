@@ -136,7 +136,10 @@ const Accordion: React.FC<{
   const [isOpen, setIsOpen] = useState(true)
 
   return (
-    <div className='border border-gray-200 bg-white rounded-lg mb-4 overflow-hidden'>
+    <motion.div
+      className='border border-gray-200 bg-white rounded-lg mb-4 overflow-hidden transition-all duration-300 ease-in-out'
+      whileHover={{ scale: 1.02 }}
+    >
       <button
         className='w-full text-left py-4 px-6 flex items-center justify-between focus:outline-none'
         onClick={() => setIsOpen(!isOpen)}
@@ -157,7 +160,7 @@ const Accordion: React.FC<{
       >
         <div className='p-6'>{children}</div>
       </motion.div>
-    </div>
+    </motion.div>
   )
 }
 

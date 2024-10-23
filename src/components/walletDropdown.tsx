@@ -72,7 +72,12 @@ const WalletDropdown: React.FC<WalletDropdownProps> = ({ purchaseTicket }) => {
     {
       onClick: handleWalletHistory,
       icon: <Receipt />,
-      text: 'Wallet History',
+      text: 'Purchase History',
+    },
+    {
+      onClick: handleWalletHistory,
+      icon: <Receipt />,
+      text: 'Claim Prize',
     },
     {
       onClick: handleDisconnect,
@@ -91,7 +96,7 @@ const WalletDropdown: React.FC<WalletDropdownProps> = ({ purchaseTicket }) => {
         <div className='ml-2'>{address ? trimAddress(address) : ''}</div>
       </button>
       {isOpen && (
-        <div className='absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'>
+        <div className='absolute right-0 mt-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'>
           <div
             className='py-1'
             role='menu'

@@ -9,7 +9,7 @@ import useWalletHistory from '@/hooks/useWalletHistory'
 import { Ticket } from '@/icons'
 
 interface WalletHistoryPageProps {
-  address?: string
+  address: string | null
 }
 
 const WalletHistoryPage: React.FC<WalletHistoryPageProps> = ({ address }) => {
@@ -68,7 +68,7 @@ const WalletHistoryPage: React.FC<WalletHistoryPageProps> = ({ address }) => {
 
   return (
     <div className='max-w-6xl mx-auto px-4 py-12'>
-      <h1 className='text-3xl font-bold mb-8 text-center'>Wallet History</h1>
+      <h1 className='text-3xl font-bold mb-8 text-center'>Purchase History</h1>
       <SearchSection
         walletAddress={walletAddress}
         setWalletAddress={setWalletAddress}
@@ -211,7 +211,7 @@ const ResultsSection: React.FC<{
 const TableHeader: React.FC = () => (
   <thead className='bg-gray-50'>
     <tr>
-      {['Ticket Number', 'Status', 'Block Explorer'].map((header) => (
+      {['Ticket Number', 'Block Explorer'].map((header) => (
         <th
           key={header}
           className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
@@ -230,9 +230,6 @@ const TableRow: React.FC<{ ticket: any; winningNumbers: bigint[] | undefined }> 
   <tr className='hover:bg-gray-50 transition-colors duration-150 ease-in-out'>
     <td className='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
       {formatTicketNumbers(ticket.numbers, winningNumbers)}
-    </td>
-    <td className='px-6 py-4 whitespace-nowrap'>
-      <StatusBadge status={getTicketStatus(ticket.numbers, winningNumbers)} />
     </td>
     <td className='px-6 py-4 whitespace-nowrap text-sm text-blue-600 hover:text-blue-900'>
       <a
@@ -261,24 +258,6 @@ const TableRow: React.FC<{ ticket: any; winningNumbers: bigint[] | undefined }> 
   </tr>
 )
 
-const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
-  const colorMap: { [key: string]: string } = {
-    jackpot: 'bg-yellow-100 text-yellow-800',
-    '3 in a row': 'bg-green-100 text-green-800',
-    '2 in a row': 'bg-blue-100 text-blue-800',
-    lost: 'bg-red-100 text-red-800',
-    pending: 'bg-purple-100 text-purple-800',
-  }
-
-  return (
-    <span
-      className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${colorMap[status] || 'bg-gray-100 text-gray-800'}`}
-    >
-      {status}
-    </span>
-  )
-}
-
 const formatTicketNumbers = (numbers: bigint[], winningNumbers: bigint[] | undefined) => {
   return numbers
     .map((num, index) => {
@@ -299,23 +278,6 @@ const formatTicketNumbers = (numbers: bigint[], winningNumbers: bigint[] | undef
         {curr}
       </>
     ))
-}
-
-const getTicketStatus = (numbers: bigint[], winningNumbers: bigint[] | undefined): string => {
-  if (!winningNumbers) return 'pending'
-
-  const matchingNumbers = numbers.filter((num, index) => winningNumbers[index] === num).length
-
-  switch (matchingNumbers) {
-    case 4:
-      return 'jackpot'
-    case 3:
-      return '3 in a row'
-    case 2:
-      return '2 in a row'
-    default:
-      return 'lost'
-  }
 }
 
 export default WalletHistoryPage

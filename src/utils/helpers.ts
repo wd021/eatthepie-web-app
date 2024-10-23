@@ -37,3 +37,8 @@ export const convertSecondsToShorthand = (seconds: number): string => {
 
   return `${Math.floor(seconds / 86400)}d`
 }
+
+export const truncateString = (str: string, length: number) => {
+  if (str.length <= length) return str
+  return `${str.slice(0, length)}...`
+}

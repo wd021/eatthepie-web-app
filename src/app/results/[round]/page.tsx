@@ -1,12 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { formatEther } from 'viem'
-import { useAccount, usePublicClient } from 'wagmi'
 
-import { CONTRACT_ADDRESSES } from '@/config/chainConfig'
-import lotteryABI from '@/contracts/LotteryABI.json'
 import { useLotteryGameInfo } from '@/hooks'
+import { Copy } from '@/icons'
+import { useToast } from '@/providers/ToastProvider'
+import { truncateString } from '@/utils/helpers'
+import { GameDetailedInfo } from '@/utils/types'
 
 const GameSection = ({
   title,
@@ -30,7 +31,7 @@ const GameSection = ({
   </div>
 )
 
-const GameProgressSection = ({ gameInfo }: { gameInfo: any }) => {
+const GameProgressSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) => {
   const steps = [
     { label: 'Game Started', completed: true },
     { label: 'Drawing Initiated', completed: gameInfo.drawInitiatedBlock > 0n },
@@ -39,7 +40,7 @@ const GameProgressSection = ({ gameInfo }: { gameInfo: any }) => {
 
   return (
     <GameSection title='Game Progress' emoji='📈'>
-      <div className='relative pt-2'>
+      <div className='relative'>
         <div className='absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200' />
         {steps.map((step, index) => (
           <div key={index} className='relative flex items-center mb-6 last:mb-0'>
@@ -68,7 +69,7 @@ const GameProgressSection = ({ gameInfo }: { gameInfo: any }) => {
             </div>
             <div className='ml-11'>
               <h4
-                className={`text-sm font-medium ${
+                className={`text-sm font-semibold ${
                   step.completed ? 'text-green-600' : 'text-gray-500'
                 }`}
               >
@@ -82,54 +83,89 @@ const GameProgressSection = ({ gameInfo }: { gameInfo: any }) => {
   )
 }
 
-const RandomNumberSection = ({ gameInfo }: { gameInfo: any }) => (
-  <GameSection title='Random Number Generation' emoji='🎲' className='mt-5'>
-    <div className='space-y-3'>
-      <div className='p-3 bg-gray-50 rounded'>
-        <div className='flex justify-between items-center'>
-          <span className='text-sm font-medium text-gray-900'>Block Number</span>
-          <span className='font-mono text-sm text-blue-600 font-medium'>
-            {gameInfo.randaoBlock.toString()}
-          </span>
-        </div>
-      </div>
-      <div className='p-3 bg-gray-50 rounded'>
-        <div className='flex justify-between items-center'>
-          <span className='text-sm font-medium text-gray-900'>RANDAO Value</span>
-          <span className='font-mono text-sm text-blue-600 font-medium'>
-            {gameInfo.randaoValue.toString()}
-          </span>
-        </div>
-      </div>
-      <div className='p-3 bg-gray-50 rounded'>
-        <div className='flex justify-between items-center'>
-          <span className='text-sm font-medium text-gray-900'>VDF Proof</span>
-          <span
-            className={`px-2.5 py-1 rounded-full text-xs font-medium ${
-              gameInfo.vdfProofSubmitted
-                ? 'bg-green-100 text-green-800'
-                : 'bg-yellow-100 text-yellow-800'
-            }`}
-          >
-            {gameInfo.vdfProofSubmitted ? 'Submitted' : 'Waiting...'}
-          </span>
-        </div>
-      </div>
-    </div>
-  </GameSection>
-)
+const RandomNumberSection = ({
+  gameInfo,
+  showToast,
+}: {
+  gameInfo: GameDetailedInfo
+  showToast: (message: string, duration?: number) => void
+}) => {
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      showToast('✅ RANDAO value copied')
+    } catch (err) {
+      // Fallback for browsers that don't support clipboard API
+      const textArea = document.createElement('textarea')
+      textArea.value = text
+      document.body.appendChild(textArea)
+      textArea.select()
+      try {
+        document.execCommand('copy')
+        showToast('✅ RANDAO value copied')
+      } catch (err) {
+        console.error('Failed to copy RANDAO value:', text)
+        showToast('⚠️ Error copying RANDAO value')
+      }
+      document.body.removeChild(textArea)
+    }
+  }
 
-const WinningNumber = ({ number }: { number: number }) => (
-  <div
-    className='w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 
-    flex items-center justify-center text-white text-xl font-bold shadow-sm 
-    transition-transform hover:scale-105'
-  >
-    {number}
-  </div>
-)
+  const vdfSubmitted = gameInfo.winningNumbers[0] !== 0n
+  const randaoBlock = gameInfo.randaoBlock !== 0n ? gameInfo.randaoBlock.toString() : '-'
+  const randaoValue = gameInfo.randaoValue !== 0n ? gameInfo.randaoValue.toString() : '-'
 
-const GameInformationSection = ({ gameInfo }: { gameInfo: any }) => {
+  return (
+    <GameSection title='Random Number Generation' emoji='🎲' className='mt-5'>
+      <div className='space-y-3'>
+        <div className='p-3 bg-gray-50 rounded'>
+          <div className='flex justify-between items-center'>
+            <span className='text-sm font-medium text-gray-900'>Block Number</span>
+            <span className='font-mono text-sm text-blue-600 font-medium'>{randaoBlock}</span>
+          </div>
+        </div>
+        <div className='p-3 bg-gray-50 rounded'>
+          <div className='flex justify-between items-center'>
+            <span className='text-sm font-medium text-gray-900'>RANDAO Value</span>
+            <div className='flex items-center gap-2'>
+              <span className='font-mono text-sm text-blue-600 font-medium'>
+                {randaoValue !== '-' ? truncateString(randaoValue, 15) : '-'}
+              </span>
+              {randaoValue !== '-' && (
+                <button
+                  onClick={() => copyToClipboard(randaoValue)}
+                  className='text-gray-500 hover:text-gray-700 transition-colors'
+                  title='Copy full value'
+                >
+                  <Copy className='w-4 h-4' />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className='p-3 bg-gray-50 rounded'>
+          <div className='flex justify-between items-center'>
+            <span className='text-sm font-medium text-gray-900'>VDF Proof</span>
+            {randaoBlock === '-' && randaoValue === '-' && (
+              <span className='font-mono text-sm text-blue-600 font-medium'>-</span>
+            )}
+            {randaoBlock !== '-' && randaoValue !== '-' && (
+              <span
+                className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                  vdfSubmitted ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                }`}
+              >
+                {vdfSubmitted ? 'Submitted' : 'Waiting'}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </GameSection>
+  )
+}
+
+const GameInformationSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) => {
   const getStatusBadge = (status: number) => {
     const styles =
       {
@@ -150,61 +186,96 @@ const GameInformationSection = ({ gameInfo }: { gameInfo: any }) => {
     )
   }
 
+  console.log('gameInfo.winningNumbers', gameInfo.winningNumbers)
+
   return (
     <GameSection title='Game Information' emoji='ℹ️'>
       <div className='space-y-6'>
-        <div>
-          <h3 className='text-sm font-semibold text-gray-900 mb-3'>Winning Numbers</h3>
-          <div className='flex space-x-2.5'>
-            {gameInfo.winningNumbers.map((number: number, index: number) => (
-              <WinningNumber key={index} number={number} />
-            ))}
-          </div>
-        </div>
-
+        {/* Winning Numbers & Status */}
         <div className='space-y-3'>
+          <div className='flex justify-between items-center'>
+            <h3 className='text-sm font-semibold text-gray-900'>Winning Numbers</h3>
+            <div className='text-2xl font-bold'>
+              {gameInfo.winningNumbers
+                .map((number: bigint) => number.toString().padStart(2, '0'))
+                .join(' - ')}
+            </div>
+          </div>
           <div className='p-3 bg-gray-50 rounded'>
             <div className='flex justify-between items-center'>
               <span className='text-sm font-medium text-gray-900'>Status</span>
               {getStatusBadge(gameInfo.status)}
             </div>
           </div>
-          <div className='p-3 bg-gray-50 rounded'>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm font-medium text-gray-900'>Prize Pool</span>
-              <span className='text-sm font-bold text-gray-900'>
+        </div>
+
+        {/* Prize Pool & Total Winners */}
+        <div className='grid grid-cols-2 gap-4'>
+          <div className='p-4 bg-gray-50 rounded-lg'>
+            <div className='flex flex-col'>
+              <span className='text-sm font-medium text-gray-500'>Total Prize Pool</span>
+              <span className='text-2xl font-bold text-gray-900'>
                 {formatEther(gameInfo.prizePool)} ETH
               </span>
             </div>
           </div>
-          <div className='p-3 bg-gray-50 rounded'>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm font-medium text-gray-900'>Total Winners</span>
-              <span className='text-sm font-bold text-gray-900'>
+          <div className='p-4 bg-gray-50 rounded-lg'>
+            <div className='flex flex-col'>
+              <span className='text-sm font-medium text-gray-500'>Total Winners</span>
+              <span className='text-2xl font-bold text-gray-900'>
                 {gameInfo.numberOfWinners.toString()}
               </span>
             </div>
           </div>
         </div>
 
-        <div className='space-y-3'>
-          <h3 className='text-sm font-semibold text-gray-900'>Payouts</h3>
-          <div className='p-3 bg-gray-50 rounded'>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm font-medium text-gray-900'>Jackpot</span>
-              <span className='text-sm font-bold text-gray-900'>10.5 ETH</span>
+        {/* Winner Distribution & Payouts */}
+        <div>
+          <h3 className='text-sm font-semibold text-gray-900 mb-3'>Winner Distribution</h3>
+          <div className='space-y-3'>
+            <div className='p-4 bg-gray-50 rounded-lg'>
+              <div className='flex items-center justify-between'>
+                <div className='space-y-1'>
+                  <div className='font-semibold text-gray-900'>Jackpot (4 Numbers)</div>
+                  <div className='text-sm text-gray-500'>
+                    {gameInfo.jackpotWinners?.toString() || '0'} winners
+                  </div>
+                </div>
+                <div className='text-right'>
+                  <div className='font-bold text-gray-900'>10.5 ETH</div>
+                  <div className='text-sm text-gray-500'>per winner</div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className='p-3 bg-gray-50 rounded'>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm font-medium text-gray-900'>3 in a row</span>
-              <span className='text-sm font-bold text-gray-900'>5.25 ETH</span>
+
+            <div className='p-4 bg-gray-50 rounded-lg'>
+              <div className='flex items-center justify-between'>
+                <div className='space-y-1'>
+                  <div className='font-semibold text-gray-900'>3 Numbers in a Row</div>
+                  <div className='text-sm text-gray-500'>
+                    {gameInfo.threeNumberWinners?.toString() || '0'} winners
+                  </div>
+                </div>
+                <div className='text-right'>
+                  <div className='font-bold text-gray-900'>5.25 ETH</div>
+                  <div className='text-sm text-gray-500'>per winner</div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className='p-3 bg-gray-50 rounded'>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm font-medium text-gray-900'>2 in a row</span>
-              <span className='text-sm font-bold text-gray-900'>2.1 ETH</span>
+
+            <div className='p-4 bg-gray-50 rounded-lg'>
+              <div className='flex items-center justify-between'>
+                <div className='space-y-1'>
+                  <div className='font-semibold text-gray-900'>2 Numbers in a Row</div>
+                  <div className='text-sm text-gray-500'>
+                    {gameInfo.twoNumberWinners?.toString() || '0'} winners
+                  </div>
+                </div>
+                <div className='text-right'>
+                  <div className='font-bold text-gray-900'>2.1 ETH</div>
+                  <div className='text-sm text-gray-500'>per winner</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -213,146 +284,9 @@ const GameInformationSection = ({ gameInfo }: { gameInfo: any }) => {
   )
 }
 
-const PrizeClaimsSection = ({
-  claims,
-  isLoading,
-  userWinningStatus,
-  onCheckWinning,
-}: {
-  claims: any[]
-  isLoading: boolean
-  userWinningStatus: string | null
-  onCheckWinning: () => void
-}) => (
-  <GameSection title='Prize Claims' emoji='🏆'>
-    <div>
-      <button
-        onClick={onCheckWinning}
-        className='mb-5 px-5 py-2 bg-blue-600 text-sm font-medium text-white rounded-lg 
-          hover:bg-blue-700 transition-colors shadow-sm'
-      >
-        Check If You Won
-      </button>
-
-      {userWinningStatus && (
-        <div className='mb-5 p-4 bg-blue-50 border border-blue-100 rounded-lg'>
-          <p className='text-sm font-medium text-blue-900'>{userWinningStatus}</p>
-        </div>
-      )}
-
-      {isLoading ? (
-        <div className='text-center py-6'>
-          <div className='animate-spin rounded-full h-7 w-7 border-b-2 border-blue-600 mx-auto' />
-        </div>
-      ) : claims.length === 0 ? (
-        <p className='text-center text-sm text-gray-500 py-6'>
-          No prizes claimed yet for this game
-        </p>
-      ) : (
-        <div className='overflow-x-auto'>
-          <table className='min-w-full divide-y divide-gray-200'>
-            <thead>
-              <tr>
-                <th className='px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                  Winner
-                </th>
-                <th className='px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                  Amount
-                </th>
-                <th className='px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                  Claimed At
-                </th>
-              </tr>
-            </thead>
-            <tbody className='divide-y divide-gray-200'>
-              {claims.map((claim, index) => (
-                <tr key={index} className='hover:bg-gray-50'>
-                  <td className='px-5 py-3 text-sm font-medium text-gray-900'>
-                    {claim.winner}
-                  </td>
-                  <td className='px-5 py-3 text-sm text-gray-900'>
-                    {formatEther(claim.amount)} ETH
-                  </td>
-                  <td className='px-5 py-3 text-sm text-gray-500'>
-                    {new Date(claim.timestamp * 1000).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  </GameSection>
-)
-
 const GameDetailsPage = ({ params: { round } }: { params: { round: bigint } }) => {
+  const { showToast } = useToast()
   const { gameInfo, isLoading, isError } = useLotteryGameInfo(round)
-  const [claims, setClaims] = useState<any[]>([])
-  const [claimsLoading, setClaimsLoading] = useState(true)
-  const [userWinningStatus, setUserWinningStatus] = useState<string | null>(null)
-
-  const publicClient = usePublicClient()
-  const { address, isConnected } = useAccount()
-
-  useEffect(() => {
-    const fetchPrizeClaims = async () => {
-      setClaimsLoading(true)
-      try {
-        const events = await publicClient.getContractEvents({
-          address: CONTRACT_ADDRESSES.LOTTERY,
-          abi: lotteryABI,
-          eventName: 'PrizeClaimed',
-          fromBlock: 'earliest',
-          toBlock: 'latest',
-          args: { gameNumber: round },
-        })
-
-        const claimsWithTimestamp = await Promise.all(
-          events.map(async (event) => {
-            const block = await publicClient.getBlock({ blockNumber: event.blockNumber })
-            return {
-              gameNumber: event.args.gameNumber,
-              winner: event.args.winner,
-              amount: event.args.amount,
-              timestamp: Number(block.timestamp),
-            }
-          }),
-        )
-
-        setClaims(claimsWithTimestamp)
-      } catch (error) {
-        console.error('Error fetching prize claims:', error)
-      } finally {
-        setClaimsLoading(false)
-      }
-    }
-
-    fetchPrizeClaims()
-  }, [round, publicClient])
-
-  const checkUserWinningStatus = async () => {
-    if (!isConnected || !address) {
-      setUserWinningStatus('Please connect your wallet to check if you won.')
-      return
-    }
-
-    try {
-      const userWon = await publicClient.readContract({
-        address: CONTRACT_ADDRESSES.LOTTERY,
-        abi: lotteryABI,
-        functionName: 'checkWinningStatus',
-        args: [round, address],
-      })
-
-      setUserWinningStatus(
-        userWon ? 'Congratulations! You won this game!' : 'Sorry, you did not win this game.',
-      )
-    } catch (error) {
-      console.error('Error checking winning status:', error)
-      setUserWinningStatus('An error occurred while checking your winning status.')
-    }
-  }
 
   if (isLoading) return <div className='text-center py-10'>Loading...</div>
   if (isError)
@@ -368,17 +302,10 @@ const GameDetailsPage = ({ params: { round } }: { params: { round: bigint } }) =
       <div className='grid grid-cols-1 md:grid-cols-2 gap-5 mb-5'>
         <div className='space-y-5'>
           <GameProgressSection gameInfo={gameInfo} />
-          <RandomNumberSection gameInfo={gameInfo} />
+          <RandomNumberSection gameInfo={gameInfo} showToast={showToast} />
         </div>
         <GameInformationSection gameInfo={gameInfo} />
       </div>
-
-      <PrizeClaimsSection
-        claims={claims}
-        isLoading={claimsLoading}
-        userWinningStatus={userWinningStatus}
-        onCheckWinning={checkUserWinningStatus}
-      />
     </div>
   )
 }

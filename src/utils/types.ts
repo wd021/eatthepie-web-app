@@ -10,3 +10,20 @@ export type LotteryInfo = {
   ticketPrice: string
   ticketsSold: string
 }
+
+export type GameDetailedInfo = {
+  gameId: bigint
+  status: number
+  prizePool: bigint
+  numberOfWinners: bigint
+  winningNumbers: bigint[]
+  difficulty: number
+  drawInitiatedBlock: bigint
+  randaoBlock: bigint
+  randaoValue: bigint
+  payouts: {
+    gold: bigint
+    silver: bigint
+    bronze: bigint
+  }
+}
