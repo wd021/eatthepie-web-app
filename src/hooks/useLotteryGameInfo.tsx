@@ -1,13 +1,12 @@
-import { Address } from 'viem'
 import { useReadContract } from 'wagmi'
 
-import { CONTRACT_ADDRESSES } from '@/config/chainConfig'
+import { CONTRACT_ADDRESS } from '@/utils/constants'
 import lotteryABI from '@/contracts/LotteryABI.json'
 import { GameDetailedInfo } from '@/utils/types'
 
 export default function useLotteryGameInfo(gameId: bigint) {
   const { data, isError, isLoading } = useReadContract({
-    address: CONTRACT_ADDRESSES.LOTTERY as Address,
+    address: CONTRACT_ADDRESS,
     abi: lotteryABI,
     functionName: 'getDetailedGameInfo',
     args: [gameId],

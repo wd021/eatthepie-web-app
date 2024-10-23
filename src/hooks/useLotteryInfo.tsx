@@ -1,63 +1,117 @@
 import { formatEther } from 'viem'
 import { useReadContract } from 'wagmi'
 
-import { CONTRACT_ADDRESSES } from '@/config/chainConfig'
+import { CONTRACT_ADDRESS } from '@/utils/constants'
 import lotteryABI from '@/contracts/LotteryABI.json'
 import { GameInfo, LotteryInfo } from '@/utils/types'
+import { useMemo } from 'react'
 
-const formatLotteryInfo = (lotteryInfo: GameInfo, ticketPrice: bigint) => {
-  const difficultyMap = ['Easy', 'Medium', 'Hard']
+const SECONDS_PER_DAY = 3600 * 24
+const SECONDS_PER_HOUR = 3600
+const SECONDS_PER_MINUTE = 60
 
-  return {
-    gameNumber: Number(lotteryInfo[0]),
-    difficulty: difficultyMap[lotteryInfo[1]] || 'Unknown',
-    prizePool: formatEther(lotteryInfo[2]),
-    drawTime: new Date(Number(lotteryInfo[3]) * 1000).toLocaleString(),
-    timeUntilDraw: formatTimeUntilDraw(Number(lotteryInfo[4])),
-    secondsUntilDraw: Number(lotteryInfo[4]),
-    ticketPrice: formatEther(ticketPrice),
-    ticketsSold: (lotteryInfo[2] / ticketPrice).toString(),
-  }
+enum Difficulty {
+  Easy = 0,
+  Medium = 1,
+  Hard = 2,
 }
 
-const formatTimeUntilDraw = (seconds: number) => {
-  const days = Math.floor(seconds / (3600 * 24))
-  const hours = Math.floor((seconds % (3600 * 24)) / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  const remainingSeconds = seconds % 60
+interface TimeParts {
+  days: number
+  hours: number
+  minutes: number
+  seconds: number
+}
 
+interface UseContractResult<T> {
+  data: T | undefined
+  isError: boolean
+  isLoading: boolean
+}
+
+interface UseLotteryInfoResult {
+  lotteryInfo: LotteryInfo | undefined
+  isLoading: boolean
+  isError: boolean
+}
+
+const calculateTimeParts = (totalSeconds: number): TimeParts => {
+  const days = Math.floor(totalSeconds / SECONDS_PER_DAY)
+  const hours = Math.floor((totalSeconds % SECONDS_PER_DAY) / SECONDS_PER_HOUR)
+  const minutes = Math.floor((totalSeconds % SECONDS_PER_HOUR) / SECONDS_PER_MINUTE)
+  const seconds = totalSeconds % SECONDS_PER_MINUTE
+
+  return { days, hours, minutes, seconds }
+}
+
+const formatTimeUntilDraw = (seconds: number): string => {
+  const { days, hours, minutes, seconds: remainingSeconds } = calculateTimeParts(seconds)
   return `${days}d ${hours}h ${minutes}m ${remainingSeconds}s`
 }
 
-export default function useLotteryInfo() {
+const getDifficultyLabel = (difficultyLevel: number): string => {
+  return Difficulty[difficultyLevel] || 'Unknown'
+}
+
+const calculateTicketsSold = (prizePool: bigint, ticketPrice: bigint): string => {
+  return (prizePool / ticketPrice).toString()
+}
+
+const formatDrawTime = (timestamp: bigint): string => {
+  return new Date(Number(timestamp) * 1000).toLocaleString()
+}
+
+const formatLotteryInfo = (gameInfo: GameInfo, ticketPrice: bigint): LotteryInfo => {
+  const [gameNumber, difficulty, prizePool, drawTimestamp, timeUntilDraw] = gameInfo
+
+  return {
+    gameNumber: Number(gameNumber),
+    difficulty: getDifficultyLabel(difficulty),
+    prizePool: formatEther(prizePool),
+    drawTime: formatDrawTime(drawTimestamp),
+    timeUntilDraw: formatTimeUntilDraw(Number(timeUntilDraw)),
+    secondsUntilDraw: Number(timeUntilDraw),
+    ticketPrice: formatEther(ticketPrice),
+    ticketsSold: calculateTicketsSold(prizePool, ticketPrice),
+  }
+}
+
+const useGameInfo = (): UseContractResult<GameInfo> => {
+  return useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: lotteryABI,
+    functionName: 'getCurrentGameInfo',
+  }) as UseContractResult<GameInfo>
+}
+
+const useTicketPrice = (): UseContractResult<bigint> => {
+  return useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: lotteryABI,
+    functionName: 'ticketPrice',
+  }) as UseContractResult<bigint>
+}
+
+export default function useLotteryInfo(): UseLotteryInfoResult {
   const {
     data: gameInfo,
     isError: isGameInfoError,
     isLoading: isGameInfoLoading,
-  } = useReadContract({
-    address: CONTRACT_ADDRESSES.LOTTERY,
-    abi: lotteryABI,
-    functionName: 'getCurrentGameInfo',
-  }) as { data: GameInfo | undefined; isError: boolean; isLoading: boolean }
+  } = useGameInfo()
 
   const {
     data: ticketPrice,
     isError: isTicketPriceError,
     isLoading: isTicketPriceLoading,
-  } = useReadContract({
-    address: CONTRACT_ADDRESSES.LOTTERY,
-    abi: lotteryABI,
-    functionName: 'ticketPrice',
-  }) as { data: bigint; isError: boolean; isLoading: boolean }
+  } = useTicketPrice()
 
   const isLoading = isGameInfoLoading || isTicketPriceLoading
   const isError = isGameInfoError || isTicketPriceError
 
-  let lotteryInfo: LotteryInfo | undefined
-
-  if (gameInfo && ticketPrice) {
-    lotteryInfo = formatLotteryInfo(gameInfo, ticketPrice)
-  }
+  const lotteryInfo = useMemo(() => {
+    if (!gameInfo || !ticketPrice) return undefined
+    return formatLotteryInfo(gameInfo, ticketPrice)
+  }, [gameInfo, ticketPrice])
 
   return {
     lotteryInfo,

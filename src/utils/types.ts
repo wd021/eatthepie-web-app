@@ -27,3 +27,13 @@ export type GameDetailedInfo = {
     bronze: bigint
   }
 }
+
+export type Ticket = {
+  player: string
+  gameNumber: number
+  numbers: number[]
+  blockNumber: bigint
+  transactionHash: `0x${string}`
+}
+
+export type BasicTicket = Omit<Ticket, 'timestamp' | 'blockNumber'>

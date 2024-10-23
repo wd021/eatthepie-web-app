@@ -287,7 +287,7 @@ export default function Home() {
       </motion.div>
       <motion.div
         ref={howItWorksRef}
-        className='py-16 bg-gradient-to-b from-green-50 to-green-100'
+        className='py-16 bg-gradient-to-b from-green-100 to-green-200'
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.2 }}

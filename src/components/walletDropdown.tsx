@@ -31,7 +31,7 @@ const STYLES = {
   walletIcon: 'w-6 h-6 text-white',
   addressText: 'ml-2',
   dropdown:
-    'absolute right-0 mt-2 w-52 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5',
+    'absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5',
   dropdownMenu: 'py-1',
   menuItem: 'flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100',
 } as const
@@ -73,18 +73,9 @@ const useDropdownActions = (purchaseTicket: () => void | Promise<void>) => {
         },
       },
       {
-        id: 'purchase-history',
-        icon: <Receipt />,
-        text: 'Purchase History',
-        action: () => {
-          router.push(`/wallet/${address}`)
-          closeDropdown()
-        },
-      },
-      {
         id: 'claim-prize',
         icon: <Prize />,
-        text: 'Claim Prize',
+        text: 'Did I Win',
         action: () => {
           router.push(`/claim/${address}`)
           closeDropdown()

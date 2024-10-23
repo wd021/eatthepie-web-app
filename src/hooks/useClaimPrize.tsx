@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react'
 import { ContractFunctionExecutionError } from 'viem'
 import { usePublicClient, useWriteContract } from 'wagmi'
 
-import { CONTRACT_ADDRESSES } from '@/config/chainConfig'
+import { CONTRACT_ADDRESS } from '@/utils/constants'
 import lotteryABI from '@/contracts/LotteryABI.json'
 
 export type TransactionStatus = 'idle' | 'pending' | 'success' | 'error'
@@ -44,7 +44,7 @@ export default function useClaimPrize(): UseClaimPrizeReturn {
         setError(null)
 
         const hash = await writeContractAsync({
-          address: CONTRACT_ADDRESSES.LOTTERY,
+          address: CONTRACT_ADDRESS,
           abi: lotteryABI,
           functionName: 'claimPrize',
           args: [BigInt(gameNumber)],

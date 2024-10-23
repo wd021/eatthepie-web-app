@@ -1,12 +1,11 @@
 import { useCallback, useState } from 'react'
-import { Address, Log } from 'viem'
+import { Address, Log, PublicClient } from 'viem'
 import { usePublicClient, useReadContract } from 'wagmi'
 
-import { CONTRACT_ADDRESSES } from '@/config/chainConfig'
+import { CONTRACT_ADDRESS } from '@/utils/constants'
 import lotteryABI from '@/contracts/LotteryABI.json'
-import { Ticket } from '@/utils/types'
-
-const MAX_TICKETS = 500
+import { BasicTicket } from '@/utils/types'
+import { MAX_TICKETS_TO_DISPLAY } from '@/utils/constants'
 
 export interface WalletHistoryParams {
   walletAddress: Address
@@ -14,115 +13,129 @@ export interface WalletHistoryParams {
 }
 
 export interface WalletHistory {
-  tickets: Ticket[]
+  tickets: BasicTicket[]
   isLoading: boolean
   error: string | null
   refetch: () => Promise<void>
 }
 
-export default function useWalletHistory({
-  walletAddress,
-  gameNumber,
-}: WalletHistoryParams): WalletHistory {
-  const [tickets, setTickets] = useState<Ticket[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [error, setError] = useState<string | null>(null)
+type TicketPurchasedEvent = {
+  player: string
+  gameNumber: bigint
+  numbers: readonly bigint[]
+  etherball: bigint
+}
 
-  const publicClient = usePublicClient()
+type TicketPurchasedLog = Log & {
+  args: TicketPurchasedEvent
+}
 
+interface BlockTimestamps {
+  [blockNumber: string]: number
+}
+
+interface GameBlocks {
+  gameStartBlock: bigint | undefined
+  nextGameStartBlock: bigint | undefined
+}
+
+const getTicketEvent = () => lotteryABI.find((event) => event.name === 'TicketPurchased')
+
+const parseLogToTicket = (log: TicketPurchasedLog): BasicTicket => ({
+  player: log.args.player,
+  gameNumber: Number(log.args.gameNumber),
+  numbers: [...log.args.numbers.map((n) => Number(n)), Number(log.args.etherball)],
+  transactionHash: log.transactionHash ?? '0x0000000000000000000000000000000000000000',
+})
+
+const getBlockTimestamps = async (
+  publicClient: PublicClient,
+  blockNumbers: bigint[],
+): Promise<BlockTimestamps> => {
+  const blocks = await Promise.all(
+    blockNumbers.map((bn) => publicClient.getBlock({ blockNumber: bn })),
+  )
+  return Object.fromEntries(blocks.map((b) => [b.number.toString(), Number(b.timestamp)]))
+}
+
+const useGameBlocks = (gameNumber: number): GameBlocks => {
   const { data: gameStartBlock } = useReadContract({
-    address: CONTRACT_ADDRESSES.LOTTERY,
+    address: CONTRACT_ADDRESS,
     abi: lotteryABI,
     functionName: 'gameStartBlock',
     args: [BigInt(gameNumber)],
   }) as { data: bigint | undefined }
 
   const { data: nextGameStartBlock } = useReadContract({
-    address: CONTRACT_ADDRESSES.LOTTERY,
+    address: CONTRACT_ADDRESS,
     abi: lotteryABI,
     functionName: 'gameStartBlock',
     args: [BigInt(gameNumber + 1)],
   }) as { data: bigint | undefined }
 
-  console.log('here we go', gameNumber, gameStartBlock, nextGameStartBlock)
+  return { gameStartBlock, nextGameStartBlock }
+}
+
+export default function useWalletHistory({
+  walletAddress,
+  gameNumber,
+}: WalletHistoryParams): WalletHistory {
+  const [tickets, setTickets] = useState<BasicTicket[]>([])
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const publicClient = usePublicClient()
+  const { gameStartBlock, nextGameStartBlock } = useGameBlocks(gameNumber)
 
   const fetchTickets = useCallback(
-    async (fromBlock: bigint, toBlock: bigint) => {
+    async (fromBlock: bigint, toBlock: bigint): Promise<BasicTicket[]> => {
       if (!publicClient) return []
 
-      const ticketEvent = lotteryABI.find((event) => event.name === 'TicketPurchased')
+      const ticketEvent = getTicketEvent()
       if (!ticketEvent) {
-        console.error('TicketPurchased event not found in ABI')
-        return []
+        throw new Error('TicketPurchased event not found in ABI')
       }
 
-      const logs = await publicClient.getLogs({
-        address: CONTRACT_ADDRESSES.LOTTERY,
-        event: ticketEvent as any,
-        fromBlock,
-        toBlock,
-      })
+      try {
+        const logs = (await publicClient.getLogs({
+          address: CONTRACT_ADDRESS,
+          event: ticketEvent as any,
+          fromBlock,
+          toBlock,
+        })) as TicketPurchasedLog[]
 
-      console.log('logs logs', logs)
-
-      const ticketsWithoutTimestamp = logs.map((log: Log) => ({
-        player: log.args.player,
-        gameNumber: Number(log.args.gameNumber),
-        numbers: [
-          ...log.args.numbers.map((n: bigint) => Number(n)),
-          Number(log.args.etherball),
-        ],
-        blockNumber: log.blockNumber,
-        transactionHash: log.transactionHash,
-      }))
-
-      const blockNumbers = [...new Set(ticketsWithoutTimestamp.map((t) => t.blockNumber))]
-      const blocks = await Promise.all(
-        blockNumbers.map((bn) => publicClient.getBlock({ blockNumber: bn })),
-      )
-      const blockTimestamps = Object.fromEntries(
-        blocks.map((b) => [b.number, Number(b.timestamp)]),
-      )
-
-      return ticketsWithoutTimestamp.map((ticket) => ({
-        ...ticket,
-        timestamp: blockTimestamps[ticket.blockNumber],
-      }))
+        return logs.map(parseLogToTicket)
+      } catch (error) {
+        console.error('Error fetching tickets:', error)
+        throw error
+      }
     },
     [publicClient],
   )
 
   const refetch = useCallback(async () => {
-    if (gameStartBlock === undefined || nextGameStartBlock === undefined || !publicClient)
+    if (!publicClient || gameStartBlock === undefined || nextGameStartBlock === undefined) {
       return
+    }
 
     setIsLoading(true)
     setError(null)
+    setTickets([])
 
     try {
       const currentBlock = await publicClient.getBlockNumber()
       const toBlock = nextGameStartBlock === 0n ? currentBlock : nextGameStartBlock - 1n
-
-      console.log('fetching tickets', gameStartBlock, toBlock)
 
       const fetchedTickets = await fetchTickets(gameStartBlock, toBlock)
       const walletTickets = fetchedTickets.filter(
         (ticket) => ticket.player.toLowerCase() === walletAddress.toLowerCase(),
       )
 
-      const limitedTickets = walletTickets.slice(0, MAX_TICKETS)
-
-      // Here you would determine the status and cost of each ticket
-      // This is a placeholder and should be replaced with your actual logic
-      // const processedTickets = walletTickets.map((ticket) => ({
-      //   ...ticket,
-      //   status: 'Pending', // Replace with actual status logic
-      //   cost: '0.1 ETH', // Replace with actual cost calculation
-      // }))
-
-      setTickets(limitedTickets)
+      setTickets(walletTickets.slice(0, MAX_TICKETS_TO_DISPLAY))
     } catch (err) {
-      setError('An error occurred while fetching tickets')
+      const errorMessage =
+        err instanceof Error ? err.message : 'An error occurred while fetching tickets'
+      setError(errorMessage)
       console.error(err)
     } finally {
       setIsLoading(false)

@@ -1,3 +1,9 @@
+if (!process.env.NEXT_PUBLIC_LOTTERY_ADDRESS) {
+  throw new Error('NEXT_PUBLIC_LOTTERY_ADDRESS is not set in environment variables')
+}
+
+export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_LOTTERY_ADDRESS as `0x${string}`
+
 export const NETWORK_NAMES = {
   mainnet: 'Ethereum Mainnet',
   sepolia: 'Sepolia',
@@ -27,3 +33,6 @@ export const LOTTERY_NUMBERS_RANGE = {
     etherball_max: 15,
   },
 }
+
+export const BATCH_SIZE_FOR_FETCHING = 2000n
+export const MAX_TICKETS_TO_DISPLAY = 500

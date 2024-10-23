@@ -1,19 +1,26 @@
 'use client'
 
 import React, { FC, useEffect, useState } from 'react'
+import { isAddress } from 'viem'
 
-import { useClaimPrize } from '@/hooks'
-import { useWinningInfo } from '@/hooks'
+import { useClaimPrize, useLotteryInfo, useWinningInfo } from '@/hooks'
 
-const isValidEthereumAddress = (address: string): boolean => {
-  return /^0x[a-fA-F0-9]{40}$/.test(address)
-}
+import SearchContainer from './searchContainer'
 
-const isValidGameNumber = (number: string): boolean => {
-  return /^\d+$/.test(number)
-}
+const ErrorMessage: React.FC<{ message: string }> = ({ message }) => (
+  <div className='flex items-center p-4 mb-6 text-red-800 border-l-4 border-red-600 bg-red-50'>
+    <svg className='w-5 h-5 mr-2' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+      <path
+        strokeLinecap='round'
+        strokeLinejoin='round'
+        strokeWidth={2}
+        d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+      />
+    </svg>
+    <span>{message}</span>
+  </div>
+)
 
-// components/ClaimFeedback.tsx
 interface ClaimFeedbackProps {
   status: TransactionStatus
   isConfirming: boolean
@@ -33,148 +40,100 @@ const ClaimFeedback: React.FC<ClaimFeedbackProps> = ({
 }) => {
   if (status === 'idle') return null
 
+  const renderEtherscanLink = () =>
+    hash && (
+      <a
+        href={`https://etherscan.io/tx/${hash}`}
+        target='_blank'
+        rel='noopener noreferrer'
+        className='inline-flex items-center text-blue-500 hover:text-blue-600 transition-colors mt-2'
+      >
+        <span>View on Etherscan</span>
+        <svg className='w-4 h-4 ml-1' viewBox='0 0 24 24' fill='none' stroke='currentColor'>
+          <path
+            d='M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+          />
+          <path d='M15 3h6v6' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
+          <path d='M10 14L21 3' strokeWidth='2' strokeLinecap='round' strokeLinejoin='round' />
+        </svg>
+      </a>
+    )
+
   return (
-    <div className='mt-4 p-4 rounded-lg border'>
-      {status === 'pending' && (
-        <div className='flex items-center space-x-3'>
-          <div className='animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500'></div>
-          <p>Please confirm the transaction in your wallet</p>
-        </div>
-      )}
+    <div className='mt-4 p-4 rounded-lg border bg-white'>
+      <div className={`${status === 'success' && isConfirmed ? 'text-center' : ''}`}>
+        {status === 'pending' && (
+          <>
+            <h3 className='flex items-center text-lg font-semibold'>
+              <div className='animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-3'></div>
+              Waiting for Confirmation
+            </h3>
+            <p className='mt-2 text-gray-600'>Please confirm the transaction in your wallet</p>
+          </>
+        )}
 
-      {status === 'success' && isConfirming && (
-        <div className='flex items-center space-x-3'>
-          <div className='animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500'></div>
-          <div>
-            <p>Transaction Sent</p>
-            <p className='text-sm text-gray-500'>Waiting for confirmation...</p>
-            {hash && (
-              <a
-                href={`https://etherscan.io/tx/${hash}`}
-                target='_blank'
-                rel='noopener noreferrer'
-                className='text-blue-500 hover:underline text-sm'
+        {status === 'success' && isConfirming && (
+          <>
+            <h3 className='flex items-center text-lg font-semibold'>
+              <div className='animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-3'></div>
+              Transaction in Progress
+            </h3>
+            <div className='mt-2'>
+              <p>Your transaction has been submitted</p>
+              {renderEtherscanLink()}
+            </div>
+          </>
+        )}
+
+        {status === 'success' && isConfirmed && (
+          <div className='text-center'>
+            <div className='inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-3'>
+              <svg
+                className='w-6 h-6 text-green-600'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
               >
-                View on Etherscan
-              </a>
-            )}
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='M5 13l4 4L19 7'
+                />
+              </svg>
+            </div>
+            <h3 className='text-xl font-semibold text-green-600'>
+              Prize Successfully Claimed!
+            </h3>
+            <div className='mt-2'>{renderEtherscanLink()}</div>
           </div>
-        </div>
-      )}
+        )}
 
-      {status === 'success' && isConfirmed && (
-        <div className='text-center'>
-          <div className='text-4xl mb-2'>🎉</div>
-          <h3 className='text-xl font-bold text-green-600 mb-2'>Prize Claimed!</h3>
-          {hash && (
-            <a
-              href={`https://etherscan.io/tx/${hash}`}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-blue-500 hover:underline text-sm'
+        {(status === 'error' || (status === 'success' && !isConfirmed && !isConfirming)) && (
+          <>
+            <h3 className='text-lg font-semibold text-red-600 mb-2'>
+              {error?.message.includes('Transaction cancelled')
+                ? 'Transaction Cancelled'
+                : 'Failed to Claim Prize'}
+            </h3>
+            <p className='text-gray-600 mb-4'>{error?.message}</p>
+            <button
+              onClick={onReset}
+              className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 
+                        transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
             >
-              View on Etherscan
-            </a>
-          )}
-        </div>
-      )}
-
-      {(status === 'error' || (status === 'success' && !isConfirmed && !isConfirming)) && (
-        <div className='text-center'>
-          <div className='text-4xl mb-2'>😕</div>
-          <h3 className='text-xl font-bold text-red-600 mb-2'>
-            {error?.message.includes('Transaction cancelled')
-              ? 'Transaction Cancelled'
-              : 'Failed to Claim Prize'}
-          </h3>
-          <p className='text-gray-600 mb-4'>{error?.message}</p>
-          <button
-            onClick={onReset}
-            className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors'
-          >
-            Try Again
-          </button>
-        </div>
-      )}
+              Try Again
+            </button>
+          </>
+        )}
+      </div>
     </div>
   )
 }
 
-// components/LoadingSpinner.tsx
-const LoadingSpinner = () => (
-  <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
-)
-
-// components/SearchSection.tsx
-interface SearchSectionProps {
-  walletAddress: string
-  setWalletAddress: (address: string) => void
-  gameNumber: string
-  setGameNumber: (number: string) => void
-  handleSearch: () => void
-  isLoading: boolean
-  errors: {
-    walletAddress?: string
-    gameNumber?: string
-  }
-}
-
-export const SearchSection: React.FC<SearchSectionProps> = ({
-  walletAddress,
-  setWalletAddress,
-  gameNumber,
-  setGameNumber,
-  handleSearch,
-  isLoading,
-  errors,
-}) => (
-  <div className='bg-white shadow-md rounded-lg overflow-hidden mb-8'>
-    <div className='px-6 py-4 bg-gray-50 flex items-center'>
-      <h2 className='text-2xl font-bold text-gray-800'>Check Prize Status</h2>
-    </div>
-    <div className='p-6 grid grid-cols-1 md:grid-cols-12 gap-4'>
-      <div className='col-span-8'>
-        <input
-          type='text'
-          placeholder='Enter wallet address'
-          value={walletAddress}
-          onChange={(e) => setWalletAddress(e.target.value)}
-          className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            errors.walletAddress ? 'border-red-500' : 'border-gray-300'
-          }`}
-        />
-        {errors.walletAddress && (
-          <p className='mt-1 text-sm text-red-500'>{errors.walletAddress}</p>
-        )}
-      </div>
-      <div className='col-span-2'>
-        <input
-          type='text'
-          placeholder='Game number'
-          value={gameNumber}
-          onChange={(e) => setGameNumber(e.target.value)}
-          className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            errors.gameNumber ? 'border-red-500' : 'border-gray-300'
-          }`}
-        />
-        {errors.gameNumber && <p className='mt-1 text-sm text-red-500'>{errors.gameNumber}</p>}
-      </div>
-      <button
-        onClick={handleSearch}
-        disabled={isLoading}
-        className='col-span-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
-      >
-        {isLoading ? (
-          <div className='w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin' />
-        ) : (
-          'Search'
-        )}
-      </button>
-    </div>
-  </div>
-)
-
-// components/ResultsSection.tsx
 interface ResultsSectionProps {
   winningInfo: WinningInfo
   handleClaim: () => Promise<void>
@@ -186,74 +145,158 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ winningInfo, handleClai
   const { goldWin, silverWin, bronzeWin, totalPrize, claimed } = winningInfo
   const hasWon = goldWin || silverWin || bronzeWin
 
+  const PrizeRow = ({ type, won }: { type: 'gold' | 'silver' | 'bronze'; won: boolean }) => {
+    const styles = {
+      gold: {
+        icon: '🏆',
+        title: 'Gold',
+        description: 'All numbers matched',
+      },
+      silver: {
+        icon: '🥈',
+        title: 'Silver',
+        description: '3 in-a-row',
+      },
+      bronze: {
+        icon: '🥉',
+        title: 'Bronze',
+        description: '2 in-a-row',
+      },
+    }
+
+    return (
+      <div
+        className={`flex items-center p-4 border rounded-lg transition-all duration-200 ${
+          won ? 'bg-green-50 border-green-200 shadow-sm' : 'border-gray-100'
+        }`}
+      >
+        <div className='flex items-center flex-1'>
+          <span className='text-2xl mr-3'>{styles[type].icon}</span>
+          <div>
+            <span className={`font-medium block ${won ? 'text-gray-900' : 'text-gray-400'}`}>
+              {styles[type].title}
+            </span>
+            <span className={`text-sm ${won ? 'text-gray-600' : 'text-gray-400'}`}>
+              {styles[type].description}
+            </span>
+          </div>
+        </div>
+        {won && (
+          <div className='flex items-center text-green-600'>
+            <svg className='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M5 13l4 4L19 7'
+              />
+            </svg>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
-    <div className='bg-white shadow-md rounded-lg overflow-hidden'>
-      <div className='px-6 py-4 bg-gray-50'>
-        <h2 className='text-2xl font-bold text-gray-800'>Results</h2>
+    <div className='bg-white rounded-lg shadow-md overflow-hidden'>
+      <div className='border-b border-gray-100 px-6 py-4'>
+        <div className='flex items-center space-x-2'>
+          <svg
+            className='w-6 h-6 text-green-600'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+            />
+          </svg>
+          <h2 className='text-xl font-semibold text-gray-900'>Results</h2>
+        </div>
       </div>
 
-      <div className='p-6'>
-        {hasWon ? (
-          <div className='space-y-4'>
-            <div className='bg-green-50 border border-green-200 rounded-lg p-4'>
-              <h3 className='text-lg font-semibold text-green-800'>
-                Congratulations! You've won {totalPrize} ETH
-              </h3>
-              <div className='mt-2 space-y-2'>
-                {goldWin && (
-                  <div className='flex items-center'>
-                    <span className='text-yellow-500 mr-2'>🏆</span>
-                    <span>Gold Prize Winner!</span>
+      {hasWon ? (
+        <div>
+          <div className='p-6 border-b border-gray-100 bg-gradient-to-r from-green-50/50 to-transparent'>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+              <div>
+                <div className='flex items-center space-x-2'>
+                  <span className='text-2xl'>🎉</span>
+                  <h3 className='text-lg font-medium text-gray-900'>Congratulations!</h3>
+                </div>
+                <div className='mt-1 flex items-baseline space-x-2'>
+                  <span className='text-2xl font-bold text-green-600'>{totalPrize} ETH</span>
+                  <span className='text-sm text-gray-500'>Prize Value</span>
+                </div>
+              </div>
+
+              <div className='flex items-center'>
+                {claimed ? (
+                  <div className='px-4 py-2 bg-green-100 text-green-700 rounded-full font-medium inline-flex items-center'>
+                    <svg
+                      className='w-4 h-4 mr-1.5'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    Prize Claimed
                   </div>
-                )}
-                {silverWin && (
-                  <div className='flex items-center'>
-                    <span className='text-gray-400 mr-2'>🥈</span>
-                    <span>Silver Prize Winner!</span>
-                  </div>
-                )}
-                {bronzeWin && (
-                  <div className='flex items-center'>
-                    <span className='text-amber-700 mr-2'>🥉</span>
-                    <span>Bronze Prize Winner!</span>
-                  </div>
+                ) : (
+                  <button
+                    onClick={handleClaim}
+                    className='inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg
+                             hover:bg-green-700 transition-colors duration-150
+                             focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
+                  >
+                    <span>Claim Prize</span>
+                    <svg
+                      className='ml-2 w-4 h-4'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      stroke='currentColor'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M13 7l5 5m0 0l-5 5m5-5H6'
+                      />
+                    </svg>
+                  </button>
                 )}
               </div>
             </div>
-
-            {claimed ? (
-              <div className='flex items-center text-green-600'>
-                <svg
-                  className='w-5 h-5 mr-2'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M5 13l4 4L19 7'
-                  />
-                </svg>
-                Prize has been claimed
-              </div>
-            ) : (
-              <button
-                onClick={handleClaim}
-                className='w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500'
-              >
-                Claim Prize
-              </button>
-            )}
           </div>
-        ) : (
-          <div className='bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center'>
+
+          <div className='p-6'>
+            <div className='mb-4'>
+              <h4 className='text-sm font-medium text-gray-500'>Prize Breakdown</h4>
+            </div>
+            <div className='space-y-3'>
+              <PrizeRow type='gold' won={goldWin} />
+              <PrizeRow type='silver' won={silverWin} />
+              <PrizeRow type='bronze' won={bronzeWin} />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className='px-6 py-12 text-center'>
+          <div className='w-12 h-12 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4'>
             <svg
-              className='w-5 h-5 text-gray-500 mr-2'
+              className='w-6 h-6 text-gray-400'
               fill='none'
-              stroke='currentColor'
               viewBox='0 0 24 24'
+              stroke='currentColor'
             >
               <path
                 strokeLinecap='round'
@@ -262,10 +305,13 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ winningInfo, handleClai
                 d='M6 18L18 6M6 6l12 12'
               />
             </svg>
-            <span>No prizes found for this wallet and game number</span>
           </div>
-        )}
-      </div>
+          <h3 className='text-lg font-medium text-gray-900 mb-1'>No Prizes Found</h3>
+          <p className='text-gray-500'>
+            We couldn't find any prizes for this wallet and game number
+          </p>
+        </div>
+      )}
     </div>
   )
 }
@@ -282,43 +328,37 @@ interface FormErrors {
 const ClaimPage: FC<ClaimPageProps> = ({ address }) => {
   const [walletAddress, setWalletAddress] = useState('')
   const [gameNumber, setGameNumber] = useState('')
-  const [errors, setErrors] = useState<FormErrors>({})
+  const [validationError, setValidationError] = useState<string | null>(null)
+  const [isSearching, setIsSearching] = useState(false)
   const [shouldFetch, setShouldFetch] = useState(false)
 
   const handleWalletChange = (address: string) => {
     setWalletAddress(address)
-    setErrors((prev) => ({ ...prev, walletAddress: undefined }))
+    setIsSearching(false)
+    setShouldFetch(false)
+    setValidationError(null)
   }
 
   const handleGameNumberChange = (number: string) => {
     setGameNumber(number)
-    setErrors((prev) => ({ ...prev, gameNumber: undefined }))
+    setIsSearching(false)
+    setShouldFetch(false)
+    setValidationError(null)
   }
 
-  const validateInputs = (): boolean => {
-    const newErrors: FormErrors = {}
+  const { lotteryInfo, isLoading: isLotteryInfoLoading } = useLotteryInfo()
 
-    if (!walletAddress) {
-      newErrors.walletAddress = 'Wallet address is required'
-    } else if (!isValidEthereumAddress(walletAddress)) {
-      newErrors.walletAddress = 'Invalid Ethereum address'
+  useEffect(() => {
+    if (address && isAddress(address)) {
+      setWalletAddress(address)
     }
+  }, [address])
 
-    if (!gameNumber) {
-      newErrors.gameNumber = 'Game number is required'
-    } else if (!isValidGameNumber(gameNumber)) {
-      newErrors.gameNumber = 'Invalid game number'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const { winningInfo, isError, isLoading } = useWinningInfo(
+  const { winningInfo, isError, isLoading } = useWinningInfo({
     gameNumber,
     walletAddress,
     shouldFetch,
-  )
+  })
 
   const {
     handleClaim,
@@ -330,53 +370,94 @@ const ClaimPage: FC<ClaimPageProps> = ({ address }) => {
     reset: resetClaim,
   } = useClaimPrize()
 
+  const validateSearch = () => {
+    if (!walletAddress.trim()) {
+      return 'Please enter a wallet address'
+    }
+
+    if (!isAddress(walletAddress)) {
+      return 'Invalid wallet address format'
+    }
+
+    if (!gameNumber.trim()) {
+      return 'Please enter a game number'
+    }
+
+    const parsedGameNumber = parseInt(gameNumber)
+    if (isNaN(parsedGameNumber) || parsedGameNumber < 0) {
+      return 'Game number must be a non-negative integer'
+    }
+
+    if (lotteryInfo && parsedGameNumber > lotteryInfo.gameNumber) {
+      return `Game number cannot be greater than the current active game (${lotteryInfo.gameNumber})`
+    }
+
+    return null
+  }
+
   const handleSearch = () => {
-    const isValid = validateInputs()
-    if (isValid) {
+    const error = validateSearch()
+    setValidationError(error)
+
+    if (!error) {
+      setIsSearching(true)
       setShouldFetch(true)
     }
   }
 
   const onClaim = async () => {
     await handleClaim(gameNumber)
-    // Only refresh winning info after successful claim
     if (claimStatus === 'success' && isConfirmed) {
       setShouldFetch(true)
     }
   }
 
+  useEffect(() => {
+    if (!isSearching) {
+      resetClaim()
+    }
+  }, [isSearching])
+
   return (
-    <div className='max-w-4xl mx-auto p-4 space-y-6'>
-      <SearchSection
+    <div className='max-w-4xl mx-auto px-4 py-8 space-y-6'>
+      <SearchContainer
         walletAddress={walletAddress}
         setWalletAddress={handleWalletChange}
         gameNumber={gameNumber}
         setGameNumber={handleGameNumberChange}
         handleSearch={handleSearch}
         isLoading={isLoading}
-        errors={errors}
       />
 
-      {isError ? (
-        <div className='bg-red-50 border border-red-200 rounded-lg p-4'>
-          <h3 className='text-red-800 font-semibold'>Error</h3>
-          <p className='text-red-600'>Failed to fetch prize information. Please try again.</p>
-        </div>
-      ) : (
-        shouldFetch &&
-        winningInfo && (
-          <>
-            <ResultsSection winningInfo={winningInfo} handleClaim={onClaim} />
-            <ClaimFeedback
-              status={claimStatus}
-              isConfirming={isConfirming}
-              isConfirmed={isConfirmed}
-              hash={hash}
-              error={claimError}
-              onReset={resetClaim}
-            />
-          </>
-        )
+      {validationError && <ErrorMessage message={validationError} />}
+
+      {isSearching && (
+        <>
+          {isLoading ? (
+            <div className='flex items-center justify-center p-8'>
+              <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500'></div>
+              <span className='ml-2 text-gray-600'>Loading...</span>
+            </div>
+          ) : isError ? (
+            <div className='p-4 bg-red-50 text-red-600 rounded-lg border border-red-200'>
+              Failed to fetch prize information. Make sure the game has already been completed.
+            </div>
+          ) : (
+            winningInfo && (
+              <>
+                <ResultsSection winningInfo={winningInfo} handleClaim={onClaim} />
+                <ClaimFeedback
+                  status={claimStatus}
+                  isConfirming={isConfirming}
+                  isConfirmed={isConfirmed}
+                  hash={hash}
+                  error={claimError}
+                  onReset={resetClaim}
+                />
+              </>
+            )
+          )}
+        </>
       )}
     </div>
   )
