@@ -3,55 +3,25 @@
 import React, { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit'
-import { createConfig, http, WagmiProvider } from 'wagmi'
+import { createConfig, fallback, unstable_connector, WagmiProvider } from 'wagmi'
 import { foundry, mainnet, sepolia } from 'wagmi/chains'
+import { injected } from 'wagmi/connectors'
 
 interface Web3ProviderProps {
   children: ReactNode
 }
 
-// Retrieve the desired chain based on environment variables
 const selectedChain = process.env.NEXT_PUBLIC_NETWORK_NAME || 'mainnet'
 
-// Define the chains with priority for custom RPC URLs (if provided)
-const chain = (() => {
-  switch (selectedChain) {
-    case 'mainnet':
-      return {
-        ...mainnet,
-        rpcUrls: {
-          default: {
-            http: [
-              `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_ID}`,
-              ...mainnet.rpcUrls.default.http,
-            ].filter(Boolean),
-          },
-        },
-      }
-    case 'sepolia':
-      return {
-        ...sepolia,
-        rpcUrls: {
-          default: {
-            http: [
-              `https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID}`,
-              ...sepolia.rpcUrls.default.http,
-            ].filter(Boolean),
-          },
-        },
-      }
-    case 'anvil':
-      return foundry
-    default:
-      throw new Error(`Unsupported chain: ${selectedChain}`)
-  }
-})()
+const chain =
+  selectedChain === 'mainnet' ? mainnet : selectedChain === 'sepolia' ? sepolia : foundry
 
 const config = createConfig(
   getDefaultConfig({
     chains: [chain],
+    connectors: [injected()],
     transports: {
-      [chain.id]: http(chain.rpcUrls.default.http[0]), // Use the first available URL in the list
+      [chain.id]: fallback([unstable_connector(injected)]),
     },
     walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
     appName: 'Eat The Pie - The World Lottery',

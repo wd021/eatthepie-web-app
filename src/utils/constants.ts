@@ -5,9 +5,9 @@ export const NETWORK_NAMES = {
 }
 
 export const BLOCK_EXPLORER_LINKS = {
-  mainnet: 'https://etherscan.io/',
+  mainnet: 'https://www.etherscan.io/',
   sepolia: 'https://sepolia.etherscan.io/',
-  anvil: 'https://anvil.etherscan.io/',
+  anvil: 'https://www.etherscan.io/',
 }
 
 export const LOTTERY_NUMBERS_RANGE = {

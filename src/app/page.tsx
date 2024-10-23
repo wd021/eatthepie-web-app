@@ -6,10 +6,24 @@ import { motion } from 'framer-motion'
 import { Countdown } from '@/components'
 import { Game as GameModal, Responsible as ResponsibleModal } from '@/components/modals'
 import { useLotteryInfo } from '@/hooks'
+import { Checkmark } from '@/icons'
 import { LotteryInfo } from '@/utils/types'
 
-const TERMS_ACCEPTED_KEY = 'etp-terms-accepted'
-const TERMS_VERSION = '1.0' // increment this when terms change to force re-acceptance
+const TERMS = {
+  ACCEPTED_KEY: 'etp-terms-accepted',
+  VERSION: '1.0',
+} as const
+
+const LINKS = {
+  ETHEREUM: 'https://www.ethereum.org',
+  VDF_EXPLAINER: 'https://www.youtube.com/watch?v=_-feyaZZjEw',
+  ETHEREUM_WALLETS: 'https://ethereum.org/en/wallets/',
+  GITHUB: 'https://github.com/eatthepie',
+  DOCS: 'https://docs.eatthepie.xyz',
+  IPFS: 'https://www.ipfs.io',
+  NPM_PACKAGE: 'https://www.npmjs.com/package/eatthepie',
+  VDF_PROVER: 'https://github.com/eatthepie/vdf-prover',
+} as const
 
 interface SectionProps {
   icon: React.ReactNode
@@ -49,127 +63,96 @@ const Section: FC<SectionProps> = ({ icon, title, children }) => {
         className='overflow-hidden'
       >
         <div className='px-6 pb-6'>
-          <div className='text-gray-600 text-lg leading-relaxed'>{children}</div>
+          <div className='text-gray-600 leading-relaxed'>{children}</div>
         </div>
       </motion.div>
     </motion.div>
   )
 }
 
-const Hero: FC<HeroProps> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => (
-  <div className='py-16'>
-    <div className='container mx-auto px-4'>
-      <div className='flex flex-col lg:flex-row items-center justify-between gap-12'>
-        <motion.div
-          className='text-center lg:text-left lg:max-w-[560px] w-full'
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <h1 className='text-4xl lg:text-6xl font-bold mb-6 text-gray-900'>
-            The World Lottery
-          </h1>
-          <ul className='text-xl lg:text-2xl mb-8 text-gray-700 space-y-2'>
-            <li className='flex items-center justify-center lg:justify-start'>
-              <svg
-                className='w-6 h-6 mr-2 text-green-500'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
+const ExternalLink: FC<{ href: string; children: React.ReactNode }> = ({ href, children }) => (
+  <a href={href} target='_blank' className='underline font-semibold' rel='noopener noreferrer'>
+    {children}
+  </a>
+)
+
+const Hero: FC<HeroProps> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => {
+  const formatPrizePool = (value?: number) => {
+    if (!value) return ''
+    return value >= 10000 ? value.toFixed(0) : value.toFixed(1)
+  }
+
+  return (
+    <div className='py-16'>
+      <div className='container mx-auto px-4'>
+        <div className='flex flex-col lg:flex-row items-center justify-between gap-12'>
+          <motion.div
+            className='text-center lg:text-left lg:max-w-[560px] w-full'
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h1 className='text-4xl lg:text-6xl font-bold mb-6 text-gray-900'>
+              The World Lottery
+            </h1>
+            <ul className='text-xl lg:text-2xl mb-8 text-gray-700 space-y-2'>
+              <li className='flex items-center justify-center lg:justify-start'>
+                <Checkmark />
+                Fully transparent and fair
+              </li>
+              <li className='flex items-center justify-center lg:justify-start'>
+                <Checkmark />
+                Self-executing
+              </li>
+              <li className='flex items-center justify-center lg:justify-start'>
+                <Checkmark />
+                Secured by Ethereum
+              </li>
+            </ul>
+            <div className='flex flex-col sm:flex-row gap-4 justify-center sm:justify-center lg:justify-start w-full'>
+              <motion.button
+                className='bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-full text-xl transition-colors duration-300'
+                onClick={onBuyTicket}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M5 13l4 4L19 7'
-                ></path>
-              </svg>
-              Fully transparent and fair
-            </li>
-            <li className='flex items-center justify-center lg:justify-start'>
-              <svg
-                className='w-6 h-6 mr-2 text-green-500'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
+                Buy Ticket - {lotteryInfo?.ticketPrice}ETH
+              </motion.button>
+              <motion.button
+                className='border-2 border-gray-400 hover:border-gray-600 text-gray-800 font-bold py-4 px-8 rounded-full text-xl transition-colors duration-300'
+                onClick={onHowItWorks}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M5 13l4 4L19 7'
-                ></path>
-              </svg>
-              Self-executing
-            </li>
-            <li className='flex items-center justify-center lg:justify-start'>
-              <svg
-                className='w-6 h-6 mr-2 text-green-500'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M5 13l4 4L19 7'
-                ></path>
-              </svg>
-              Secured by Ethereum
-            </li>
-          </ul>
-          <div className='flex flex-col sm:flex-row gap-4 justify-center sm:justify-center lg:justify-start w-full'>
-            <motion.button
-              className='bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-full text-xl transition-colors duration-300'
-              onClick={onBuyTicket}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Buy Ticket - {lotteryInfo?.ticketPrice}ETH
-            </motion.button>
-            <motion.button
-              className='border-2 border-gray-400 hover:border-gray-600 text-gray-800 font-bold py-4 px-8 rounded-full text-xl transition-colors duration-300'
-              onClick={onHowItWorks}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              How It Works
-            </motion.button>
-          </div>
-        </motion.div>
-        <motion.div
-          className='relative w-full max-w-sm lg:max-w-md cursor-pointer'
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          onClick={onBuyTicket}
-        >
-          <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
-          <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
-            <div className='text-5xl lg:text-7xl font-bold text-black'>
-              {lotteryInfo?.prizePool
-                ? Number(lotteryInfo?.prizePool) >= 10000
-                  ? Number(lotteryInfo?.prizePool).toFixed(0)
-                  : Number(lotteryInfo?.prizePool).toFixed(1)
-                : ''}
-              Ξ
+                How It Works
+              </motion.button>
             </div>
-            <div className='text-lg lg:text-3xl text-black font-semibold mt-2'>
-              <Countdown
-                secondsUntilDraw={lotteryInfo?.secondsUntilDraw}
-                displayCompleted={false}
-              />
+          </motion.div>
+          <motion.div
+            className='relative w-full max-w-sm lg:max-w-md cursor-pointer'
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            onClick={onBuyTicket}
+          >
+            <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
+            <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
+              <div className='text-5xl lg:text-7xl font-bold text-black'>
+                {formatPrizePool(Number(lotteryInfo?.prizePool))}Ξ
+              </div>
+              <div className='text-lg lg:text-3xl text-black font-semibold mt-2'>
+                <Countdown
+                  secondsUntilDraw={lotteryInfo?.secondsUntilDraw}
+                  displayCompleted={false}
+                />
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 const HowItWorks = () => (
   <div className='max-w-2xl mx-auto px-4'>
@@ -191,105 +174,68 @@ const HowItWorks = () => (
         <div>
           Imagine a global lottery where everyone plays on equal footing, free from manipulation
           or unfair advantages. Thanks to the power of{' '}
-          <a
-            href='https://www.ethereum.org'
-            target='_blank'
-            className='underline font-semibold'
-          >
-            Ethereum
-          </a>{' '}
-          and{' '}
-          <a
-            href='https://www.youtube.com/watch?v=_-feyaZZjEw'
-            target='_blank'
-            className='underline font-semibold'
-          >
+          <ExternalLink href={LINKS.ETHEREUM}>Ethereum</ExternalLink> and{' '}
+          <ExternalLink href={LINKS.VDF_EXPLAINER}>
             Verifiable Delay Functions (VDFs)
-          </a>
+          </ExternalLink>
           , we now have that: a decentralized, self-executing lottery that operates autonomously
           forever. No hidden tricks, no human involvement—just pure, verifiable randomness.
         </div>
         <div className='pt-4'>
           Traditional lotteries take up to <b>50% in fees</b>, leaving a fraction of the pool
-          for the winners. Our lottery takes only <b>1% in fees</b>, capped at 100 ETH. That
+          for the winners. Eat The Pie takes only <b>1% in fees</b>, capped at 100 ETH. That
           means more of the prize money goes back to where it belongs—into the hands of the
           participants. It&apos;s a global game, accessible to anyone with an{' '}
-          <a
-            href='https://ethereum.org/en/wallets/'
-            target='_blank'
-            className='underline font-semibold'
-          >
-            Ethereum wallet
-          </a>
-          .
+          <ExternalLink href={LINKS.ETHEREUM_WALLETS}>Ethereum wallet</ExternalLink>.
         </div>
       </Section>
 
       <Section icon='🔒' title='Unbreakable: Ethereum & VDFs'>
         <div>
-          The lottery runs on the Ethereum blockchain, a decentralized network powered by
-          thousands of validators around the world. This robust infrastructure not only secures
-          cryptocurrencies but also serves as the foundation for our lottery’s integrity.
+          Built on Ethereum&apos;s battle-tested infrastructure, Eat The Pie inherits the
+          security of the most decentralized blockchain in the world. This means no single
+          entity controls the lottery - every transaction and outcome is verified by thousands
+          of independent validators, making it impossible for anyone to manipulate the rules or
+          withhold prizes.
         </div>
         <div className='pt-4'>
-          We took it a step further by incorporating Verifiable Delay Functions (VDFs) into the
-          process of generating random lottery numbers. VDFs introduce a required time delay,
-          ensuring that even if validators tried to collude, they wouldn’t be able to predict or
-          manipulate the outcome.
+          At its core, the integrity of any lottery depends on how random numbers are generated.
+          That&apos;s why Eat The Pie uses Verifiable Delay Functions (VDFs) to create a crucial
+          time gap between when a game is settled and when the winning numbers are known. This
+          delay completely removes any power Ethereum validators might have, as they can&apos;t
+          manipulate an outcome that hasn&apos;t been computed yet.
         </div>
         <div className='pt-4'>
-          This combination makes the lottery tamper proof — mathematically guaranteed,
-          autonomous, and resistant to manipulation.
+          The result? A lottery that&apos;s not just secure, but mathematically guaranteed to be
+          fair.
         </div>
       </Section>
 
       <Section icon='💻' title='Open Source, Self-Executing, and Runs Forever'>
         <div>
-          All{' '}
-          <a href='https://www.github.com' target='_blank' className='underline font-semibold'>
-            code is open
-          </a>{' '}
-          and publicly available for anyone to review, audit, and verify.
+          <ExternalLink href={LINKS.GITHUB}>📖 The codebase is open source</ExternalLink> for
+          anyone to review.
         </div>
         <div className='pt-4'>
-          Want to dive deeper into how the lottery works?{' '}
-          <a
-            href='https://docs.eatthepie.xyz'
-            target='_blank'
-            className='underline font-semibold'
-          >
-            Explore our docs
-          </a>{' '}
-          for a detailed breakdown.
+          🔍 <ExternalLink href={LINKS.DOCS}>The documentation</ExternalLink> provides a
+          detailed breakdown.
         </div>
         <div className='pt-4'>
-          We’ve also taken decentralization a step further by hosting this{' '}
-          <a href='https://www.ipfs.com' target='_blank' className='underline font-semibold'>
-            website on IPFS
-          </a>
-          . You can also access it via <b>eatthepie.eth</b> on browsers that support IPFS
-          (brave).
+          🌐 <ExternalLink href={LINKS.IPFS}>IPFS-hosted interface</ExternalLink> to access via
+          a decentralized frontend or via <b>eatthepie.eth</b> in browsers that support ENS
+          resolution.
+        </div>
+        <div className='pt-4'>
+          💻 <ExternalLink href={LINKS.NPM_PACKAGE}>A CLI tool</ExternalLink> is available via{' '}
+          <code className='bg-gray-100 px-2 py-1 rounded'>npm install -g eatthepie</code> to
+          interact with the lottery fully from the terminal.
+        </div>
+        <div className='pt-4'>
+          🔐 <ExternalLink href={LINKS.VDF_PROVER}>The VDF prover</ExternalLink> is accessible
+          for anyone to compute and submit proofs, contributing to the lottery&apos;s verifiable
+          fairness.
         </div>
       </Section>
-    </motion.div>
-    <motion.div
-      className='mt-12 text-center'
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.4 }}
-    >
-      <p className='text-gray-600 mb-6'>
-        For a more in-depth understanding, check out the documentation.
-      </p>
-      <motion.a
-        href='https://docs.eatthepie.xyz'
-        target='_blank'
-        className='bg-gray-800 text-white px-6 py-3 rounded-full font-semibold inline-block'
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        Read the Docs
-      </motion.a>
     </motion.div>
   </div>
 )
@@ -299,31 +245,30 @@ export default function Home() {
   const howItWorksRef = useRef<HTMLDivElement>(null)
   const { lotteryInfo } = useLotteryInfo()
 
-  const scrollToHowItWorks = () => {
-    if (howItWorksRef.current) {
-      const yOffset = -100
-      const y = howItWorksRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset
-      window.scrollTo({ top: y, behavior: 'smooth' })
-    }
-  }
-
   useEffect(() => {
     checkTermsAcceptance()
   }, [])
 
   const checkTermsAcceptance = () => {
-    // Only check after component is mounted to avoid hydration issues
-    if (typeof window !== 'undefined') {
-      const acceptedVersion = localStorage.getItem(TERMS_ACCEPTED_KEY)
-      if (!acceptedVersion || acceptedVersion !== TERMS_VERSION) {
-        setModal('responsible')
-      }
+    if (typeof window === 'undefined') return
+
+    const acceptedVersion = localStorage.getItem(TERMS.ACCEPTED_KEY)
+    if (!acceptedVersion || acceptedVersion !== TERMS.VERSION) {
+      setModal('responsible')
     }
   }
 
   const handleAcceptTerms = () => {
-    localStorage.setItem(TERMS_ACCEPTED_KEY, TERMS_VERSION)
+    localStorage.setItem(TERMS.ACCEPTED_KEY, TERMS.VERSION)
     setModal(false)
+  }
+
+  const scrollToHowItWorks = () => {
+    if (!howItWorksRef.current) return
+
+    const yOffset = -100
+    const y = howItWorksRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset
+    window.scrollTo({ top: y, behavior: 'smooth' })
   }
 
   return (
