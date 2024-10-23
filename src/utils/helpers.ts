@@ -42,3 +42,17 @@ export const truncateString = (str: string, length: number) => {
   if (str.length <= length) return str
   return `${str.slice(0, length)}...`
 }
+
+const TIME_FORMAT = {
+  PADDING: 2,
+  SEPARATOR: ':',
+  COMPLETED_TEXT: 'Completed!',
+} as const
+
+export const formatTimeUnit = (value: number): string => {
+  return value.toString().padStart(TIME_FORMAT.PADDING, '0')
+}
+
+export const calculateTargetDate = (secondsUntilDraw: number): Date => {
+  return new Date(Date.now() + secondsUntilDraw * 1000)
+}

@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import { useEffect, useState } from 'react'
 import Countdown from 'react-countdown'
 
 interface CountdownProps {
@@ -8,7 +9,7 @@ interface CountdownProps {
   displayCompleted?: boolean
 }
 
-interface RendererProps {
+interface TimeUnits {
   days: number
   hours: number
   minutes: number
@@ -16,38 +17,67 @@ interface RendererProps {
   completed: boolean
 }
 
-const CountdownComponent: React.FC<CountdownProps> = ({
-  secondsUntilDraw,
-  displayCompleted = true,
-}) => {
+const TIME_FORMAT = {
+  PADDING: 2,
+  SEPARATOR: ':',
+  COMPLETED_TEXT: 'Completed!',
+} as const
+
+const formatTimeUnit = (value: number): string => {
+  return value.toString().padStart(TIME_FORMAT.PADDING, '0')
+}
+
+const calculateTargetDate = (secondsUntilDraw: number): Date => {
+  return new Date(Date.now() + secondsUntilDraw * 1000)
+}
+
+const TimeDisplay = ({ days, hours, minutes, seconds }: Omit<TimeUnits, 'completed'>) => {
+  const timeUnits = [
+    { value: days, shouldShow: days > 0 },
+    { value: hours, shouldShow: true },
+    { value: minutes, shouldShow: true },
+    { value: seconds, shouldShow: true },
+  ]
+
+  return (
+    <span className='font-mono'>
+      {timeUnits
+        .filter((unit) => unit.shouldShow)
+        .map((unit, index, array) => (
+          <React.Fragment key={index}>
+            {formatTimeUnit(unit.value)}
+            {index < array.length - 1 && TIME_FORMAT.SEPARATOR}
+          </React.Fragment>
+        ))}
+    </span>
+  )
+}
+
+/**
+ * Countdown component that displays time remaining until a target date
+ * @param secondsUntilDraw - Number of seconds until the draw
+ * @param displayCompleted - Whether to display 'Completed!' when countdown ends
+ */
+const CountdownComponent = ({ secondsUntilDraw, displayCompleted = true }: CountdownProps) => {
   const [targetDate, setTargetDate] = useState<Date | null>(null)
 
   useEffect(() => {
-    if (secondsUntilDraw !== undefined) {
-      const newTargetDate = new Date(Date.now() + secondsUntilDraw * 1000)
-      setTargetDate(newTargetDate)
+    if (typeof secondsUntilDraw === 'number') {
+      setTargetDate(calculateTargetDate(secondsUntilDraw))
     }
   }, [secondsUntilDraw])
 
-  const renderer = ({ days, hours, minutes, seconds, completed }: RendererProps) => {
-    if (completed) {
-      return <span>{displayCompleted ? 'Completed!' : ''}</span>
-    } else {
-      return (
-        <span className='font-mono'>
-          {days > 0 && `${days.toString().padStart(2, '0')}:`}
-          {hours.toString().padStart(2, '0')}:{minutes.toString().padStart(2, '0')}:
-          {seconds.toString().padStart(2, '0')}
-        </span>
-      )
+  const renderCountdown = (timeUnits: TimeUnits) => {
+    if (timeUnits.completed) {
+      return displayCompleted ? TIME_FORMAT.COMPLETED_TEXT : ''
     }
+
+    return <TimeDisplay {...timeUnits} />
   }
 
-  if (!targetDate) {
-    return null
-  }
+  if (!targetDate) return null
 
-  return <Countdown date={targetDate} renderer={renderer} />
+  return <Countdown date={targetDate} renderer={renderCountdown} precision={3} />
 }
 
 export default CountdownComponent

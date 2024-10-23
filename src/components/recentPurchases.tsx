@@ -83,7 +83,7 @@ const TicketList: React.FC<{
       <div className='flex-grow flex items-center justify-center'>
         <div className='flex flex-col items-center space-y-3'>
           <svg
-            className='animate-spin h-5 w-5 text-blue-500'
+            className='animate-spin h-5 w-5 text-gray-500'
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
             viewBox='0 0 24 24'
@@ -111,9 +111,7 @@ const TicketList: React.FC<{
   return (
     <div className='flex-grow overflow-y-auto'>
       <div className='px-4'>
-        {tickets.length === 0 ? (
-          <p className='text-center text-gray-500 py-4'>No ticket purchases found.</p>
-        ) : (
+        {tickets.length > 0 && (
           <>
             <div className='text-xs text-gray-500 text-center py-2'>
               Showing the last {tickets.length} ticket purchases
