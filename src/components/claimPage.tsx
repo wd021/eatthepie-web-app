@@ -105,10 +105,10 @@ const ClaimFeedback: React.FC<ClaimFeedbackProps> = ({
                 />
               </svg>
             </div>
-            <h3 className='text-xl font-semibold text-green-600'>
+            <h3 className='text-lg font-semibold text-green-600'>
               Prize Successfully Claimed!
             </h3>
-            <div className='mt-2'>{renderEtherscanLink()}</div>
+            <div>{renderEtherscanLink()}</div>
           </div>
         )}
 
@@ -119,7 +119,9 @@ const ClaimFeedback: React.FC<ClaimFeedbackProps> = ({
                 ? 'Transaction Cancelled'
                 : 'Failed to Claim Prize'}
             </h3>
-            <p className='text-gray-600 mb-4'>{error?.message}</p>
+            <p className='text-gray-600 mb-4'>
+              Make sure you&apos;ve connected the right wallet and network
+            </p>
             <button
               onClick={onReset}
               className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 
@@ -308,7 +310,7 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({ winningInfo, handleClai
           </div>
           <h3 className='text-lg font-medium text-gray-900 mb-1'>No Prizes Found</h3>
           <p className='text-gray-500'>
-            We couldn't find any prizes for this wallet and game number
+            We couldn&apos;t find any prizes for this wallet and game number
           </p>
         </div>
       )}

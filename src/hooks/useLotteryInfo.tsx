@@ -1,10 +1,10 @@
+import { useMemo } from 'react'
 import { formatEther } from 'viem'
 import { useReadContract } from 'wagmi'
 
-import { CONTRACT_ADDRESS } from '@/utils/constants'
 import lotteryABI from '@/contracts/LotteryABI.json'
+import { CONTRACT_ADDRESS } from '@/utils/constants'
 import { GameInfo, LotteryInfo } from '@/utils/types'
-import { useMemo } from 'react'
 
 const SECONDS_PER_DAY = 3600 * 24
 const SECONDS_PER_HOUR = 3600
