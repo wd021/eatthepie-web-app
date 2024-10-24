@@ -75,7 +75,8 @@ export default function useLotteryPurchase({
         // Check for specific error messages and show corresponding toast
         for (const [, value] of Object.entries(ERROR_MESSAGES)) {
           if (errorMessage.includes(value)) {
-            showToast(TOAST_MESSAGES[value as keyof typeof ERROR_MESSAGES])
+            // eslint-disable-next-line
+            showToast(TOAST_MESSAGES[value as keyof typeof TOAST_MESSAGES])
             return
           }
         }
