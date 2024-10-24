@@ -2,38 +2,21 @@ import { useMemo } from 'react'
 import { formatEther } from 'viem'
 import { useReadContract } from 'wagmi'
 
-import lotteryABI from '@/contracts/LotteryABI.json'
-import { CONTRACT_ADDRESS } from '@/utils/constants'
-import { GameInfo, LotteryInfo } from '@/utils/types'
-
-const SECONDS_PER_DAY = 3600 * 24
-const SECONDS_PER_HOUR = 3600
-const SECONDS_PER_MINUTE = 60
-
-enum Difficulty {
-  Easy = 0,
-  Medium = 1,
-  Hard = 2,
-}
-
-interface TimeParts {
-  days: number
-  hours: number
-  minutes: number
-  seconds: number
-}
-
-interface UseContractResult<T> {
-  data: T | undefined
-  isError: boolean
-  isLoading: boolean
-}
-
-interface UseLotteryInfoResult {
-  lotteryInfo: LotteryInfo | undefined
-  isLoading: boolean
-  isError: boolean
-}
+import lotteryABI from '@/abi/LotteryABI.json'
+import {
+  CONTRACT_ADDRESS,
+  Difficulty,
+  SECONDS_PER_DAY,
+  SECONDS_PER_HOUR,
+  SECONDS_PER_MINUTE,
+} from '@/utils/constants'
+import {
+  GameInfo,
+  LotteryInfo,
+  TimeParts,
+  UseContractResult,
+  UseLotteryInfoResult,
+} from '@/utils/types'
 
 const calculateTimeParts = (totalSeconds: number): TimeParts => {
   const days = Math.floor(totalSeconds / SECONDS_PER_DAY)

@@ -4,40 +4,19 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAccount, useDisconnect } from 'wagmi'
 
-import { Cart, PowerOff, Prize, Receipt, Wallet } from '@/icons'
+import { Cart, PowerOff, Prize, Wallet } from '@/icons'
 import { trimAddress } from '@/utils/helpers'
 
-interface WalletDropdownProps {
-  purchaseTicket: () => void | Promise<void>
-}
-
-interface DropdownItemProps {
+const DropdownItem: React.FC<{
   onClick: () => void
   icon: React.ReactNode
   text: string
-}
-
-interface DropdownAction {
-  id: string
-  icon: React.ReactNode
-  text: string
-  action: (closeDropdown: () => void) => void
-}
-
-const STYLES = {
-  container: 'relative',
-  walletButton:
-    'flex px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold',
-  walletIcon: 'w-6 h-6 text-white',
-  addressText: 'ml-2',
-  dropdown:
-    'absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5',
-  dropdownMenu: 'py-1',
-  menuItem: 'flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100',
-} as const
-
-const DropdownItem: React.FC<DropdownItemProps> = ({ onClick, icon, text }) => (
-  <button onClick={onClick} className={STYLES.menuItem} role='menuitem'>
+}> = ({ onClick, icon, text }) => (
+  <button
+    onClick={onClick}
+    className='flex items-center w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100'
+    role='menuitem'
+  >
     {icon}
     {text}
   </button>
@@ -62,7 +41,14 @@ const useDropdownActions = (purchaseTicket: () => void | Promise<void>) => {
   const { address } = useAccount()
 
   return useCallback(
-    (closeDropdown: () => void): DropdownAction[] => [
+    (
+      closeDropdown: () => void,
+    ): {
+      id: string
+      icon: React.ReactNode
+      text: string
+      action: (closeDropdown: () => void) => void
+    }[] => [
       {
         id: 'buy-tickets',
         icon: <Cart />,
@@ -95,7 +81,9 @@ const useDropdownActions = (purchaseTicket: () => void | Promise<void>) => {
   )
 }
 
-const WalletDropdown: React.FC<WalletDropdownProps> = ({ purchaseTicket }) => {
+const WalletDropdown: React.FC<{ purchaseTicket: () => void | Promise<void> }> = ({
+  purchaseTicket,
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const { address } = useAccount()
@@ -105,21 +93,21 @@ const WalletDropdown: React.FC<WalletDropdownProps> = ({ purchaseTicket }) => {
   const dropdownActions = getDropdownActions(handleClose)
 
   return (
-    <div className={STYLES.container} ref={dropdownRef}>
+    <div className='relative' ref={dropdownRef}>
       <button
-        className={STYLES.walletButton}
+        className='flex px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold'
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup='true'
       >
-        <Wallet className={STYLES.walletIcon} />
-        <div className={STYLES.addressText}>{address ? trimAddress(address) : ''}</div>
+        <Wallet className='w-6 h-6 text-white' />
+        <div className='ml-2'>{address ? trimAddress(address) : ''}</div>
       </button>
 
       {isOpen && (
-        <div className={STYLES.dropdown}>
+        <div className='absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'>
           <div
-            className={STYLES.dropdownMenu}
+            className='py-1'
             role='menu'
             aria-orientation='vertical'
             aria-labelledby='wallet-menu'

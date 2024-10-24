@@ -16,6 +16,8 @@ export const BLOCK_EXPLORER_LINKS = {
   anvil: 'https://www.etherscan.io/',
 }
 
+export const DISCORD_URL = 'https://discord.gg/yourdiscord'
+
 export const LOTTERY_NUMBERS_RANGE = {
   Easy: {
     min: 1,
@@ -36,3 +38,20 @@ export const LOTTERY_NUMBERS_RANGE = {
 
 export const BATCH_SIZE_FOR_FETCHING = 2000n
 export const MAX_TICKETS_TO_DISPLAY = 500
+export const RESULTS_PAGE_SIZE = 10n
+
+export const TIME_FORMAT = {
+  PADDING: 2,
+  SEPARATOR: ':',
+  COMPLETED_TEXT: 'Completed!',
+} as const
+
+export const SECONDS_PER_DAY = 3600 * 24
+export const SECONDS_PER_HOUR = 3600
+export const SECONDS_PER_MINUTE = 60
+
+export enum Difficulty {
+  Easy = 0,
+  Medium = 1,
+  Hard = 2,
+}

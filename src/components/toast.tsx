@@ -2,15 +2,13 @@
 
 import React, { useCallback, useEffect, useState } from 'react'
 
-interface ToastProps {
-  message: string
-  duration?: number
-  onClose: () => void
-}
-
 const ANIMATION_DURATION = 300 // ms
 
-const Toast: React.FC<ToastProps> = ({ message, duration = 2500, onClose }) => {
+const Toast: React.FC<{ message: string; duration?: number; onClose: () => void }> = ({
+  message,
+  duration = 2500,
+  onClose,
+}) => {
   const [isVisible, setIsVisible] = useState(false)
 
   const hideToast = useCallback(() => {

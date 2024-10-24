@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { ConnectKitButton } from 'connectkit'
@@ -9,57 +9,25 @@ import { useAccount } from 'wagmi'
 import { WalletDropdown } from '@/components'
 import { Game as GameModal } from '@/components/modals'
 
-interface HeaderProps {
-  isStatusBarVisible: boolean
-}
-
-interface NavLinkProps {
-  href: string
-  currentPath: string
-  children: React.ReactNode
-}
-
-interface NavItem {
+const NAVIGATION_ITEMS: {
   href: string
   label: string
-}
-
-const NAVIGATION_ITEMS: NavItem[] = [
+}[] = [
   { href: '/rules', label: 'Rules' },
   { href: '/results', label: 'Results' },
 ] as const
 
-const STYLES = {
-  header: {
-    base: 'z-10 bg-white h-20 fixed left-0 right-0 shadow-md transition-all duration-300',
-    position: {
-      visible: 'top-12',
-      hidden: 'top-0',
-    },
-  },
-  navLink: {
-    base: 'px-3 py-2 rounded-md transition-colors duration-200',
-    active: 'bg-green-100 text-green-700 font-semibold',
-    inactive: 'text-gray-700 hover:bg-gray-100',
-  },
-  connectButton:
-    'px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold',
-  logo: {
-    container: 'h-full flex items-center',
-    image: 'w-12 md:w-14 transition-transform duration-200 hover:scale-105',
-  },
-  nav: 'flex items-center space-x-2 md:space-x-4',
-} as const
-
-const NavLink: FC<NavLinkProps> = ({ href, currentPath, children }) => {
+const NavLink: React.FC<{ href: string; currentPath: string; children: React.ReactNode }> = ({
+  href,
+  currentPath,
+  children,
+}) => {
   const isActive = currentPath === href || currentPath.startsWith(href)
 
   return (
     <Link
       href={href}
-      className={`
-        ${STYLES.navLink.base}
-        ${isActive ? STYLES.navLink.active : STYLES.navLink.inactive}
+      className={`px-3 py-2 rounded-md transition-colors duration-200 ${isActive ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-700 hover:bg-gray-100'}
       `}
     >
       {children}
@@ -67,28 +35,35 @@ const NavLink: FC<NavLinkProps> = ({ href, currentPath, children }) => {
   )
 }
 
-const CustomConnectButton: FC = () => (
+const CustomConnectButton: React.FC = () => (
   <ConnectKitButton.Custom>
     {({ show }) => (
-      <button onClick={show} className={STYLES.connectButton}>
+      <button
+        onClick={show}
+        className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold'
+      >
         Connect Wallet
       </button>
     )}
   </ConnectKitButton.Custom>
 )
 
-const Logo: FC = () => (
-  <Link href='/' className={STYLES.logo.container}>
-    <img src='/logo.png' alt='Eat The Pie Lottery' className={STYLES.logo.image} />
+const Logo: React.FC = () => (
+  <Link href='/' className='h-full flex items-center'>
+    <img
+      src='/logo.png'
+      alt='Eat The Pie Lottery'
+      className='w-12 md:w-14 transition-transform duration-200 hover:scale-105'
+    />
   </Link>
 )
 
-const Navigation: FC<{
+const Navigation: React.FC<{
   pathname: string
   isConnected: boolean
   onPurchaseTicket: () => void
 }> = ({ pathname, isConnected, onPurchaseTicket }) => (
-  <nav className={STYLES.nav}>
+  <nav className='flex items-center space-x-2 md:space-x-4'>
     {NAVIGATION_ITEMS.map(({ href, label }) => (
       <NavLink key={href} href={href} currentPath={pathname}>
         {label}
@@ -102,7 +77,7 @@ const Navigation: FC<{
   </nav>
 )
 
-const Header: FC<HeaderProps> = ({ isStatusBarVisible }) => {
+const Header: React.FC<{ isStatusBarVisible: boolean }> = ({ isStatusBarVisible }) => {
   const [isGameModalOpen, setIsGameModalOpen] = useState(false)
   const { isConnected } = useAccount()
   const pathname = usePathname()
@@ -118,9 +93,7 @@ const Header: FC<HeaderProps> = ({ isStatusBarVisible }) => {
   return (
     <>
       <header
-        className={`
-          ${STYLES.header.base}
-          ${isStatusBarVisible ? STYLES.header.position.visible : STYLES.header.position.hidden}
+        className={`z-10 bg-white h-20 fixed left-0 right-0 shadow-md transition-all duration-300 ${isStatusBarVisible ? 'top-12' : 'top-0'}
         `}
       >
         <div className='container mx-auto h-full px-4 flex items-center justify-between'>

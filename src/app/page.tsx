@@ -25,19 +25,11 @@ const LINKS = {
   VDF_PROVER: 'https://github.com/eatthepie/vdf-prover',
 } as const
 
-interface SectionProps {
+const Section: FC<{
   icon: React.ReactNode
   title: string
   children: React.ReactNode
-}
-
-interface HeroProps {
-  lotteryInfo: LotteryInfo | undefined
-  onBuyTicket: () => void
-  onHowItWorks: () => void
-}
-
-const Section: FC<SectionProps> = ({ icon, title, children }) => {
+}> = ({ icon, title, children }) => {
   const [isOpen, setIsOpen] = useState(true)
 
   return (
@@ -76,7 +68,11 @@ const ExternalLink: FC<{ href: string; children: React.ReactNode }> = ({ href, c
   </a>
 )
 
-const Hero: FC<HeroProps> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => {
+const Hero: FC<{
+  lotteryInfo: LotteryInfo | undefined
+  onBuyTicket: () => void
+  onHowItWorks: () => void
+}> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => {
   const formatPrizePool = (value?: number) => {
     if (!value) return ''
     return value >= 10000 ? value.toFixed(0) : value.toFixed(1)

@@ -2,9 +2,21 @@
   {
     "type": "constructor",
     "inputs": [
-      { "name": "_vdfContractAddress", "type": "address", "internalType": "address" },
-      { "name": "_nftPrizeAddress", "type": "address", "internalType": "address" },
-      { "name": "_feeRecipient", "type": "address", "internalType": "address" }
+      {
+        "name": "_vdfContractAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_nftPrizeAddress",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "_feeRecipient",
+        "type": "address",
+        "internalType": "address"
+      }
     ],
     "stateMutability": "nonpayable"
   },
@@ -131,7 +143,13 @@
   {
     "type": "function",
     "name": "buyTickets",
-    "inputs": [{ "name": "tickets", "type": "uint256[4][]", "internalType": "uint256[4][]" }],
+    "inputs": [
+      {
+        "name": "tickets",
+        "type": "uint256[4][]",
+        "internalType": "uint256[4][]"
+      }
+    ],
     "outputs": [],
     "stateMutability": "payable"
   },
@@ -188,7 +206,13 @@
     "type": "function",
     "name": "gameDifficulty",
     "inputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "outputs": [{ "name": "", "type": "uint8", "internalType": "enum Lottery.Difficulty" }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "enum Lottery.Difficulty"
+      }
+    ],
     "stateMutability": "view"
   },
   {
@@ -281,10 +305,26 @@
         "internalType": "struct Lottery.GameBasicInfo[]",
         "components": [
           { "name": "gameId", "type": "uint256", "internalType": "uint256" },
-          { "name": "status", "type": "uint8", "internalType": "enum Lottery.GameStatus" },
-          { "name": "prizePool", "type": "uint256", "internalType": "uint256" },
-          { "name": "numberOfWinners", "type": "uint256", "internalType": "uint256" },
-          { "name": "winningNumbers", "type": "uint256[4]", "internalType": "uint256[4]" }
+          {
+            "name": "status",
+            "type": "uint8",
+            "internalType": "enum Lottery.GameStatus"
+          },
+          {
+            "name": "prizePool",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "numberOfWinners",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winningNumbers",
+            "type": "uint256[4]",
+            "internalType": "uint256[4]"
+          }
         ]
       }
     ],
@@ -296,10 +336,18 @@
     "inputs": [],
     "outputs": [
       { "name": "gameNumber", "type": "uint256", "internalType": "uint256" },
-      { "name": "difficulty", "type": "uint8", "internalType": "enum Lottery.Difficulty" },
+      {
+        "name": "difficulty",
+        "type": "uint8",
+        "internalType": "enum Lottery.Difficulty"
+      },
       { "name": "prizePool", "type": "uint256", "internalType": "uint256" },
       { "name": "drawTime", "type": "uint256", "internalType": "uint256" },
-      { "name": "timeUntilDraw", "type": "uint256", "internalType": "uint256" }
+      {
+        "name": "timeUntilDraw",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
     ],
     "stateMutability": "view"
   },
@@ -314,19 +362,66 @@
         "internalType": "struct Lottery.GameDetailedInfo",
         "components": [
           { "name": "gameId", "type": "uint256", "internalType": "uint256" },
-          { "name": "status", "type": "uint8", "internalType": "enum Lottery.GameStatus" },
-          { "name": "prizePool", "type": "uint256", "internalType": "uint256" },
-          { "name": "numberOfWinners", "type": "uint256", "internalType": "uint256" },
-          { "name": "winningNumbers", "type": "uint256[4]", "internalType": "uint256[4]" },
+          {
+            "name": "status",
+            "type": "uint8",
+            "internalType": "enum Lottery.GameStatus"
+          },
+          {
+            "name": "prizePool",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "numberOfWinners",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "goldWinners",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "silverWinners",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "bronzeWinners",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "winningNumbers",
+            "type": "uint256[4]",
+            "internalType": "uint256[4]"
+          },
           {
             "name": "difficulty",
             "type": "uint8",
             "internalType": "enum Lottery.Difficulty"
           },
-          { "name": "drawInitiatedBlock", "type": "uint256", "internalType": "uint256" },
-          { "name": "randaoBlock", "type": "uint256", "internalType": "uint256" },
-          { "name": "randaoValue", "type": "uint256", "internalType": "uint256" },
-          { "name": "payouts", "type": "uint256[3]", "internalType": "uint256[3]" }
+          {
+            "name": "drawInitiatedBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "randaoBlock",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "randaoValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "payouts",
+            "type": "uint256[3]",
+            "internalType": "uint256[3]"
+          }
         ]
       }
     ],
@@ -414,7 +509,13 @@
     "type": "function",
     "name": "newDifficulty",
     "inputs": [],
-    "outputs": [{ "name": "", "type": "uint8", "internalType": "enum Lottery.Difficulty" }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "enum Lottery.Difficulty"
+      }
+    ],
     "stateMutability": "view"
   },
   {
@@ -496,14 +597,26 @@
   {
     "type": "function",
     "name": "setFeeRecipient",
-    "inputs": [{ "name": "_newFeeRecipient", "type": "address", "internalType": "address" }],
+    "inputs": [
+      {
+        "name": "_newFeeRecipient",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
   {
     "type": "function",
     "name": "setNewVDFContract",
-    "inputs": [{ "name": "_newVDFContract", "type": "address", "internalType": "address" }],
+    "inputs": [
+      {
+        "name": "_newVDFContract",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
@@ -585,9 +698,25 @@
   },
   {
     "type": "function",
+    "name": "uint256ToBigNumber",
+    "inputs": [{ "name": "input", "type": "uint256", "internalType": "uint256" }],
+    "outputs": [
+      { "name": "val", "type": "bytes", "internalType": "bytes" },
+      { "name": "bitlen", "type": "uint256", "internalType": "uint256" }
+    ],
+    "stateMutability": "pure"
+  },
+  {
+    "type": "function",
     "name": "vdfContract",
     "inputs": [],
-    "outputs": [{ "name": "", "type": "address", "internalType": "contract VDFPietrzak" }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "contract VDFPietrzak"
+      }
+    ],
     "stateMutability": "view"
   },
   {
@@ -615,7 +744,11 @@
       }
     ],
     "outputs": [
-      { "name": "calculatedNumbers", "type": "uint256[4]", "internalType": "uint256[4]" },
+      {
+        "name": "calculatedNumbers",
+        "type": "uint256[4]",
+        "internalType": "uint256[4]"
+      },
       { "name": "isValid", "type": "bool", "internalType": "bool" }
     ],
     "stateMutability": "view"
@@ -662,9 +795,24 @@
     "type": "event",
     "name": "ExcessPrizePoolTransferred",
     "inputs": [
-      { "name": "fromGame", "type": "uint256", "indexed": false, "internalType": "uint256" },
-      { "name": "toGame", "type": "uint256", "indexed": false, "internalType": "uint256" },
-      { "name": "amount", "type": "uint256", "indexed": false, "internalType": "uint256" }
+      {
+        "name": "fromGame",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "toGame",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
     "anonymous": false
   },
@@ -691,7 +839,12 @@
         "indexed": false,
         "internalType": "uint256"
       },
-      { "name": "goldPrize", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      {
+        "name": "goldPrize",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
       {
         "name": "silverPrize",
         "type": "uint256",
@@ -711,9 +864,24 @@
     "type": "event",
     "name": "NFTMinted",
     "inputs": [
-      { "name": "winner", "type": "address", "indexed": true, "internalType": "address" },
-      { "name": "tokenId", "type": "uint256", "indexed": true, "internalType": "uint256" },
-      { "name": "gameNumber", "type": "uint256", "indexed": true, "internalType": "uint256" }
+      {
+        "name": "winner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "tokenId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "gameNumber",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      }
     ],
     "anonymous": false
   },
@@ -727,7 +895,12 @@
         "indexed": true,
         "internalType": "address"
       },
-      { "name": "newOwner", "type": "address", "indexed": true, "internalType": "address" }
+      {
+        "name": "newOwner",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      }
     ],
     "anonymous": false
   },
@@ -741,8 +914,18 @@
         "indexed": false,
         "internalType": "uint256"
       },
-      { "name": "player", "type": "address", "indexed": false, "internalType": "address" },
-      { "name": "amount", "type": "uint256", "indexed": false, "internalType": "uint256" }
+      {
+        "name": "player",
+        "type": "address",
+        "indexed": false,
+        "internalType": "address"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
     "anonymous": false
   },
@@ -756,7 +939,12 @@
         "indexed": false,
         "internalType": "uint256"
       },
-      { "name": "random", "type": "uint256", "indexed": false, "internalType": "uint256" }
+      {
+        "name": "random",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
     "anonymous": false
   },
@@ -764,7 +952,12 @@
     "type": "event",
     "name": "TicketPriceChangeScheduled",
     "inputs": [
-      { "name": "newPrice", "type": "uint256", "indexed": false, "internalType": "uint256" },
+      {
+        "name": "newPrice",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
       {
         "name": "effectiveGameNumber",
         "type": "uint256",
@@ -778,7 +971,12 @@
     "type": "event",
     "name": "TicketPurchased",
     "inputs": [
-      { "name": "player", "type": "address", "indexed": true, "internalType": "address" },
+      {
+        "name": "player",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
       {
         "name": "gameNumber",
         "type": "uint256",
@@ -791,7 +989,12 @@
         "indexed": false,
         "internalType": "uint256[3]"
       },
-      { "name": "etherball", "type": "uint256", "indexed": false, "internalType": "uint256" }
+      {
+        "name": "etherball",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
     "anonymous": false
   },
@@ -799,7 +1002,12 @@
     "type": "event",
     "name": "TicketsPurchased",
     "inputs": [
-      { "name": "player", "type": "address", "indexed": true, "internalType": "address" },
+      {
+        "name": "player",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
       {
         "name": "gameNumber",
         "type": "uint256",
@@ -819,8 +1027,18 @@
     "type": "event",
     "name": "VDFProofSubmitted",
     "inputs": [
-      { "name": "submitter", "type": "address", "indexed": true, "internalType": "address" },
-      { "name": "gameNumber", "type": "uint256", "indexed": false, "internalType": "uint256" }
+      {
+        "name": "submitter",
+        "type": "address",
+        "indexed": true,
+        "internalType": "address"
+      },
+      {
+        "name": "gameNumber",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
     "anonymous": false
   },
@@ -828,11 +1046,36 @@
     "type": "event",
     "name": "WinningNumbersSet",
     "inputs": [
-      { "name": "gameNumber", "type": "uint256", "indexed": true, "internalType": "uint256" },
-      { "name": "number1", "type": "uint256", "indexed": false, "internalType": "uint256" },
-      { "name": "number2", "type": "uint256", "indexed": false, "internalType": "uint256" },
-      { "name": "number3", "type": "uint256", "indexed": false, "internalType": "uint256" },
-      { "name": "etherball", "type": "uint256", "indexed": false, "internalType": "uint256" }
+      {
+        "name": "gameNumber",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "number1",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "number2",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "number3",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      },
+      {
+        "name": "etherball",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
     ],
     "anonymous": false
   },

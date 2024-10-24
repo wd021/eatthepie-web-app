@@ -1,4 +1,4 @@
-import { ClaimPage } from '@/components'
+import ClaimPage from '@/components/claims'
 
 const Page = () => {
   return <ClaimPage address={null} />

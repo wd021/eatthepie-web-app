@@ -1,24 +1,14 @@
 import { useCallback, useState } from 'react'
+import { AbiEvent } from 'viem'
 import { usePublicClient } from 'wagmi'
-import { Abi, AbiEvent, Log } from 'viem'
-import lotteryABI from '@/contracts/LotteryABI.json'
-import { Ticket } from '@/utils/types'
+
+import lotteryABI from '@/abi/LotteryABI.json'
 import {
-  CONTRACT_ADDRESS,
   BATCH_SIZE_FOR_FETCHING,
+  CONTRACT_ADDRESS,
   MAX_TICKETS_TO_DISPLAY,
 } from '@/utils/constants'
-
-type TicketPurchasedEvent = {
-  player: string
-  gameNumber: bigint
-  numbers: readonly bigint[]
-  etherball: bigint
-}
-
-type TicketPurchasedLog = Log<bigint, number, false, undefined, true, Abi> & {
-  args: TicketPurchasedEvent
-}
+import { Ticket, TicketPurchasedLog } from '@/utils/types'
 
 const getTicketEvent = () => lotteryABI.find((event) => event.name === 'TicketPurchased')
 

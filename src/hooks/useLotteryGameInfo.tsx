@@ -1,7 +1,7 @@
 import { useReadContract } from 'wagmi'
 
+import lotteryABI from '@/abi/LotteryABI.json'
 import { CONTRACT_ADDRESS } from '@/utils/constants'
-import lotteryABI from '@/contracts/LotteryABI.json'
 import { GameDetailedInfo } from '@/utils/types'
 
 export default function useLotteryGameInfo(gameId: bigint) {

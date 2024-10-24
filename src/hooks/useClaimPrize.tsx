@@ -2,20 +2,9 @@ import { useCallback, useState } from 'react'
 import { ContractFunctionExecutionError } from 'viem'
 import { usePublicClient, useWriteContract } from 'wagmi'
 
+import lotteryABI from '@/abi/LotteryABI.json'
 import { CONTRACT_ADDRESS } from '@/utils/constants'
-import lotteryABI from '@/contracts/LotteryABI.json'
-
-export type TransactionStatus = 'idle' | 'pending' | 'success' | 'error'
-
-interface UseClaimPrizeReturn {
-  handleClaim: (gameNumber: string) => Promise<void>
-  status: TransactionStatus
-  isConfirming: boolean
-  isConfirmed: boolean
-  hash: string | undefined
-  error: Error | null
-  reset: () => void
-}
+import { TransactionStatus, UseClaimPrizeReturn } from '@/utils/types'
 
 export default function useClaimPrize(): UseClaimPrizeReturn {
   const [status, setStatus] = useState<TransactionStatus>('idle')
@@ -54,7 +43,7 @@ export default function useClaimPrize(): UseClaimPrizeReturn {
         setIsConfirming(true)
 
         // Wait for confirmation
-        const receipt = await publicClient.waitForTransactionReceipt({ hash })
+        await publicClient.waitForTransactionReceipt({ hash })
         setIsConfirming(false)
         setIsConfirmed(true)
       } catch (err) {

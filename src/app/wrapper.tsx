@@ -9,20 +9,6 @@ import { NETWORK_NAMES } from '@/utils/constants'
 
 type NetworkName = keyof typeof NETWORK_NAMES
 
-interface WrapperProps {
-  children: React.ReactNode
-}
-
-interface FooterProps {
-  networkName: NetworkName
-  lotteryAddress: string
-  showResponsibleModal: () => void
-}
-
-interface NavigationProps {
-  showResponsibleModal: () => void
-}
-
 const EXTERNAL_LINKS = {
   DOCS: 'https://docs.eatthepie.xyz',
   GITHUB: 'https://github.com/eatthepie',
@@ -35,7 +21,9 @@ const NAV_ITEMS = [
   { type: 'action', label: '⚠️ Responsible Gaming', action: 'showResponsibleModal' },
 ] as const
 
-const Navigation: React.FC<NavigationProps> = ({ showResponsibleModal }) => {
+const Navigation: React.FC<{ showResponsibleModal: () => void }> = ({
+  showResponsibleModal,
+}) => {
   const renderNavItem = (item: (typeof NAV_ITEMS)[number]) => {
     const commonClasses = 'hover:text-green-600 transition-colors duration-200'
 
@@ -74,7 +62,11 @@ const Navigation: React.FC<NavigationProps> = ({ showResponsibleModal }) => {
   )
 }
 
-const Footer: React.FC<FooterProps> = ({ showResponsibleModal }) => (
+const Footer: React.FC<{
+  networkName: NetworkName
+  lotteryAddress: string
+  showResponsibleModal: () => void
+}> = ({ showResponsibleModal }) => (
   <footer className='bg-white border-t border-gray-200 py-4 mt-auto'>
     <div className='container mx-auto px-4'>
       <div className='flex flex-col items-center'>
@@ -84,7 +76,6 @@ const Footer: React.FC<FooterProps> = ({ showResponsibleModal }) => (
   </footer>
 )
 
-// Utilities
 const getEnvironmentVariables = () => {
   const networkName = process.env.NEXT_PUBLIC_NETWORK_NAME as NetworkName
   const lotteryAddress = process.env.NEXT_PUBLIC_LOTTERY_ADDRESS ?? ''
@@ -95,22 +86,16 @@ const getEnvironmentVariables = () => {
   }
 }
 
-// Main Component
-const Wrapper: React.FC<WrapperProps> = ({ children }) => {
-  // State
+const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isClient, setIsClient] = useState(false)
   const [isStatusBarVisible, setIsStatusBarVisible] = useState(true)
   const [isResponsibleModalOpen, setIsResponsibleModalOpen] = useState(false)
-
-  // Environment variables
   const { networkName, lotteryAddress } = getEnvironmentVariables()
 
-  // Effects
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  // Handlers
   const handleResponsibleModalOpen = () => setIsResponsibleModalOpen(true)
   const handleResponsibleModalClose = () => setIsResponsibleModalOpen(false)
 

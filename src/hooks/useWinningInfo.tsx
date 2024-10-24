@@ -1,29 +1,14 @@
 import { formatEther } from 'viem'
 import { useReadContract } from 'wagmi'
+
+import lotteryABI from '@/abi/LotteryABI.json'
 import { CONTRACT_ADDRESS } from '@/utils/constants'
-import lotteryABI from '@/contracts/LotteryABI.json'
-
-export interface WinningInfo {
-  goldWin: boolean
-  silverWin: boolean
-  bronzeWin: boolean
-  totalPrize: string
-  claimed: boolean
-}
-
-type ContractWinningsResult = [boolean, boolean, boolean, bigint, boolean]
-
-interface UseWinningInfoParams {
-  gameNumber: string
-  walletAddress: string
-  shouldFetch: boolean
-}
-
-interface UseWinningInfoResult {
-  winningInfo: WinningInfo | undefined
-  isError: boolean
-  isLoading: boolean
-}
+import {
+  ContractWinningsResult,
+  UseWinningInfoParams,
+  UseWinningInfoResult,
+  WinningInfo,
+} from '@/utils/types'
 
 const parseWinningInfo = (data: ContractWinningsResult): WinningInfo => ({
   goldWin: data[0],

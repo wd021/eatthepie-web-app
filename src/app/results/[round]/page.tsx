@@ -1,35 +1,15 @@
 'use client'
 
 import React from 'react'
+import { motion } from 'framer-motion'
 import { formatEther } from 'viem'
 
+import { GameSection } from '@/components/results'
 import { useLotteryGameInfo } from '@/hooks'
 import { Copy } from '@/icons'
 import { useToast } from '@/providers/ToastProvider'
 import { truncateString } from '@/utils/helpers'
 import { GameDetailedInfo } from '@/utils/types'
-
-const GameSection = ({
-  title,
-  emoji,
-  children,
-  className = '',
-}: {
-  title: string
-  emoji: string
-  children: React.ReactNode
-  className?: string
-}) => (
-  <div className={`bg-white rounded-lg shadow-sm overflow-hidden ${className}`}>
-    <div className='px-5 py-3.5 border-b border-gray-100'>
-      <div className='flex items-center space-x-2'>
-        <span className='text-xl'>{emoji}</span>
-        <h2 className='text-base font-semibold text-gray-900'>{title}</h2>
-      </div>
-    </div>
-    <div className='p-5'>{children}</div>
-  </div>
-)
 
 const GameProgressSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) => {
   const steps = [
@@ -38,12 +18,24 @@ const GameProgressSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) => {
     { label: 'RANDAO Set', completed: gameInfo.randaoBlock > 0n },
   ]
 
+  const status = steps.every((step) => step.completed)
+    ? 'completed'
+    : steps.some((step) => step.completed)
+      ? 'inProgress'
+      : 'pending'
+
   return (
-    <GameSection title='Game Progress' emoji='📈'>
+    <GameSection title='Game Progress' emoji='📈' status={status}>
       <div className='relative'>
         <div className='absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200' />
         {steps.map((step, index) => (
-          <div key={index} className='relative flex items-center mb-6 last:mb-0'>
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className='relative flex items-center mb-8 last:mb-0'
+          >
             <div
               className={`absolute left-4 w-7 h-7 rounded-full flex items-center justify-center border-2 -ml-3.5 ${
                 step.completed ? 'bg-green-500 border-green-400' : 'bg-white border-gray-300'
@@ -76,7 +68,7 @@ const GameProgressSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) => {
                 {step.label}
               </h4>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </GameSection>
@@ -90,6 +82,13 @@ const RandomNumberSection = ({
   gameInfo: GameDetailedInfo
   showToast: (message: string, duration?: number) => void
 }) => {
+  const status =
+    gameInfo.randaoBlock > 0n
+      ? 'completed'
+      : gameInfo.drawInitiatedBlock > 0n
+        ? 'inProgress'
+        : 'pending'
+
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
@@ -116,7 +115,7 @@ const RandomNumberSection = ({
   const randaoValue = gameInfo.randaoValue !== 0n ? gameInfo.randaoValue.toString() : '-'
 
   return (
-    <GameSection title='Random Number Generation' emoji='🎲' className='mt-5'>
+    <GameSection title='Random Number Generation' emoji='🎲' status={status} className=''>
       <div className='space-y-3'>
         <div className='p-3 bg-gray-50 rounded'>
           <div className='flex justify-between items-center'>
@@ -166,129 +165,141 @@ const RandomNumberSection = ({
 }
 
 const GameInformationSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) => {
-  const getStatusBadge = (status: number) => {
-    const styles =
-      {
-        0: 'bg-blue-100 text-blue-800',
-        1: 'bg-yellow-100 text-yellow-800',
-        2: 'bg-green-100 text-green-800',
-      }[status] || 'bg-gray-100 text-gray-800'
-
-    const labels =
-      {
-        0: 'In Play',
-        1: 'Drawing',
-        2: 'Completed',
-      }[status] || 'Unknown'
-
-    return (
-      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${styles}`}>{labels}</span>
-    )
-  }
-
-  console.log('gameInfo.winningNumbers', gameInfo.winningNumbers)
+  const status =
+    gameInfo.status === 2 ? 'completed' : gameInfo.status === 1 ? 'inProgress' : 'pending'
 
   return (
-    <GameSection title='Game Information' emoji='ℹ️'>
+    <GameSection title='Game Information' emoji='ℹ️' status={status}>
       <div className='space-y-6'>
-        {/* Winning Numbers & Status */}
-        <div className='space-y-3'>
-          <div className='flex justify-between items-center'>
-            <h3 className='text-sm font-semibold text-gray-900'>Winning Numbers</h3>
-            <div className='text-2xl font-bold'>
-              {gameInfo.winningNumbers
-                .map((number: bigint) => number.toString().padStart(2, '0'))
-                .join(' - ')}
-            </div>
-          </div>
-          <div className='p-3 bg-gray-50 rounded'>
-            <div className='flex justify-between items-center'>
-              <span className='text-sm font-medium text-gray-900'>Status</span>
-              {getStatusBadge(gameInfo.status)}
-            </div>
-          </div>
-        </div>
-
-        {/* Prize Pool & Total Winners */}
+        {/* Top Stats Grid */}
         <div className='grid grid-cols-2 gap-4'>
-          <div className='p-4 bg-gray-50 rounded-lg'>
-            <div className='flex flex-col'>
-              <span className='text-sm font-medium text-gray-500'>Total Prize Pool</span>
-              <span className='text-2xl font-bold text-gray-900'>
-                {formatEther(gameInfo.prizePool)} ETH
-              </span>
+          {/* Game Numbers Card */}
+          <div className='col-span-2 bg-gray-50 p-4 rounded-lg'>
+            <div className='space-y-1'>
+              <h3 className='text-sm font-medium text-gray-500 mb-2'>Winning Numbers</h3>
+              <div className='flex space-x-2'>
+                {gameInfo.winningNumbers.map((number: bigint, index: number) => (
+                  <div
+                    key={index}
+                    className='w-10 h-10 rounded-lg flex items-center justify-center 
+                             bg-white text-gray-900 border border-gray-200 font-bold text-lg'
+                  >
+                    {gameInfo.status === 2 ? number.toString().padStart(2, '0') : '-'}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-          <div className='p-4 bg-gray-50 rounded-lg'>
-            <div className='flex flex-col'>
-              <span className='text-sm font-medium text-gray-500'>Total Winners</span>
-              <span className='text-2xl font-bold text-gray-900'>
-                {gameInfo.numberOfWinners.toString()}
-              </span>
+
+          {/* Total Prize Card */}
+          <div className='bg-gray-50 p-4 rounded-lg'>
+            <div className='flex items-center justify-between h-full'>
+              <div className='space-y-1'>
+                <h3 className='text-sm font-medium text-gray-500'>Total Prize</h3>
+                <div className='flex items-baseline space-x-1'>
+                  <span className='text-2xl font-bold text-gray-900'>
+                    {Number(formatEther(gameInfo.prizePool)).toFixed(2)}
+                  </span>
+                  <span className='text-lg font-semibold text-gray-600'>ETH</span>
+                </div>
+              </div>
+              <div className='text-2xl'>💰</div>
+            </div>
+          </div>
+
+          {/* Total Winners Card */}
+          <div className='bg-gray-50 p-4 rounded-lg'>
+            <div className='flex items-center justify-between h-full'>
+              <div className='space-y-1'>
+                <h3 className='text-sm font-medium text-gray-500'>Total Winners</h3>
+                <div className='flex items-baseline space-x-1'>
+                  <span className='text-2xl font-bold text-gray-900'>
+                    {gameInfo.status === 2 ? gameInfo.numberOfWinners.toString() : '-'}
+                  </span>
+                </div>
+              </div>
+              <div className='text-2xl'>👑</div>
             </div>
           </div>
         </div>
 
-        {/* Winner Distribution & Payouts */}
-        <div>
-          <h3 className='text-sm font-semibold text-gray-900 mb-3'>Winner Distribution</h3>
-          <div className='space-y-3'>
-            <div className='p-4 bg-gray-50 rounded-lg'>
-              <div className='flex items-center justify-between'>
-                <div className='space-y-1'>
-                  <div className='font-semibold text-gray-900'>Jackpot (4 Numbers)</div>
-                  <div className='text-sm text-gray-500'>
-                    {gameInfo.jackpotWinners?.toString() || '0'} winners
-                  </div>
-                </div>
-                <div className='text-right'>
-                  <div className='font-bold text-gray-900'>10.5 ETH</div>
-                  <div className='text-sm text-gray-500'>per winner</div>
+        {/* Prize Distribution */}
+        <div className='space-y-2'>
+          <h3 className='text-sm font-medium text-gray-500 mb-3'>Prize Distribution</h3>
+          {[
+            {
+              type: 'gold',
+              icon: '🏆',
+              title: 'Jackpot',
+              subtitle: '4 matching numbers',
+              winners: gameInfo.goldWinners?.toString() || '0',
+              prize:
+                gameInfo.payouts[0] !== 0n
+                  ? Number(formatEther(gameInfo.payouts[0])).toFixed + ' ETH'
+                  : '-',
+            },
+            {
+              type: 'silver',
+              icon: '🥈',
+              title: 'Silver Prize',
+              subtitle: '3 in-a-row',
+              winners: gameInfo.silverWinners?.toString() || '0',
+              prize:
+                gameInfo.payouts[1] !== 0n
+                  ? Number(formatEther(gameInfo.payouts[1])).toFixed(2) + ' ETH'
+                  : '-',
+            },
+            {
+              type: 'bronze',
+              icon: '🥉',
+              title: 'Bronze Prize',
+              subtitle: '2 in-a-row',
+              winners: gameInfo.bronzeWinners?.toString() || '0',
+              prize:
+                gameInfo.payouts[2] !== 0n
+                  ? Number(formatEther(gameInfo.payouts[2])).toFixed(2) + ' ETH'
+                  : '-',
+            },
+          ].map((tier) => (
+            <div
+              key={tier.type}
+              className='p-4 bg-gray-50 rounded-lg flex items-center justify-between hover:bg-gray-100 transition-colors duration-200'
+            >
+              <div className='flex items-center space-x-3'>
+                <span className='text-2xl'>{tier.icon}</span>
+                <div className='space-y-0.5'>
+                  <div className='font-semibold text-gray-900'>{tier.title}</div>
+                  <div className='text-sm text-gray-500'>{tier.subtitle}</div>
+                  {gameInfo.status === 2 && (
+                    <div className='text-sm font-medium text-blue-600'>
+                      {tier.winners} winner{tier.winners !== '1' ? 's' : ''}
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-
-            <div className='p-4 bg-gray-50 rounded-lg'>
-              <div className='flex items-center justify-between'>
-                <div className='space-y-1'>
-                  <div className='font-semibold text-gray-900'>3 Numbers in a Row</div>
-                  <div className='text-sm text-gray-500'>
-                    {gameInfo.threeNumberWinners?.toString() || '0'} winners
-                  </div>
-                </div>
-                <div className='text-right'>
-                  <div className='font-bold text-gray-900'>5.25 ETH</div>
-                  <div className='text-sm text-gray-500'>per winner</div>
-                </div>
+              <div className='text-right'>
+                <div className='font-bold text-gray-900'>{tier.prize}</div>
+                <div className='text-sm text-gray-500'>per winner</div>
               </div>
             </div>
-
-            <div className='p-4 bg-gray-50 rounded-lg'>
-              <div className='flex items-center justify-between'>
-                <div className='space-y-1'>
-                  <div className='font-semibold text-gray-900'>2 Numbers in a Row</div>
-                  <div className='text-sm text-gray-500'>
-                    {gameInfo.twoNumberWinners?.toString() || '0'} winners
-                  </div>
-                </div>
-                <div className='text-right'>
-                  <div className='font-bold text-gray-900'>2.1 ETH</div>
-                  <div className='text-sm text-gray-500'>per winner</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </GameSection>
   )
 }
 
-const GameDetailsPage = ({ params: { round } }: { params: { round: bigint } }) => {
+const ResultsRoundPage = ({ params: { round } }: { params: { round: bigint } }) => {
   const { showToast } = useToast()
   const { gameInfo, isLoading, isError } = useLotteryGameInfo(round)
 
-  if (isLoading) return <div className='text-center py-10'>Loading...</div>
+  if (isLoading)
+    return (
+      <div className='flex items-center'>
+        <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500'></div>
+        <span className='ml-2 text-sm text-gray-600'>Loading...</span>
+      </div>
+    )
   if (isError)
     return <div className='text-center py-10 text-red-600'>Error fetching game details</div>
   if (!gameInfo) return <div className='text-center py-10'>No game information available</div>
@@ -310,4 +321,4 @@ const GameDetailsPage = ({ params: { round } }: { params: { round: bigint } }) =
   )
 }
 
-export default GameDetailsPage
+export default ResultsRoundPage

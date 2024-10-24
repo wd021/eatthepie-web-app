@@ -1,26 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useReadContract, useReadContracts } from 'wagmi'
 
-import { CONTRACT_ADDRESS } from '@/utils/constants'
-import lotteryABI from '@/contracts/LotteryABI.json'
-
-const PAGE_SIZE = 10n
-
-interface GameBasicInfo {
-  gameId: bigint
-  status: number
-  prizePool: bigint
-  numberOfWinners: bigint
-  winningNumbers: bigint[]
-}
-
-interface UseLotteryResultsReturn {
-  games: GameBasicInfo[]
-  hasMore: boolean
-  isLoading: boolean
-  loadMore: () => void
-  error: string | null
-}
+import lotteryABI from '@/abi/LotteryABI.json'
+import { CONTRACT_ADDRESS, RESULTS_PAGE_SIZE } from '@/utils/constants'
+import { GameBasicInfo, UseLotteryResultsReturn } from '@/utils/types'
 
 const calculateGameIds = (
   currentGameNumber: bigint | undefined,
@@ -30,8 +13,8 @@ const calculateGameIds = (
     return { startGameId: 1n, endGameId: 0n }
   }
 
-  const endGameId = currentGameNumber - BigInt(currentPage * Number(PAGE_SIZE))
-  const startGameId = endGameId > PAGE_SIZE ? endGameId - (PAGE_SIZE - 1n) : 1n
+  const endGameId = currentGameNumber - BigInt(currentPage * Number(RESULTS_PAGE_SIZE))
+  const startGameId = endGameId > RESULTS_PAGE_SIZE ? endGameId - (RESULTS_PAGE_SIZE - 1n) : 1n
 
   return { startGameId, endGameId }
 }

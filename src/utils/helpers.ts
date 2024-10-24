@@ -1,3 +1,5 @@
+import { TIME_FORMAT } from '@/utils/constants'
+
 export const trimAddress = (
   addr: string,
   startLength: number = 4,
@@ -16,6 +18,11 @@ export const trimAddress = (
   }
 
   return `${addr.slice(0, startLength)}...${addr.slice(-endLength)}`
+}
+
+export const truncateString = (str: string, length: number) => {
+  if (str.length <= length) return str
+  return `${str.slice(0, length)}...`
 }
 
 export const convertSecondsToShorthand = (seconds: number): string => {
@@ -38,19 +45,12 @@ export const convertSecondsToShorthand = (seconds: number): string => {
   return `${Math.floor(seconds / 86400)}d`
 }
 
-export const truncateString = (str: string, length: number) => {
-  if (str.length <= length) return str
-  return `${str.slice(0, length)}...`
-}
-
-const TIME_FORMAT = {
-  PADDING: 2,
-  SEPARATOR: ':',
-  COMPLETED_TEXT: 'Completed!',
-} as const
-
 export const formatTimeUnit = (value: number): string => {
   return value.toString().padStart(TIME_FORMAT.PADDING, '0')
+}
+
+export const formatNumbers = (numbers: number[]): string => {
+  return numbers.map((num) => num.toString().padStart(TIME_FORMAT.PADDING, '0')).join(' - ')
 }
 
 export const calculateTargetDate = (secondsUntilDraw: number): Date => {
