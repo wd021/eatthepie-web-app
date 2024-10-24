@@ -295,7 +295,7 @@ const ResultsRoundPage = ({ params: { round } }: { params: { round: bigint } }) 
 
   if (isLoading)
     return (
-      <div className='flex items-center'>
+      <div className='flex items-center justify-center py-10'>
         <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500'></div>
         <span className='ml-2 text-sm text-gray-600'>Loading...</span>
       </div>

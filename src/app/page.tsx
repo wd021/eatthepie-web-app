@@ -209,27 +209,28 @@ const HowItWorks = () => (
 
       <Section icon='💻' title='Open Source, Self-Executing, and Runs Forever'>
         <div>
-          <ExternalLink href={LINKS.GITHUB}>📖 The codebase is open source</ExternalLink> for
-          anyone to review.
+          <ExternalLink href={LINKS.GITHUB}>📖 Open source codebase</ExternalLink> for anyone to
+          inspect the code.
         </div>
         <div className='pt-4'>
-          🔍 <ExternalLink href={LINKS.DOCS}>The documentation</ExternalLink> provides a
-          detailed breakdown.
+          🔍 <ExternalLink href={LINKS.DOCS}>Documentation</ExternalLink> provides details on
+          how everything works.
         </div>
         <div className='pt-4'>
-          🌐 <ExternalLink href={LINKS.IPFS}>IPFS-hosted interface</ExternalLink> to access via
-          a decentralized frontend or via <b>eatthepie.eth</b> in browsers that support ENS
-          resolution.
+          🌐 <ExternalLink href={LINKS.IPFS}>eatthepie.eth on IPFS</ExternalLink> to access via
+          a decentralized frontend.
         </div>
         <div className='pt-4'>
-          💻 <ExternalLink href={LINKS.NPM_PACKAGE}>A CLI tool</ExternalLink> is available via{' '}
-          <code className='bg-gray-100 px-2 py-1 rounded'>npm install -g eatthepie</code> to
-          interact with the lottery fully from the terminal.
+          💻 <ExternalLink href={LINKS.NPM_PACKAGE}>A command line app</ExternalLink> to
+          interact with Eat The Pie fully from the terminal. (
+          <code className='text-xs font-semibold bg-gray-100 px-2 py-1 rounded'>
+            npm install -g eatthepie
+          </code>
+          )
         </div>
         <div className='pt-4'>
-          🔐 <ExternalLink href={LINKS.VDF_PROVER}>The VDF prover</ExternalLink> is accessible
-          for anyone to compute and submit proofs, contributing to the lottery&apos;s verifiable
-          fairness.
+          🔐 <ExternalLink href={LINKS.VDF_PROVER}>The VDF prover</ExternalLink> is available
+          for anyone to do the computation and submit the proofs to generate random numbers.
         </div>
       </Section>
     </motion.div>
