@@ -1,8 +1,8 @@
 ![Eat The Pie](https://github.com/eatthepie/docs/blob/main/static/img/header.png)
 
-# Eat The Pie DApp
+# Eat The Pie App
 
-Frontend interface where users can participate in Eat The Pie, the world lottery on Ethereum.
+Frontend interface for users to participate in Eat The Pie - an autonomous lottery running on Ethereum.
 
 ## Prerequisites
 
@@ -30,12 +30,7 @@ npm install
 yarn install
 ```
 
-3. Create a `.env.local` file in the root directory:
-
-```
-NEXT_PUBLIC_NETWORK_NAME=mainnet,seploia
-NEXT_PUBLIC_LOTTERY_ADDRESS=0x....
-```
+3. Create a `.env.local` file in the root directory. See `.env.example` for variables to fill out.
 
 4. Start the development server:
 
