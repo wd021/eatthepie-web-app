@@ -46,18 +46,15 @@ const DiscordPrompt: React.FC = () => (
 )
 
 const TicketItem: React.FC<{ ticket: TicketType }> = ({ ticket }) => {
-  const networkName = process.env.NEXT_PUBLIC_NETWORK_NAME as keyof typeof BLOCK_EXPLORER_LINKS
+  const networkName = process.env
+    .NEXT_PUBLIC_LOTTERY_NETWORK as keyof typeof BLOCK_EXPLORER_LINKS
   const blockExplorer = BLOCK_EXPLORER_LINKS[networkName]
 
   return (
     <div className='border-b border-gray-200 last:border-b-0 p-3'>
       <div className='flex justify-between items-center'>
         <div className='flex flex-col'>
-          <div className='flex items-center mb-1'>
-            <span className='text-sm font-medium text-gray-700'>
-              {formatNumbers(ticket.numbers)}
-            </span>
-          </div>
+          <div className='flex items-center mb-1'>{formatNumbers(ticket.numbers)}</div>
           <BlockExplorerLink
             href={`${blockExplorer}/address/${ticket.player}`}
             className='text-xs text-gray-500 hover:text-gray-700 flex items-center'

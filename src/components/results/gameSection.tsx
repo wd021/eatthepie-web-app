@@ -38,7 +38,7 @@ const GameSection = ({
 }) => (
   <div className={`bg-white rounded-lg shadow-sm overflow-hidden ${className}`}>
     <div className='px-5 py-3.5 border-b border-gray-100 flex justify-between items-center'>
-      <div className='flex items-center space-x-2'>
+      <div className='flex items-center space-x-2 mr-2'>
         <span className='text-xl'>{emoji}</span>
         <h2 className='text-base font-semibold text-gray-900'>{title}</h2>
       </div>

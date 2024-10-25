@@ -10,7 +10,7 @@ import { convertSecondsToShorthand } from '@/utils/helpers'
 const CloseButton: FC<{ onClick: (e: React.MouseEvent) => void }> = ({ onClick }) => (
   <button
     onClick={onClick}
-    className='ml-4 p-1 rounded-full hover:bg-green-600 transition-colors duration-200 text-white'
+    className='ml-4 p-1 rounded-full hover:bg-green-600 transition-colors duration-200'
     aria-label='Close status bar'
   >
     <Close className='w-6 h-6' />
@@ -22,7 +22,9 @@ const StatusInfo: FC<{ prizePool?: string | number; timeLeft: string }> = ({
   timeLeft,
 }) => (
   <div className='flex items-center space-x-4 text-black'>
-    <span className='font-bold'>Prize Pool: {Number(prizePool).toFixed(2)} ETH</span>
+    <span className='font-bold'>
+      Prize Pool: {prizePool ? Number(prizePool).toFixed(2) : '-'} ETH
+    </span>
     <span className='text-sm'>|</span>
     <span>Time Left: {timeLeft}</span>
   </div>

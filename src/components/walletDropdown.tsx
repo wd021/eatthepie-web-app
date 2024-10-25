@@ -95,7 +95,7 @@ const WalletDropdown: React.FC<{ purchaseTicket: () => void | Promise<void> }> =
   return (
     <div className='relative' ref={dropdownRef}>
       <button
-        className='flex px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold'
+        className='flex px-3 py-1.5 md:px-4 md:py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold'
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         aria-haspopup='true'

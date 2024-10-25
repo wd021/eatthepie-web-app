@@ -51,13 +51,20 @@ const Navigation: React.FC<{ showResponsibleModal: () => void }> = ({
   }
 
   return (
-    <nav className='h-[50px] text-sm sm:text-base flex items-center justify-center'>
-      {NAV_ITEMS.map((item, index) => (
-        <Fragment key={index}>
-          {index > 0 && <span className='mx-2 text-gray-400'>·</span>}
-          {renderNavItem(item)}
-        </Fragment>
-      ))}
+    <nav className='text-sm sm:text-base w-full'>
+      <div className='flex flex-col md:flex-row justify-center items-center gap-2 md:gap-0'>
+        <div className='flex items-center justify-center'>
+          {renderNavItem(NAV_ITEMS[0])}
+          <span className='mx-2 text-gray-400'>·</span>
+          {renderNavItem(NAV_ITEMS[1])}
+        </div>
+        <span className='hidden md:flex mx-2 text-gray-400'>·</span>
+        <div className='flex items-center justify-center'>
+          {renderNavItem(NAV_ITEMS[2])}
+          <span className='mx-2 text-gray-400'>·</span>
+          {renderNavItem(NAV_ITEMS[3])}
+        </div>
+      </div>
     </nav>
   )
 }
@@ -69,15 +76,13 @@ const Footer: React.FC<{
 }> = ({ showResponsibleModal }) => (
   <footer className='bg-white border-t border-gray-200 py-4 mt-auto'>
     <div className='container mx-auto px-4'>
-      <div className='flex flex-col items-center'>
-        <Navigation showResponsibleModal={showResponsibleModal} />
-      </div>
+      <Navigation showResponsibleModal={showResponsibleModal} />
     </div>
   </footer>
 )
 
 const getEnvironmentVariables = () => {
-  const networkName = process.env.NEXT_PUBLIC_NETWORK_NAME as NetworkName
+  const networkName = process.env.NEXT_PUBLIC_LOTTERY_NETWORK as NetworkName
   const lotteryAddress = process.env.NEXT_PUBLIC_LOTTERY_ADDRESS ?? ''
 
   return {

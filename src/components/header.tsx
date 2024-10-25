@@ -27,7 +27,7 @@ const NavLink: React.FC<{ href: string; currentPath: string; children: React.Rea
   return (
     <Link
       href={href}
-      className={`px-3 py-2 rounded-md transition-colors duration-200 ${isActive ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-700 hover:bg-gray-100'}
+      className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md transition-colors duration-200 ${isActive ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-700 hover:bg-gray-100'}
       `}
     >
       {children}
@@ -40,7 +40,7 @@ const CustomConnectButton: React.FC = () => (
     {({ show }) => (
       <button
         onClick={show}
-        className='px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold'
+        className='px-3 py-1.5 md:px-4 md:py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors duration-200 font-semibold'
       >
         Connect Wallet
       </button>
@@ -63,7 +63,7 @@ const Navigation: React.FC<{
   isConnected: boolean
   onPurchaseTicket: () => void
 }> = ({ pathname, isConnected, onPurchaseTicket }) => (
-  <nav className='flex items-center space-x-2 md:space-x-4'>
+  <nav className='flex items-center space-x-1 md:space-x-4'>
     {NAVIGATION_ITEMS.map(({ href, label }) => (
       <NavLink key={href} href={href} currentPath={pathname}>
         {label}

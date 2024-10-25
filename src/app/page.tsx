@@ -125,7 +125,7 @@ const Hero: FC<{
             </div>
           </motion.div>
           <motion.div
-            className='relative w-full max-w-sm lg:max-w-md cursor-pointer'
+            className='relative w-[85%] max-w-sm lg:max-w-md cursor-pointer'
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}

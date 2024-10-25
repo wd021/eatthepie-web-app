@@ -9,7 +9,11 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Eat The Pie - The World Lottery',
-  description: "The world's first fully autonomous and trustless lottery running on Ethereum.",
+  description:
+    'A revolutionary lottery that runs itself, secured by math, powered by Ethereum. Low 1% fees mean bigger wins for everyone.',
+  other: {
+    'format-detection': 'telephone=no, date=no',
+  },
 }
 
 export default function RootLayout({

@@ -24,7 +24,8 @@ const Transaction: React.FC<{
 }) => {
   if (status === 'idle') return null
 
-  const networkName = process.env.NEXT_PUBLIC_NETWORK_NAME as keyof typeof BLOCK_EXPLORER_LINKS
+  const networkName = process.env
+    .NEXT_PUBLIC_LOTTERY_NETWORK as keyof typeof BLOCK_EXPLORER_LINKS
   const blockExplorer = BLOCK_EXPLORER_LINKS[networkName]
 
   return (
