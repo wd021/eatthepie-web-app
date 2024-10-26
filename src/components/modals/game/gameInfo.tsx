@@ -102,7 +102,7 @@ const GameInfo: React.FC<{
             </div>
           </div>
           <div className='text-xs text-center text-gray-600'>
-            Drawing starts when countdown reaches 0 and prize pool reaches 500 ETH
+            Drawing starts when countdown reaches 0 and the prize pool reaches 500 ETH
           </div>
         </div>
       )}

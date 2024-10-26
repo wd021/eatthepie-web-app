@@ -134,7 +134,7 @@ const RULES_CONTENT = {
     title: 'Draw Schedule',
     icon: 'clock' as const,
     color: 'bg-green-50',
-    conditions: ['A week has passed', 'The prize pool passes 500ETH'],
+    conditions: ['One week has passed', 'The prize pool exceeds 500 ETH'],
   },
   prizePools: {
     title: 'Prize Pools',
@@ -148,8 +148,7 @@ const RULES_CONTENT = {
   difficultyLevels: {
     title: 'Difficulty Levels',
     icon: 'alertCircle' as const,
-    description:
-      'The game adjusts difficulty based on winners. Three consecutive drawings without a jackpot reduces difficulty. Three consecutive jackpot winners increases it.',
+    description: 'The lottery difficulty adjusts based on the rate of wins.',
     numberFormat: {
       main: 'First 3 numbers of your selection',
       etherball: 'Final (4th) number',
@@ -164,9 +163,9 @@ const RULES_CONTENT = {
     title: 'Winning and Claiming Prizes',
     icon: 'award' as const,
     steps: [
-      'Random numbers are generated (can take a few hours for a VDF proof to be submitted).',
-      'Once a proof is confirmed, numbers are revealed and players can claim their winnings.',
-      'Jackpot winners receive a unique NFT to commemorate their win!',
+      'Random numbers are generated (this can take a few hours...).',
+      'A proof is confirmed, revealing the numbers. Players can then claim their winnings.',
+      'Jackpot winners can claim a unique NFT to commemorate their win.',
       "If there isn't a winner, the prize pool rolls over to the next game.",
     ],
   },
@@ -175,7 +174,7 @@ const RULES_CONTENT = {
     icon: 'coins' as const,
     color: 'bg-yellow-50',
     price: '0.1 ETH',
-    distribution: ['99% goes to prize pool', '1% fee (capped at 100ETH)'],
+    distribution: ['99% goes to prize pool', '1% fee (capped at 100 ETH)'],
   },
 } as const
 
@@ -228,7 +227,7 @@ const Accordion: FC<AccordionProps> = ({ title, icon, children }) => {
 
 const Rules: FC = () => {
   return (
-    <div className='max-w-6xl mx-auto px-2 py-12'>
+    <div className='max-w-6xl mx-auto px-6 py-12'>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6 mb-8'>
         <Card
           title={RULES_CONTENT.howToPlay.title}
@@ -271,8 +270,8 @@ const Rules: FC = () => {
             ))}
           </ul>
           <div className='mt-4 italic'>
-            *Each ticket is eligible for each pool. So a jackpot winner would collect in all 3
-            pools, a 3 in-a-row winner would also win 2 in-a-row.
+            *When you win, you collect from all eligible prize pools - for example, hitting the
+            jackpot means you win all three prize levels.
           </div>
         </Accordion>
 

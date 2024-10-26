@@ -73,9 +73,13 @@ const Hero: FC<{
   onBuyTicket: () => void
   onHowItWorks: () => void
 }> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => {
-  const formatPrizePool = (value?: number) => {
-    if (!value) return ''
-    return value >= 10000 ? value.toFixed(0) : value.toFixed(1)
+  const formatPrizePool = (value?: string) => {
+    if (!value) return '-'
+
+    const numValue = Number(value)
+    const decimalPlaces = numValue >= 10000 ? 0 : 1
+
+    return numValue.toFixed(decimalPlaces)
   }
 
   return (
@@ -190,16 +194,16 @@ const HowItWorks = () => (
         <div>
           Built on Ethereum&apos;s battle-tested infrastructure, Eat The Pie inherits the
           security of the most decentralized blockchain in the world. This means no single
-          entity controls the lottery - every transaction and outcome is verified by thousands
-          of independent validators, making it impossible for anyone to manipulate the rules or
+          entity controls the lottery; every transaction and outcome is verified by thousands of
+          independent validators, making it impossible for anyone to manipulate the rules or
           withhold prizes.
         </div>
         <div className='pt-4'>
           At its core, the integrity of any lottery depends on how random numbers are generated.
           That&apos;s why Eat The Pie uses Verifiable Delay Functions (VDFs) to create a crucial
           time gap between when a game is settled and when the winning numbers are known. This
-          delay completely removes any power Ethereum validators might have, as they can&apos;t
-          manipulate an outcome that hasn&apos;t been computed yet.
+          delay completely removes any advantage Ethereum validators might have, as they
+          can&apos;t manipulate an outcome that hasn&apos;t been computed yet.
         </div>
         <div className='pt-4'>
           The result? A lottery that&apos;s not just secure, but mathematically guaranteed to be
@@ -207,30 +211,30 @@ const HowItWorks = () => (
         </div>
       </Section>
 
-      <Section icon='💻' title='Open Source, Self-Executing, and Runs Forever'>
+      <Section icon='💻' title='Forever Open-Source, Forever Self-Executing'>
         <div>
-          <ExternalLink href={LINKS.GITHUB}>📖 Open source codebase</ExternalLink> for anyone to
-          inspect the code.
+          📖<ExternalLink href={LINKS.GITHUB}>Open-source codebase</ExternalLink>: Inspect the
+          code.
         </div>
         <div className='pt-4'>
-          🔍 <ExternalLink href={LINKS.DOCS}>Documentation</ExternalLink> provides details on
-          how everything works.
+          🔍 <ExternalLink href={LINKS.DOCS}>Documentation</ExternalLink>: Understand how it
+          works.
         </div>
         <div className='pt-4'>
-          🌐 <ExternalLink href={LINKS.IPFS}>eatthepie.eth on IPFS</ExternalLink> to access via
-          a decentralized frontend.
+          🌐 <ExternalLink href={LINKS.IPFS}>eatthepie.eth on IPFS</ExternalLink>: Access via a
+          decentralized frontend.
         </div>
         <div className='pt-4'>
-          💻 <ExternalLink href={LINKS.NPM_PACKAGE}>A command line app</ExternalLink> to
-          interact with Eat The Pie fully from the terminal. (
+          💻 <ExternalLink href={LINKS.NPM_PACKAGE}>Command line app</ExternalLink>: Interact
+          with Eat The Pie from your terminal. (
           <code className='text-xs font-semibold bg-gray-100 px-2 py-1 rounded'>
             npm install -g eatthepie
           </code>
           )
         </div>
         <div className='pt-4'>
-          🔐 <ExternalLink href={LINKS.VDF_PROVER}>The VDF prover</ExternalLink> is available
-          for anyone to do the computation and submit the proofs to generate random numbers.
+          🔐 <ExternalLink href={LINKS.VDF_PROVER}>VDF prover</ExternalLink>: Submit or validate
+          proofs to check lottery numbers.
         </div>
       </Section>
     </motion.div>

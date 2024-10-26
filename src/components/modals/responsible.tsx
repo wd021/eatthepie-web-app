@@ -37,14 +37,14 @@ const InfoList: FC = () => (
         blockchain.
       </BulletPoint>
       <BulletPoint>The platform operates without any central authority.</BulletPoint>
-      <BulletPoint>All smart contract code is open source and publicly verifiable.</BulletPoint>
+      <BulletPoint>All smart contract code is open-source and publicly verifiable.</BulletPoint>
       <BulletPoint>
-        Participating in this lottery involves risk, and you take full responsibility with your
+        Participating in this lottery involves risk, and you take full responsibility for your
         actions.
       </BulletPoint>
       <BulletPoint>
-        Transactions cannot be reversed or refunded as all operations are controlled by
-        immutable smart contracts.
+        Transactions cannot be reversed or refunded as all operations are run by immutable smart
+        contracts.
       </BulletPoint>
       <BulletPoint>
         Users are responsible for ensuring compliance with their local laws and regulations
@@ -87,7 +87,7 @@ const AcceptanceForm: FC<{
           className='text-sm font-medium text-gray-700 cursor-pointer hover:text-gray-900 transition-colors'
         >
           I understand and accept the risks involved in participating in this decentralized
-          lottery
+          lottery.
         </label>
       </div>
     </div>
