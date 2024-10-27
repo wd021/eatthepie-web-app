@@ -82,13 +82,6 @@ const RandomNumberSection = ({
   gameInfo: GameDetailedInfo
   showToast: (message: string, duration?: number) => void
 }) => {
-  const status =
-    gameInfo.randaoBlock > 0n
-      ? 'completed'
-      : gameInfo.drawInitiatedBlock > 0n
-        ? 'inProgress'
-        : 'pending'
-
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
@@ -113,6 +106,12 @@ const RandomNumberSection = ({
   const vdfSubmitted = gameInfo.winningNumbers[0] !== 0n
   const randaoBlock = gameInfo.randaoBlock !== 0n ? gameInfo.randaoBlock.toString() : '-'
   const randaoValue = gameInfo.randaoValue !== 0n ? gameInfo.randaoValue.toString() : '-'
+
+  const status = vdfSubmitted
+    ? 'completed'
+    : gameInfo.drawInitiatedBlock > 0n
+      ? 'inProgress'
+      : 'pending'
 
   return (
     <GameSection title='Random Number Generation' emoji='🎲' status={status} className=''>

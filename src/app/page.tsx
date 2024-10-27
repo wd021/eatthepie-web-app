@@ -138,7 +138,7 @@ const Hero: FC<{
             <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
             <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
               <div className='text-5xl lg:text-7xl font-bold text-black'>
-                {formatPrizePool(Number(lotteryInfo?.prizePool))}Ξ
+                {formatPrizePool(lotteryInfo?.prizePool)}Ξ
               </div>
               <div className='text-lg lg:text-3xl text-black font-semibold mt-2'>
                 <Countdown
