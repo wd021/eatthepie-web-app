@@ -20,9 +20,9 @@ const LINKS = {
   ETHEREUM_WALLETS: 'https://ethereum.org/en/wallets/',
   GITHUB: 'https://github.com/eatthepie',
   DOCS: 'https://docs.eatthepie.xyz',
-  IPFS: 'https://www.ipfs.io',
+  MIRRORS: 'https://docs.eatthepie.xyz/links/main',
   NPM_PACKAGE: 'https://www.npmjs.com/package/eatthepie',
-  VDF_PROVER: 'https://github.com/eatthepie/vdf-prover',
+  VDF_PROVER: 'https://github.com/eatthepie/vdfs',
 } as const
 
 const Section: FC<{
@@ -213,7 +213,7 @@ const HowItWorks = () => (
 
       <Section icon='💻' title='Forever Open-Source, Forever Self-Executing'>
         <div>
-          📖<ExternalLink href={LINKS.GITHUB}>Open-source codebase</ExternalLink>: Inspect the
+          📖 <ExternalLink href={LINKS.GITHUB}>Open-source codebase</ExternalLink>: Inspect the
           code.
         </div>
         <div className='pt-4'>
@@ -221,20 +221,19 @@ const HowItWorks = () => (
           works.
         </div>
         <div className='pt-4'>
-          🌐 <ExternalLink href={LINKS.IPFS}>eatthepie.eth on IPFS</ExternalLink>: Access via a
-          decentralized frontend.
+          🌐 <ExternalLink href={LINKS.MIRRORS}>Frontend Mirrors</ExternalLink>: Accessible via
+          IPFS and Arweave.
         </div>
         <div className='pt-4'>
-          💻 <ExternalLink href={LINKS.NPM_PACKAGE}>Command line app</ExternalLink>: Interact
-          with Eat The Pie from your terminal. (
-          <code className='text-xs font-semibold bg-gray-100 px-2 py-1 rounded'>
+          💻 <ExternalLink href={LINKS.NPM_PACKAGE}>Command line app</ExternalLink>: Play from
+          your terminal.
+          <code className='ml-2 text-xs font-semibold bg-gray-100 p-2 rounded'>
             npm install -g eatthepie
           </code>
-          )
         </div>
         <div className='pt-4'>
-          🔐 <ExternalLink href={LINKS.VDF_PROVER}>VDF prover</ExternalLink>: Submit or validate
-          proofs to check lottery numbers.
+          🔐 <ExternalLink href={LINKS.VDF_PROVER}>VDF prover</ExternalLink>: Anyone can submit
+          or validate proofs.
         </div>
       </Section>
     </motion.div>

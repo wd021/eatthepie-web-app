@@ -154,9 +154,9 @@ const RULES_CONTENT = {
       etherball: 'Final (4th) number',
     },
     levels: [
-      { name: 'Easy', mainRange: '1-50', etherballRange: '1-5' },
-      { name: 'Medium', mainRange: '1-100', etherballRange: '1-10' },
-      { name: 'Hard', mainRange: '1-150', etherballRange: '1-15' },
+      { name: 'Easy', mainRange: '1-25', etherballRange: '1-10' },
+      { name: 'Medium', mainRange: '1-50', etherballRange: '1-10' },
+      { name: 'Hard', mainRange: '1-75', etherballRange: '1-10' },
     ],
   },
   winningAndClaiming: {

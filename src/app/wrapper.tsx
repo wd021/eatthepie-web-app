@@ -12,12 +12,13 @@ type NetworkName = keyof typeof NETWORK_NAMES
 const EXTERNAL_LINKS = {
   DOCS: 'https://docs.eatthepie.xyz',
   GITHUB: 'https://github.com/eatthepie',
+  LINKS: 'https://docs.eatthepie.xyz/links/main',
 } as const
 
 const NAV_ITEMS = [
   { type: 'link', href: EXTERNAL_LINKS.DOCS, label: 'Docs', isExternal: true },
   { type: 'link', href: EXTERNAL_LINKS.GITHUB, label: 'Github', isExternal: true },
-  { type: 'link', href: '/resources', label: 'Resources', isExternal: false },
+  { type: 'link', href: EXTERNAL_LINKS.LINKS, label: 'Links', isExternal: true },
   { type: 'action', label: '⚠️ Responsible Gaming', action: 'showResponsibleModal' },
 ] as const
 
