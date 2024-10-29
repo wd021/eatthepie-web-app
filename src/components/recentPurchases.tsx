@@ -73,6 +73,15 @@ const TicketItem: React.FC<{ ticket: TicketType }> = ({ ticket }) => {
   )
 }
 
+const BlockRangeInfo: React.FC = () => (
+  <div className='px-4 py-2 bg-gray-50 border-b border-gray-100'>
+    <p className='text-sm text-center text-gray-700'>
+      Showing purchases from the last 800 blocks
+      <span className='text-gray-500 text-xs ml-1'>(~2.5 hours)</span>
+    </p>
+  </div>
+)
+
 const TicketList: React.FC<{ tickets: TicketType[]; isLoading: boolean }> = ({
   tickets,
   isLoading,
@@ -86,9 +95,9 @@ const TicketList: React.FC<{ tickets: TicketType[]; isLoading: boolean }> = ({
           {tickets.map((ticket, i) => (
             <TicketItem key={`${ticket.transactionHash}-${i}`} ticket={ticket} />
           ))}
-          <DiscordPrompt />
         </>
       )}
+      <DiscordPrompt />
     </div>
   )
 }
@@ -134,6 +143,7 @@ const RecentPurchases: React.FC = () => {
           style={MODAL_DIMENSIONS}
         >
           <ModalHeader onClose={toggleOpen} />
+          <BlockRangeInfo />
           <TicketList tickets={tickets} isLoading={isLoading} />
         </div>
       )}

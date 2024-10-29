@@ -26,33 +26,29 @@ const APP_CONFIG = {
   appIcon: 'https://www.eatthepie.xyz/logo.png',
 } as const
 
-const getRpcUrls = (providers: string[], defaultRpc: string) => {
-  const urls = providers
-    .map((provider) => process.env[`NEXT_PUBLIC_${provider}_RPC`])
-    .filter(Boolean)
-    .map((url) => http(url as string))
-
-  urls.push(http(defaultRpc))
-  return urls
-}
-
 const getSelectedChain = () => {
   const selectedChain = process.env.NEXT_PUBLIC_LOTTERY_NETWORK || 'mainnet'
-  return selectedChain === 'mainnet' ? mainnet : selectedChain === 'sepolia' ? sepolia : foundry
+  return selectedChain === 'mainnet' ? mainnet : sepolia
 }
 
 const configureRpcs = () => {
-  const providers = ['ALCHEMY', 'INFURA', 'QUICKNODE']
+  const mainnetRpcs = [
+    http(process.env.NEXT_PUBLIC_ALCHEMY_MAINNET_RPC!),
+    http(process.env.NEXT_PUBLIC_INFURA_MAINNET_RPC!),
+    http(process.env.NEXT_PUBLIC_QUICKNODE_MAINNET_RPC!),
+    http(mainnet.rpcUrls.default.http[0]),
+  ]
+
+  const sepoliaRpcs = [
+    http(process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA_RPC!),
+    http(process.env.NEXT_PUBLIC_INFURA_SEPOLIA_RPC!),
+    http(process.env.NEXT_PUBLIC_QUICKNODE_SEPOLIA_RPC!),
+    http(sepolia.rpcUrls.default.http[0]),
+  ]
 
   return {
-    mainnetRpcs: getRpcUrls(
-      providers.map((p) => `${p}_MAINNET`),
-      mainnet.rpcUrls.default.http[0],
-    ),
-    sepoliaRpcs: getRpcUrls(
-      providers.map((p) => `${p}_SEPOLIA`),
-      sepolia.rpcUrls.default.http[0],
-    ),
+    mainnetRpcs,
+    sepoliaRpcs,
   }
 }
 

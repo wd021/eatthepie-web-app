@@ -16,7 +16,7 @@ export const BLOCK_EXPLORER_LINKS = {
   anvil: 'https://www.etherscan.io/',
 }
 
-export const DISCORD_URL = 'https://discord.gg/yourdiscord'
+export const DISCORD_URL = 'https://discord.gg/secUmU2P43'
 
 export const LOTTERY_NUMBERS_RANGE = {
   Easy: {
@@ -36,7 +36,7 @@ export const LOTTERY_NUMBERS_RANGE = {
   },
 }
 
-export const BATCH_SIZE_FOR_FETCHING = 2000n
+export const BATCH_SIZE_FOR_FETCHING = 790n
 export const MAX_TICKETS_TO_DISPLAY = 500
 export const RESULTS_PAGE_SIZE = 10n
 
