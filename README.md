@@ -42,13 +42,18 @@ yarn dev
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Smart Contract Integration
+## 🌐 Website Deployments
 
-The application interacts with an Ethereum smart contract deployed at `NEXT_PUBLIC_LOTTERY_ADDRESS`. The contract handles:
+- **Website**: [www.eatthepie.xyz](https://www.eatthepie.xyz)
+- **IPFS**: [eatthepie.eth.limo](https://eatthepie.eth.limo)
+- **IPFS Hash**: `bafybeigearodnnti3mzkd73iwbxtp27z5qfewwrtt44m7ukklsrcwhaeca`
 
-- Ticket purchases
-- Claiming prizes
-- Viewing game state
+## 📝 Deployed Contracts
+
+| Network | Address                                      |
+| ------- | -------------------------------------------- |
+| Mainnet | `0x043c9ae2764B5a7c2d685bc0262F8cF2f6D86008` |
+| Sepolia | `0x44B340051a31D216f83428B447DBa2C102DFF373` |
 
 ## License
 
