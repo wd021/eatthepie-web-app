@@ -16,11 +16,15 @@
         "name": "_feeRecipient",
         "type": "address",
         "internalType": "address"
+      },
+      {
+        "name": "_paymentToken",
+        "type": "address",
+        "internalType": "address"
       }
     ],
     "stateMutability": "nonpayable"
   },
-  { "type": "receive", "stateMutability": "payable" },
   {
     "type": "function",
     "name": "BRONZE_PLACE_PERCENTAGE",
@@ -114,30 +118,16 @@
   },
   {
     "type": "function",
+    "name": "PERMIT2_ADDRESS",
+    "inputs": [],
+    "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "SILVER_PLACE_PERCENTAGE",
     "inputs": [],
     "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "bronzeTicketCounts",
-    "inputs": [
-      { "name": "", "type": "uint256", "internalType": "uint256" },
-      { "name": "", "type": "bytes32", "internalType": "bytes32" }
-    ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "bronzeTicketOwners",
-    "inputs": [
-      { "name": "", "type": "uint256", "internalType": "uint256" },
-      { "name": "", "type": "bytes32", "internalType": "bytes32" },
-      { "name": "", "type": "address", "internalType": "address" }
-    ],
-    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
     "stateMutability": "view"
   },
   {
@@ -148,7 +138,34 @@
         "name": "tickets",
         "type": "uint256[4][]",
         "internalType": "uint256[4][]"
-      }
+      },
+      {
+        "name": "permit",
+        "type": "tuple",
+        "internalType": "struct IPermit2.PermitTransferFrom",
+        "components": [
+          {
+            "name": "permitted",
+            "type": "tuple",
+            "internalType": "struct IPermit2.TokenPermissions",
+            "components": [
+              {
+                "name": "token",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "amount",
+                "type": "uint256",
+                "internalType": "uint256"
+              }
+            ]
+          },
+          { "name": "nonce", "type": "uint256", "internalType": "uint256" },
+          { "name": "deadline", "type": "uint256", "internalType": "uint256" }
+        ]
+      },
+      { "name": "signature", "type": "bytes", "internalType": "bytes" }
     ],
     "outputs": [],
     "stateMutability": "payable"
@@ -156,7 +173,9 @@
   {
     "type": "function",
     "name": "calculatePayouts",
-    "inputs": [{ "name": "gameNumber", "type": "uint256", "internalType": "uint256" }],
+    "inputs": [
+      { "name": "gameNumber", "type": "uint256", "internalType": "uint256" }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
@@ -170,7 +189,9 @@
   {
     "type": "function",
     "name": "claimPrize",
-    "inputs": [{ "name": "gameNumber", "type": "uint256", "internalType": "uint256" }],
+    "inputs": [
+      { "name": "gameNumber", "type": "uint256", "internalType": "uint256" }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
@@ -354,7 +375,9 @@
   {
     "type": "function",
     "name": "getDetailedGameInfo",
-    "inputs": [{ "name": "gameId", "type": "uint256", "internalType": "uint256" }],
+    "inputs": [
+      { "name": "gameId", "type": "uint256", "internalType": "uint256" }
+    ],
     "outputs": [
       {
         "name": "",
@@ -445,27 +468,6 @@
   },
   {
     "type": "function",
-    "name": "goldTicketCounts",
-    "inputs": [
-      { "name": "", "type": "uint256", "internalType": "uint256" },
-      { "name": "", "type": "bytes32", "internalType": "bytes32" }
-    ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "goldTicketOwners",
-    "inputs": [
-      { "name": "", "type": "uint256", "internalType": "uint256" },
-      { "name": "", "type": "bytes32", "internalType": "bytes32" },
-      { "name": "", "type": "address", "internalType": "address" }
-    ],
-    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "hasClaimedNFT",
     "inputs": [
       { "name": "", "type": "uint256", "internalType": "uint256" },
@@ -501,7 +503,9 @@
   {
     "type": "function",
     "name": "mintWinningNFT",
-    "inputs": [{ "name": "gameNumber", "type": "uint256", "internalType": "uint256" }],
+    "inputs": [
+      { "name": "gameNumber", "type": "uint256", "internalType": "uint256" }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
@@ -557,7 +561,9 @@
     "type": "function",
     "name": "nftPrize",
     "inputs": [],
-    "outputs": [{ "name": "", "type": "address", "internalType": "contract NFTPrize" }],
+    "outputs": [
+      { "name": "", "type": "address", "internalType": "contract NFTPrize" }
+    ],
     "stateMutability": "view"
   },
   {
@@ -565,6 +571,24 @@
     "name": "owner",
     "inputs": [],
     "outputs": [{ "name": "", "type": "address", "internalType": "address" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "paymentToken",
+    "inputs": [],
+    "outputs": [
+      { "name": "", "type": "address", "internalType": "contract IERC20" }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "permit2",
+    "inputs": [],
+    "outputs": [
+      { "name": "", "type": "address", "internalType": "contract IPermit2" }
+    ],
     "stateMutability": "view"
   },
   {
@@ -623,37 +647,20 @@
   {
     "type": "function",
     "name": "setRandom",
-    "inputs": [{ "name": "gameNumber", "type": "uint256", "internalType": "uint256" }],
+    "inputs": [
+      { "name": "gameNumber", "type": "uint256", "internalType": "uint256" }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
   {
     "type": "function",
     "name": "setTicketPrice",
-    "inputs": [{ "name": "_newPrice", "type": "uint256", "internalType": "uint256" }],
+    "inputs": [
+      { "name": "_newPrice", "type": "uint256", "internalType": "uint256" }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "silverTicketCounts",
-    "inputs": [
-      { "name": "", "type": "uint256", "internalType": "uint256" },
-      { "name": "", "type": "bytes32", "internalType": "bytes32" }
-    ],
-    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "silverTicketOwners",
-    "inputs": [
-      { "name": "", "type": "uint256", "internalType": "uint256" },
-      { "name": "", "type": "bytes32", "internalType": "bytes32" },
-      { "name": "", "type": "address", "internalType": "address" }
-    ],
-    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
-    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -684,6 +691,27 @@
   },
   {
     "type": "function",
+    "name": "ticketCounts",
+    "inputs": [
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint32", "internalType": "uint32" }
+    ],
+    "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "ticketOwners",
+    "inputs": [
+      { "name": "", "type": "uint256", "internalType": "uint256" },
+      { "name": "", "type": "uint32", "internalType": "uint32" },
+      { "name": "", "type": "address", "internalType": "address" }
+    ],
+    "outputs": [{ "name": "", "type": "bool", "internalType": "bool" }],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "ticketPrice",
     "inputs": [],
     "outputs": [{ "name": "", "type": "uint256", "internalType": "uint256" }],
@@ -692,14 +720,18 @@
   {
     "type": "function",
     "name": "transferOwnership",
-    "inputs": [{ "name": "newOwner", "type": "address", "internalType": "address" }],
+    "inputs": [
+      { "name": "newOwner", "type": "address", "internalType": "address" }
+    ],
     "outputs": [],
     "stateMutability": "nonpayable"
   },
   {
     "type": "function",
     "name": "uint256ToBigNumber",
-    "inputs": [{ "name": "input", "type": "uint256", "internalType": "uint256" }],
+    "inputs": [
+      { "name": "input", "type": "uint256", "internalType": "uint256" }
+    ],
     "outputs": [
       { "name": "val", "type": "bytes", "internalType": "bytes" },
       { "name": "bitlen", "type": "uint256", "internalType": "uint256" }
@@ -1082,12 +1114,16 @@
   {
     "type": "error",
     "name": "OwnableInvalidOwner",
-    "inputs": [{ "name": "owner", "type": "address", "internalType": "address" }]
+    "inputs": [
+      { "name": "owner", "type": "address", "internalType": "address" }
+    ]
   },
   {
     "type": "error",
     "name": "OwnableUnauthorizedAccount",
-    "inputs": [{ "name": "account", "type": "address", "internalType": "address" }]
+    "inputs": [
+      { "name": "account", "type": "address", "internalType": "address" }
+    ]
   },
   { "type": "error", "name": "ReentrancyGuardReentrantCall", "inputs": [] }
 ]

@@ -1,2 +1,5 @@
+import ERC20ABI from './ERC20ABI.json'
 import LotteryABI from './LotteryABI.json'
-export { LotteryABI }
+import PermitABI from './PermitABI.json'
+
+export { ERC20ABI, LotteryABI, PermitABI }
