@@ -2,7 +2,17 @@ if (!process.env.NEXT_PUBLIC_LOTTERY_ADDRESS) {
   throw new Error('NEXT_PUBLIC_LOTTERY_ADDRESS is not set in environment variables')
 }
 
+if (!process.env.NEXT_PUBLIC_PERMIT2_ADDRESS) {
+  throw new Error('NEXT_PUBLIC_PERMIT2_ADDRESS is not set in environment variables')
+}
+
+if (!process.env.NEXT_PUBLIC_TOKEN_ADDRESS) {
+  throw new Error('NEXT_PUBLIC_TOKEN_ADDRESS is not set in environment variables')
+}
+
 export const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_LOTTERY_ADDRESS as `0x${string}`
+export const PERMIT2_ADDRESS = process.env.NEXT_PUBLIC_PERMIT2_ADDRESS as `0x${string}`
+export const TOKEN_ADDRESS = process.env.NEXT_PUBLIC_TOKEN_ADDRESS as `0x${string}`
 
 export const NETWORK_NAMES = {
   mainnet: 'Ethereum Mainnet',
