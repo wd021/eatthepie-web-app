@@ -16,13 +16,17 @@ export const TOKEN_ADDRESS = process.env.NEXT_PUBLIC_TOKEN_ADDRESS as `0x${strin
 
 export const NETWORK_NAMES = {
   mainnet: 'Ethereum Mainnet',
+  worldchain: 'Worldchain',
   sepolia: 'Sepolia',
+  worldchainSepolia: 'Worldchain Sepolia',
   anvil: 'Anvil',
 }
 
 export const BLOCK_EXPLORER_LINKS = {
   mainnet: 'https://www.etherscan.io/',
+  worldchain: 'https://www.worldscan.org/',
   sepolia: 'https://sepolia.etherscan.io/',
+  worldchainSepolia: 'https://sepolia.worldscan.org/',
   anvil: 'https://www.etherscan.io/',
 }
 

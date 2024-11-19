@@ -95,7 +95,7 @@ const ClaimResults: React.FC<ResultsSectionProps> = ({ winningInfo, handleClaim 
                 </div>
                 <div className='mt-1 flex items-baseline space-x-2'>
                   <span className='text-2xl font-bold text-green-600'>
-                    {Number(totalPrize).toFixed(2)} ETH
+                    {Number(totalPrize).toLocaleString()} WLD
                   </span>
                   <span className='text-sm text-gray-500'>Prize Value</span>
                 </div>

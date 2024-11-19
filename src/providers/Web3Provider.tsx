@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit'
 import { createConfig, fallback, http, WagmiProvider } from 'wagmi'
-import { mainnet, sepolia } from 'wagmi/chains'
+import { anvil, foundry, mainnet, sepolia, worldchain, worldchainSepolia } from 'wagmi/chains'
 
 const CONNECT_KIT_THEME = {
   '--ck-connectbutton-font-size': '16px',
@@ -19,7 +19,7 @@ const CONNECT_KIT_THEME = {
 } as const
 
 const APP_CONFIG = {
-  appName: 'Eat The Pie - The World Lottery',
+  appName: 'Eat The Pie - The World Lottery on World Chain',
   appDescription:
     'A revolutionary lottery that runs itself, secured by math, powered by Ethereum. Low 1% fees mean bigger wins for everyone.',
   appUrl: 'https://www.eatthepie.xyz',
@@ -28,7 +28,13 @@ const APP_CONFIG = {
 
 const getSelectedChain = () => {
   const selectedChain = process.env.NEXT_PUBLIC_LOTTERY_NETWORK || 'mainnet'
-  return selectedChain === 'mainnet' ? mainnet : sepolia
+  return selectedChain === 'mainnet'
+    ? mainnet
+    : selectedChain === 'worldchain'
+      ? worldchain
+      : selectedChain === 'sepolia'
+        ? sepolia
+        : worldchainSepolia
 }
 
 const configureRpcs = () => {
@@ -46,9 +52,25 @@ const configureRpcs = () => {
     http(sepolia.rpcUrls.default.http[0]),
   ]
 
+  const worldchainRpcs = [
+    http(process.env.NEXT_PUBLIC_ALCHEMY_WC_MAINNET_RPC!),
+    http(process.env.NEXT_PUBLIC_INFURA_WC_MAINNET_RPC!),
+    http(process.env.NEXT_PUBLIC_QUICKNODE_WC_MAINNET_RPC!),
+    http(mainnet.rpcUrls.default.http[0]),
+  ]
+
+  const worldchainSepoliaRpcs = [
+    http(process.env.NEXT_PUBLIC_ALCHEMY_WC_SEPOLIA_RPC!),
+    http(process.env.NEXT_PUBLIC_INFURA_WC_SEPOLIA_RPC!),
+    http(process.env.NEXT_PUBLIC_QUICKNODE_WC_SEPOLIA_RPC!),
+    http(sepolia.rpcUrls.default.http[0]),
+  ]
+
   return {
     mainnetRpcs,
     sepoliaRpcs,
+    worldchainRpcs,
+    worldchainSepoliaRpcs,
   }
 }
 
@@ -62,7 +84,7 @@ const createProviderConfig = () => {
       transports: {
         [mainnet.id]: fallback(mainnetRpcs),
         [sepolia.id]: fallback(sepoliaRpcs),
-        // [foundry.id]: http('http://127.0.0.1:8545'),
+        [foundry.id]: http('http://127.0.0.1:8545'),
       },
       walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
       ...APP_CONFIG,

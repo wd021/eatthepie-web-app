@@ -234,7 +234,7 @@ const GameInformationSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) =>
               winners: gameInfo.goldWinners?.toString() || '0',
               prize:
                 gameInfo.payouts[0] !== 0n
-                  ? Number(formatEther(gameInfo.payouts[0])).toFixed + ' ETH'
+                  ? Number(formatEther(gameInfo.payouts[0])).toFixed + ' WLD'
                   : '-',
             },
             {
@@ -245,7 +245,7 @@ const GameInformationSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) =>
               winners: gameInfo.silverWinners?.toString() || '0',
               prize:
                 gameInfo.payouts[1] !== 0n
-                  ? Number(formatEther(gameInfo.payouts[1])).toFixed(2) + ' ETH'
+                  ? Number(formatEther(gameInfo.payouts[1])).toFixed(2) + ' WLD'
                   : '-',
             },
             {
@@ -256,7 +256,7 @@ const GameInformationSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) =>
               winners: gameInfo.bronzeWinners?.toString() || '0',
               prize:
                 gameInfo.payouts[2] !== 0n
-                  ? Number(formatEther(gameInfo.payouts[2])).toFixed(2) + ' ETH'
+                  ? Number(formatEther(gameInfo.payouts[2])).toFixed(2) + ' WLD'
                   : '-',
             },
           ].map((tier) => (
