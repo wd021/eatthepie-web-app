@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <head>
-        <title>Eat The Pie - The World Lottery</title>
+        <title>Eat The Pie - The World Lottery on World Chain</title>
         <meta
           name='description'
           content='A revolutionary lottery that runs itself, secured by math, powered by Ethereum. Low 1% fees mean bigger wins for everyone.'

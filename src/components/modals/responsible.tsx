@@ -140,7 +140,7 @@ const Responsible: FC<{
           <div className='flex-grow overflow-y-auto hide-scrollbar'>
             <div className='space-y-6 text-gray-600'>
               <p className='text-lg font-semibold text-gray-900'>
-                Eat The Pie - The World Lottery on Ethereum
+                Eat The Pie - The World Lottery on World Chain
               </p>
 
               <div className='space-y-4'>
