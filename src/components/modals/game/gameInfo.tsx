@@ -12,7 +12,7 @@ const GameInfo: React.FC<{
 }> = ({ lotteryInfo, isExpanded, onToggle }) => {
   const prizePoolProgress = useMemo(() => {
     const currentPrizePool = parseFloat(lotteryInfo?.prizePool || '0')
-    return Math.min((currentPrizePool / 500) * 100, 100)
+    return Math.min((currentPrizePool / 100000) * 100, 100)
   }, [lotteryInfo?.prizePool])
 
   const countdownProgress = useMemo(() => {
@@ -88,7 +88,9 @@ const GameInfo: React.FC<{
                 <Ethereum className='w-6 h-6 mr-2' />
                 <div>
                   <h4 className='text-xs font-semibold text-gray-600'>Current Prize Pool</h4>
-                  <p className='font-bold text-gray-800'>{lotteryInfo?.prizePool || '0'} ETH</p>
+                  <p className='font-bold text-gray-800'>
+                    {Number(lotteryInfo?.prizePool).toLocaleString() || '0'} WLD
+                  </p>
                 </div>
               </div>
               <div className='mt-2 bg-gray-200 rounded-full h-1.5'>
@@ -102,7 +104,7 @@ const GameInfo: React.FC<{
             </div>
           </div>
           <div className='text-xs text-center text-gray-600'>
-            Drawing starts when countdown reaches 0 and the prize pool reaches 500 ETH
+            Drawing starts when countdown reaches 0 and the prize pool reaches 100,000 WLD
           </div>
         </div>
       )}

@@ -23,7 +23,7 @@ const StatusInfo: FC<{ prizePool?: string | number; timeLeft: string }> = ({
 }) => (
   <div className='flex items-center space-x-4 text-black'>
     <span className='font-bold'>
-      Prize Pool: {prizePool ? Number(prizePool).toFixed(1) : '-'} ETH
+      Prize Pool: {prizePool ? Number(prizePool).toLocaleString() : '-'} WLD
     </span>
     <span className='text-sm'>|</span>
     <span>Time Left: {timeLeft}</span>

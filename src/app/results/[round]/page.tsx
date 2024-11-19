@@ -15,7 +15,7 @@ const GameProgressSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) => {
   const steps = [
     { label: 'Game Started', completed: true },
     { label: 'Drawing Initiated', completed: gameInfo.drawInitiatedBlock > 0n },
-    { label: 'RANDAO Set', completed: gameInfo.randaoBlock > 0n },
+    { label: 'Blockhash Set', completed: gameInfo.randaoBlock > 0n },
   ]
 
   const status = steps.every((step) => step.completed)
@@ -85,7 +85,7 @@ const RandomNumberSection = ({
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text)
-      showToast('✅ RANDAO value copied')
+      showToast('✅ Blockhash copied')
     } catch (err) {
       // Fallback for browsers that don't support clipboard API
       const textArea = document.createElement('textarea')
@@ -94,10 +94,10 @@ const RandomNumberSection = ({
       textArea.select()
       try {
         document.execCommand('copy')
-        showToast('✅ RANDAO value copied')
+        showToast('✅ Blockhash copied')
       } catch (err) {
-        console.error('Failed to copy RANDAO value:', text)
-        showToast('⚠️ Error copying RANDAO value')
+        console.error('Failed to copy Blockhash:', text)
+        showToast('⚠️ Error copying Blockhash')
       }
       document.body.removeChild(textArea)
     }
@@ -124,7 +124,7 @@ const RandomNumberSection = ({
         </div>
         <div className='p-3 bg-gray-50 rounded'>
           <div className='flex justify-between items-center'>
-            <span className='text-sm font-medium text-gray-900'>RANDAO Value</span>
+            <span className='text-sm font-medium text-gray-900'>Blockhash</span>
             <div className='flex items-center gap-2'>
               <span className='font-mono text-sm text-blue-600 font-medium'>
                 {randaoValue !== '-' ? truncateString(randaoValue, 15) : '-'}
@@ -197,9 +197,9 @@ const GameInformationSection = ({ gameInfo }: { gameInfo: GameDetailedInfo }) =>
                 <h3 className='text-sm font-medium text-gray-500'>Total Prize</h3>
                 <div className='flex items-baseline space-x-1'>
                   <span className='text-2xl font-bold text-gray-900'>
-                    {Number(formatEther(gameInfo.prizePool)).toFixed(2)}
+                    {Number(formatEther(gameInfo.prizePool)).toLocaleString()}
                   </span>
-                  <span className='text-lg font-semibold text-gray-600'>ETH</span>
+                  <span className='text-lg font-semibold text-gray-600'>WLD</span>
                 </div>
               </div>
               <div className='text-2xl'>💰</div>

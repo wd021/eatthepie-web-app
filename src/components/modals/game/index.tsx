@@ -183,7 +183,7 @@ const Game: React.FC<{ onRequestClose: () => void }> = ({ onRequestClose }) => {
         <div className='p-4 flex-shrink-0 border-t border-gray-200'>
           <div className='mb-4 text-center'>
             <span className='text-lg font-semibold text-gray-700'>
-              Total cost: {(ticketCount * Number(lotteryInfo?.ticketPrice || 0)).toFixed(2)} ETH
+              Total cost: {ticketCount * Number(lotteryInfo?.ticketPrice || 0)} WLD
             </span>
           </div>
           <motion.button

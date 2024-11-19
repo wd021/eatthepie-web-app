@@ -134,7 +134,7 @@ const RULES_CONTENT = {
     title: 'Draw Schedule',
     icon: 'clock' as const,
     color: 'bg-green-50',
-    conditions: ['One week has passed', 'The prize pool exceeds 500 ETH'],
+    conditions: ['One week has passed', 'The prize pool exceeds 100,000 WLD'],
   },
   prizePools: {
     title: 'Prize Pools',
@@ -173,8 +173,8 @@ const RULES_CONTENT = {
     title: 'Ticket Pricing and Fees',
     icon: 'coins' as const,
     color: 'bg-yellow-50',
-    price: '0.1 ETH',
-    distribution: ['99% goes to prize pool', '1% fee (capped at 100 ETH)'],
+    price: '1 WLD',
+    distribution: ['99% goes to prize pool', '1% fee'],
   },
 } as const
 

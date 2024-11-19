@@ -76,10 +76,7 @@ const Hero: FC<{
   const formatPrizePool = (value?: string) => {
     if (!value) return '-'
 
-    const numValue = Number(value)
-    const decimalPlaces = numValue >= 10000 ? 0 : 1
-
-    return numValue.toFixed(decimalPlaces)
+    return Number(value).toLocaleString()
   }
 
   return (
@@ -87,13 +84,13 @@ const Hero: FC<{
       <div className='container mx-auto px-4'>
         <div className='flex flex-col lg:flex-row items-center justify-between gap-12'>
           <motion.div
-            className='text-center lg:text-left lg:max-w-[560px] w-full'
+            className='text-center lg:text-left lg:max-w-[575px] w-full'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
             <h1 className='text-4xl lg:text-6xl font-bold mb-6 text-gray-900'>
-              The World Lottery
+              The World Lottery on World Chain
             </h1>
             <ul className='text-xl lg:text-2xl mb-8 text-gray-700 space-y-2'>
               <li className='flex items-center justify-center lg:justify-start'>
@@ -116,7 +113,7 @@ const Hero: FC<{
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Buy Ticket - {lotteryInfo?.ticketPrice}ETH
+                Buy Ticket - {lotteryInfo?.ticketPrice} WLD
               </motion.button>
               <motion.button
                 className='border-2 border-gray-400 hover:border-gray-600 text-gray-800 font-bold py-4 px-8 rounded-full text-xl transition-colors duration-300'
@@ -138,7 +135,7 @@ const Hero: FC<{
             <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
             <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
               <div className='text-5xl lg:text-7xl font-bold text-black'>
-                {formatPrizePool(lotteryInfo?.prizePool)}Ξ
+                {formatPrizePool(lotteryInfo?.prizePool)}
               </div>
               <div className='text-lg lg:text-3xl text-black font-semibold mt-2'>
                 <Countdown
@@ -183,9 +180,9 @@ const HowItWorks = () => (
         </div>
         <div className='pt-4'>
           Traditional lotteries take up to <b>50% in fees</b>, leaving a fraction of the pool
-          for the winners. Eat The Pie takes only <b>1% in fees</b>, capped at 100 ETH. That
-          means more of the prize money goes back to where it belongs—into the hands of the
-          participants. It&apos;s a global game, accessible to anyone with an{' '}
+          for the winners. Eat The Pie takes only <b>1% in fees</b>. That means more of the
+          prize money goes back to where it belongs—into the hands of the participants.
+          It&apos;s a global game, accessible to anyone with an{' '}
           <ExternalLink href={LINKS.ETHEREUM_WALLETS}>Ethereum wallet</ExternalLink>.
         </div>
       </Section>
