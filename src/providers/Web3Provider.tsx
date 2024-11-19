@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ConnectKitProvider, getDefaultConfig } from 'connectkit'
 import { createConfig, fallback, http, WagmiProvider } from 'wagmi'
-import { anvil, foundry, mainnet, sepolia, worldchain, worldchainSepolia } from 'wagmi/chains'
+import { mainnet, sepolia, worldchain, worldchainSepolia } from 'wagmi/chains'
 
 const CONNECT_KIT_THEME = {
   '--ck-connectbutton-font-size': '16px',
@@ -76,7 +76,7 @@ const configureRpcs = () => {
 
 const createProviderConfig = () => {
   const chain = getSelectedChain()
-  const { mainnetRpcs, sepoliaRpcs } = configureRpcs()
+  const { mainnetRpcs, sepoliaRpcs, worldchainRpcs, worldchainSepoliaRpcs } = configureRpcs()
 
   return createConfig(
     getDefaultConfig({
@@ -84,7 +84,9 @@ const createProviderConfig = () => {
       transports: {
         [mainnet.id]: fallback(mainnetRpcs),
         [sepolia.id]: fallback(sepoliaRpcs),
-        [foundry.id]: http('http://127.0.0.1:8545'),
+        [worldchain.id]: fallback(worldchainRpcs),
+        [worldchainSepolia.id]: fallback(worldchainSepoliaRpcs),
+        // [foundry.id]: http('http://127.0.0.1:8545'),
       },
       walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
       ...APP_CONFIG,
