@@ -10,12 +10,12 @@ import { convertSecondsToShorthand } from '@/utils/helpers'
 const networks = [
   {
     name: 'Ethereum',
-    url: 'https://www.eatthepie.xyz',
+    url: 'https://dev.eatthepie.xyz',
     icon: <EthereumWhite className='w-4' />,
   },
   {
     name: 'World Chain',
-    url: 'https://world.eatthepie.xyz',
+    url: 'https://world-dev.eatthepie.xyz',
     icon: <WorldchainWhite className='w-4' />,
   },
 ]
