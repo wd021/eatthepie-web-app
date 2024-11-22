@@ -115,7 +115,7 @@ const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         setIsStatusBarVisible={setIsStatusBarVisible}
       />
       <Header isStatusBarVisible={isStatusBarVisible} />
-      <main className={`flex-grow ${isStatusBarVisible ? 'mt-32' : 'mt-20'}`}>{children}</main>
+      <main className={`flex-grow ${isStatusBarVisible ? 'mt-40' : 'mt-20'}`}>{children}</main>
       <Footer
         networkName={networkName}
         lotteryAddress={lotteryAddress}
