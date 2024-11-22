@@ -1,9 +1,10 @@
 'use client'
 
 import { FC, useState } from 'react'
+
 import { Game as GameModal } from '@/components/modals'
 import { useLotteryInfo } from '@/hooks'
-import { Jackpot, ChevronDown, Clock, EthereumWhite, WorldchainWhite } from '@/icons'
+import { ChevronDown, Clock, EthereumWhite, Jackpot, WorldchainWhite } from '@/icons'
 import { convertSecondsToShorthand } from '@/utils/helpers'
 
 const networks = [
@@ -97,6 +98,7 @@ const TimeLeft: FC<{ value: string }> = ({ value }) => (
 const StatusBar: FC<{
   isStatusBarVisible: boolean
   setIsStatusBarVisible: (value: boolean) => void
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
 }> = ({ isStatusBarVisible, setIsStatusBarVisible }) => {
   const [isGameModalOpen, setIsGameModalOpen] = useState(false)
   const { lotteryInfo } = useLotteryInfo()
