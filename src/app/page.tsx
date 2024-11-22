@@ -76,7 +76,7 @@ const Hero: FC<{
   const formatPrizePool = (value?: string) => {
     if (!value) return '-'
 
-    return Number(value).toLocaleString()
+    return Number(value).toFixed(0).toLocaleString()
   }
 
   return (
@@ -84,13 +84,13 @@ const Hero: FC<{
       <div className='container mx-auto px-4'>
         <div className='flex flex-col lg:flex-row items-center justify-between gap-12'>
           <motion.div
-            className='text-center lg:text-left lg:max-w-[575px] w-full'
+            className='text-center lg:text-left lg:max-w-[560px] w-full'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
             <h1 className='text-4xl lg:text-6xl font-bold mb-6 text-gray-900'>
-              The World Lottery on World Chain
+              The World Lottery
             </h1>
             <ul className='text-xl lg:text-2xl mb-8 text-gray-700 space-y-2'>
               <li className='flex items-center justify-center lg:justify-start'>
@@ -134,8 +134,8 @@ const Hero: FC<{
           >
             <img src='/jackpot.png' className='shrink-0 w-full h-full' alt='Jackpot' />
             <div className='absolute w-full h-[50%] top-[50%] flex flex-col items-center justify-center'>
-              <div className='text-5xl lg:text-7xl font-bold text-black'>
-                {formatPrizePool(lotteryInfo?.prizePool)}
+              <div className='text-3xl lg:text-5xl font-bold text-black'>
+                {formatPrizePool(lotteryInfo?.prizePool)} WLD
               </div>
               <div className='text-lg lg:text-3xl text-black font-semibold mt-2'>
                 <Countdown

@@ -93,7 +93,7 @@ const Header: React.FC<{ isStatusBarVisible: boolean }> = ({ isStatusBarVisible 
   return (
     <>
       <header
-        className={`z-10 bg-white h-20 fixed left-0 right-0 shadow-md transition-all duration-300 ${isStatusBarVisible ? 'top-12' : 'top-0'}
+        className={`z-10 bg-white h-20 fixed left-0 right-0 shadow-md transition-all duration-300 ${isStatusBarVisible ? 'top-20' : 'top-0'}
         `}
       >
         <div className='container mx-auto h-full px-4 flex items-center justify-between'>
