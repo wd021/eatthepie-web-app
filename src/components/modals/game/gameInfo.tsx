@@ -73,14 +73,14 @@ const GameInfo: React.FC<{
                   </p>
                 </div>
               </div>
-              <div className='mt-2 bg-gray-200 rounded-full h-1.5'>
+              {/* <div className='mt-2 bg-gray-200 rounded-full h-1.5'>
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${countdownProgress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
                   className='bg-blue-500 h-1.5 rounded-full'
                 />
-              </div>
+              </div> */}
             </div>
 
             <div className='bg-white rounded-lg p-3 flex flex-col justify-between border border-gray-200'>
@@ -93,18 +93,18 @@ const GameInfo: React.FC<{
                   </p>
                 </div>
               </div>
-              <div className='mt-2 bg-gray-200 rounded-full h-1.5'>
+              {/* <div className='mt-2 bg-gray-200 rounded-full h-1.5'>
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${prizePoolProgress}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
                   className='bg-green-500 h-1.5 rounded-full'
                 />
-              </div>
+              </div> */}
             </div>
           </div>
           <div className='text-xs text-center text-gray-600'>
-            Drawing starts when countdown reaches 0 and the prize pool reaches 100,000 WLD
+            Drawing starts when countdown reaches 0
           </div>
         </div>
       )}

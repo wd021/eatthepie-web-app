@@ -134,7 +134,7 @@ const RULES_CONTENT = {
     title: 'Draw Schedule',
     icon: 'clock' as const,
     color: 'bg-green-50',
-    conditions: ['One week has passed', 'The prize pool exceeds 100,000 WLD'],
+    conditions: ['4 days has passed'],
   },
   prizePools: {
     title: 'Prize Pools',
@@ -249,9 +249,7 @@ const Rules: FC = () => {
           Draws occur when:
           <ul className='list-disc pl-5 mt-2 space-y-2'>
             {RULES_CONTENT.drawSchedule.conditions.map((condition, index) => (
-              <li key={index}>
-                {condition} <b>{index === 0 && 'AND'}</b>
-              </li>
+              <li key={index}>{condition}</li>
             ))}
           </ul>
         </Card>
