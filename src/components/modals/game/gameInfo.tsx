@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 
 import { Countdown } from '@/components'
@@ -10,17 +9,6 @@ const GameInfo: React.FC<{
   isExpanded: boolean
   onToggle: () => void
 }> = ({ lotteryInfo, isExpanded, onToggle }) => {
-  const prizePoolProgress = useMemo(() => {
-    const currentPrizePool = parseFloat(lotteryInfo?.prizePool || '0')
-    return Math.min((currentPrizePool / 100000) * 100, 100)
-  }, [lotteryInfo?.prizePool])
-
-  const countdownProgress = useMemo(() => {
-    const totalSeconds = 7 * 24 * 60 * 60
-    const remainingSeconds = lotteryInfo?.secondsUntilDraw || 0
-    return Math.max(0, Math.min(((totalSeconds - remainingSeconds) / totalSeconds) * 100, 100))
-  }, [lotteryInfo?.secondsUntilDraw])
-
   return (
     <div className='bg-gray-100 p-4 rounded-lg'>
       <motion.div
@@ -73,14 +61,6 @@ const GameInfo: React.FC<{
                   </p>
                 </div>
               </div>
-              {/* <div className='mt-2 bg-gray-200 rounded-full h-1.5'>
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${countdownProgress}%` }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className='bg-blue-500 h-1.5 rounded-full'
-                />
-              </div> */}
             </div>
 
             <div className='bg-white rounded-lg p-3 flex flex-col justify-between border border-gray-200'>
@@ -93,14 +73,6 @@ const GameInfo: React.FC<{
                   </p>
                 </div>
               </div>
-              {/* <div className='mt-2 bg-gray-200 rounded-full h-1.5'>
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${prizePoolProgress}%` }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className='bg-green-500 h-1.5 rounded-full'
-                />
-              </div> */}
             </div>
           </div>
           <div className='text-xs text-center text-gray-600'>
