@@ -2,7 +2,7 @@ import React, { type SVGProps } from 'react'
 
 export default function WorldchainWhite(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg width='601' height='601' viewBox='0 0 601 601' fill='none' {...props}>
+    <svg width='30' height='30' viewBox='0 0 601 601' fill='none' {...props}>
       <g clip-path='url(#clip0_15680_6635)'>
         <mask
           id='mask0_15680_6635'
