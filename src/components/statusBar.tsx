@@ -79,7 +79,7 @@ const PrizePool: FC<{ value?: string | number }> = ({ value }) => (
     <div className='flex flex-col'>
       <span className='text-xs font-medium text-white/50'>Prize Pool</span>
       <span className='text-lg font-bold text-white'>
-        {value ? Number(value).toFixed(0) : '-'} WLD
+        {value ? Number(value).toLocaleString('en-US', { maximumFractionDigits: 0 }) : '-'} WLD
       </span>
     </div>
   </div>
