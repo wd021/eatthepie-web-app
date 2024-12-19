@@ -9,7 +9,6 @@ const RecentPurchases: React.FC = () => {
     <div className='fixed bottom-4 right-4 z-50'>
       <a
         href='https://www.eatthepie.xyz'
-        target='_blank'
         rel='noopener noreferrer'
         className='group bg-gradient-to-r from-gray-800 to-gray-900 text-gray-200 rounded-full p-4 shadow-lg 
         transition-all duration-300 flex items-center gap-2 hover:scale-105 hover:shadow-xl 
