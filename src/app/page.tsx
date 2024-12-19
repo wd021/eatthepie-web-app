@@ -75,8 +75,7 @@ const Hero: FC<{
 }> = ({ lotteryInfo, onBuyTicket, onHowItWorks }) => {
   const formatPrizePool = (value?: string) => {
     if (!value) return '-'
-
-    return Number(value).toFixed(0).toLocaleString()
+    return Number(value).toLocaleString('en-US', { maximumFractionDigits: 0 })
   }
 
   return (

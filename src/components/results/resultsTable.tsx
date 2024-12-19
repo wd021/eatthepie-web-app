@@ -14,7 +14,7 @@ const ResultsTable: FC<{
   }[]
 }> = ({ games }) => {
   const formatPrizePool = (prizePool: bigint) => {
-    return `${parseFloat(formatEther(prizePool)).toLocaleString()} WLD`
+    return `${parseFloat(formatEther(prizePool)).toFixed(1)} WLD`
   }
 
   const formatWinningNumbers = (numbers: bigint[]) => {
