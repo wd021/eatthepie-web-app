@@ -10,7 +10,7 @@ import { convertSecondsToShorthand } from '@/utils/helpers'
 const networks = [
   {
     name: 'Ethereum',
-    url: 'https://www.eatthepie.xyz',
+    url: 'https://ethereum.eatthepie.xyz',
     icon: <EthereumWhite className='w-4' />,
   },
   {
