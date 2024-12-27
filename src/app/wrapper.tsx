@@ -92,9 +92,27 @@ const getEnvironmentVariables = () => {
   }
 }
 
+const DeprecatedNotice: React.FC = () => (
+  <div className='bg-yellow-100 border-b border-yellow-200 p-4 h-20 flex items-center'>
+    <div className='container mx-auto px-4'>
+      <p className='text-center text-yellow-800'>
+        ⚠️ This version is deprecated. Please visit{' '}
+        <a
+          href='https://www.eatthepie.xyz'
+          className='underline font-medium hover:text-yellow-900'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          www.eatthepie.xyz
+        </a>{' '}
+        for the latest version.
+      </p>
+    </div>
+  </div>
+)
+
 const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isClient, setIsClient] = useState(false)
-  const [isStatusBarVisible, setIsStatusBarVisible] = useState(true)
   const [isResponsibleModalOpen, setIsResponsibleModalOpen] = useState(false)
   const { networkName, lotteryAddress } = getEnvironmentVariables()
 
@@ -110,12 +128,9 @@ const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className='min-h-screen flex flex-col'>
-      <StatusBar
-        isStatusBarVisible={isStatusBarVisible}
-        setIsStatusBarVisible={setIsStatusBarVisible}
-      />
-      <Header isStatusBarVisible={isStatusBarVisible} />
-      <main className={`flex-grow ${isStatusBarVisible ? 'mt-40' : 'mt-20'}`}>{children}</main>
+      <DeprecatedNotice />
+      <Header isStatusBarVisible={true} />
+      <main className={`flex-grow mt-40`}>{children}</main>
       <Footer
         networkName={networkName}
         lotteryAddress={lotteryAddress}
