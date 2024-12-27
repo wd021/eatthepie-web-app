@@ -93,7 +93,7 @@ const getEnvironmentVariables = () => {
 }
 
 const DeprecatedNotice: React.FC = () => (
-  <div className='bg-yellow-100 border-b border-yellow-200 p-4 h-20 flex items-center'>
+  <div className='bg-yellow-100 border-b border-yellow-200 p-4 h-20 flex items-center fixed w-full z-[1000]'>
     <div className='container mx-auto px-4'>
       <p className='text-center text-yellow-800'>
         ⚠️ This version is deprecated. Please visit{' '}
