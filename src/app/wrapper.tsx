@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 
-import { Header, RecentPurchases, StatusBar } from '@/components'
+import { Header, RecentPurchases } from '@/components'
 import { Responsible } from '@/components/modals'
 import { NETWORK_NAMES } from '@/utils/constants'
 
